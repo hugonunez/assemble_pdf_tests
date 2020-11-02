@@ -226,6 +226,10 @@ const Utils = {
         return items
     },
     validateRequiredParams(...params) {
+        console.log({params})
+        if (params.length == 0) {
+            throw 'Must have at least 1 parameter'
+        }
         return params.every(i => !!i)
     }
 }

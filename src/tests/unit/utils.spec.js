@@ -3,24 +3,46 @@ import '@testing-library/jest-dom/extend-expect'
 import { JSDOM } from 'jsdom'
 import fs from 'fs'
 import path from 'path'
-import {Utils, Factories, assemblePDF, Commands, Getters, constants} from './assemble_pdf'
-const html = fs.readFileSync(path.resolve(__dirname, './index.html'), 'utf8');
+import {Utils} from '../../assemble_pdf'
+const html = fs.readFileSync(path.resolve(__dirname, '../../index.html'), 'utf8');
 
 let dom
 let document
 let body
 
-describe("Test Factories", () => {
+describe("Test Utils", () => {
   beforeEach(() => {
-    dom = new JSDOM(html, {runScripts: 'dangerously'})
+/*    dom = new JSDOM(html, {runScripts: 'dangerously'})
     body = dom.window.document.body;
-    document = dom.window.document
+    document = dom.window.document*/
   })
 
-  it("makeWidget with null input", async () => {
-    const rawWidget = null;
-    const widget = Factories.makeWidget(rawWidget)
-    expect(widget).toBe(null)
+  it("validate required params with empty input", async () => {
+    expect( Utils.validateRequiredParams).toThrow('Must have at least 1 parameter' )
+  })
+
+  it("validate required params with null input", async () => {
+    const params = null;
+    const value = Utils.validateRequiredParams(params)
+    expect(value).toBe(false)
+  })
+
+  it("validate required params with single input", async () => {
+    const params = [1];
+    const value = Utils.validateRequiredParams(...params)
+    expect(value).toBe(true)
+  })
+
+  it("validate required params with multiple input", async () => {
+    const params = [1,2];
+    const value = Utils.validateRequiredParams(...params)
+    expect(value).toBe(true)
+  })
+
+  it("validate required params with multiple input", async () => {
+    const params = [1,0];
+    const value = Utils.validateRequiredParams(...params)
+    expect(value).toBe(false)
   })
 })
 
