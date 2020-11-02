@@ -67,6 +67,7 @@ const constants = {
 }
 const Factories = {
      makeWidget (rawWidget){
+        if(!rawWidget) return null
         const type = Utils.getWidgetType(rawWidget.classList);
         const rows = Getters.getRows(rawWidget)
         return {
@@ -232,5 +233,10 @@ const Utils = {
 if (typeof exports !== 'undefined') {
     module.exports = {
         Utils,
+        Factories,
+        Commands,
+        Getters,
+        constants, 
+        assemblePDF,
     };
 }

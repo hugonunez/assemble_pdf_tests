@@ -3,21 +3,24 @@ import '@testing-library/jest-dom/extend-expect'
 import { JSDOM } from 'jsdom'
 import fs from 'fs'
 import path from 'path'
-import {Utils} from './assemble_pdf'
+import {Utils, Factories, assemblePDF, Commands, Getters, constants} from './assemble_pdf'
 const html = fs.readFileSync(path.resolve(__dirname, './index.html'), 'utf8');
 
-console.log({Utils})
 let dom
+let document
 let body
 
-describe("Test Utils", () => {
+describe("Test Factories", () => {
   beforeEach(() => {
     dom = new JSDOM(html, {runScripts: 'dangerously'})
     body = dom.window.document.body;
+    document = dom.window.document
   })
-  it("getHeight, should return item's height", () => {
-    const height = Utils.getHeight(body.querySelector('h1'))
-    expect(typeof height).toBe('number')
+
+  it("makeWidget with null input", async () => {
+    const rawWidget = null;
+    const widget = Factories.makeWidget(rawWidget)
+    expect(widget).toBe(null)
   })
 })
 
