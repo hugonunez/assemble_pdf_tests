@@ -4,18 +4,18 @@ import { JSDOM } from 'jsdom'
 import fs from 'fs'
 import path from 'path'
 import {Factories} from '../../assemble_pdf'
-const html = fs.readFileSync(path.resolve(__dirname, '../../index.html'), 'utf8');
+/*const html = fs.readFileSync(path.resolve(__dirname, '../../index.html'), 'utf8');
 
 let dom
 let document
-let body
+let body*/
 
 describe("Test Factories", () => {
-  beforeEach(() => {
+/*  beforeEach(() => {
     dom = new JSDOM(html, {runScripts: 'dangerously'})
     body = dom.window.document.body;
     document = dom.window.document
-  })
+  })*/
 
   it("makeWidget with null input", async () => {
     const rawWidget = null;

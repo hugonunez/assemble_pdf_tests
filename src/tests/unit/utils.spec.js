@@ -6,11 +6,8 @@ import path from 'path'
 import {Utils} from '../../assemble_pdf'
 const html = fs.readFileSync(path.resolve(__dirname, '../../index.html'), 'utf8');
 
-let dom
-let document
-let body
 
-describe("Test Utils", () => {
+describe("Test validateRequiredInputs", () => {
   beforeEach(() => {
 /*    dom = new JSDOM(html, {runScripts: 'dangerously'})
     body = dom.window.document.body;
@@ -33,19 +30,38 @@ describe("Test Utils", () => {
     expect(value).toBe(true)
   })
 
-  it("validate required params with multiple input", async () => {
+  it("validate required params with multiple correct input", async () => {
     const params = [1,2];
     const value = Utils.validateRequiredParams(...params)
     expect(value).toBe(true)
   })
 
-  it("validate required params with multiple input", async () => {
+  it("validate required params with multiple input, including falsy", async () => {
     const params = [1,0];
     const value = Utils.validateRequiredParams(...params)
     expect(value).toBe(false)
   })
 })
 
+describe("Test getHeight", () => {
+  beforeEach( () => {
+    const dom = new JSDOM(html, {runScripts: 'dangerously'})
+    global.document = dom.window.document
+    global.window = dom.window
+  })
+
+  it("getHeight with null input", () => {
+    const element = null;
+    const fun = () => Utils.getHeight(element);
+    expect(fun).toThrow('Input element can not be null')
+  })
+
+  it("getHeight with correct input", () => {
+    const element = document.querySelector('div');
+    const height  = Utils.getHeight(element);
+    expect(typeof height).toBe('number')
+  })
+})
 /*
 
 describe('index.html', () => {

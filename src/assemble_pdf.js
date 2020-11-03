@@ -6,12 +6,12 @@ window.onload = onLoad || fallbackOnload;
 function onLoad () {
     const widgets = Getters.getWidgets();
     const parsedWidgets = Utils.parseWidgets(widgets)
+    console.log({parsedWidgets})
     const pages = Utils.nodeListToIterable(Getters.getPages())
     const print = Getters.getPrint();
     const validated = Utils.validateRequiredParams(widgets, parsedWidgets, pages, print)
     if (validated) {
         console.log('Using assemble_pdf onLoad funtion')
-        console.log({widgets, parsedWidgets})
         return assemblePDF({
             pages,
             items: parsedWidgets,
@@ -24,10 +24,7 @@ function onLoad () {
     console.warn({MSG: "Could not load assemble_pdf, required elements returned: ", widgets, parsedWidgets, pages, print})
     return null
 }
-function assemble ({widgets, print, pages}) {
-    widgets.forEach(el=>print.appendChild(el))
-    Commands.hideElements();
-}
+
 //assemble pdf onload function
  function assemblePDF({items, pages, pageHeight, skipPageTreshhold, print}) {
     let sumOfHeights = 0;
@@ -38,12 +35,11 @@ function assemble ({widgets, print, pages}) {
         let currentPage = pages[pages.length -1];
         //Delta is equal to the prev sum of heights + the current item height
         const delta = (sumOfHeights + itemHeight) - pageHeight;
-        //Determine if a new page should be created and filled with the splitted widget.
+        //Determine if a new page should be created and filled with the widget
         if (delta > skipPageTreshhold) {
             sumOfHeights = 0;
             //Update currentPage state with new one
             currentPage = Commands.createNewPage({print, pages});
-            console.log({pageHeight, itemHeight, CO: constants.PAGE_HEIGHT})
             if ((itemHeight >= pageHeight) && items[i].table && !items[i].isHorizontalRow) { //Replace hasTable
                 sumOfHeights = Commands.splitWidgetIntoPage({page: currentPage, pWidget: items[i].widget, pages, print});
                 continue;
@@ -148,7 +144,6 @@ const Commands = {
         document.querySelector(constants.ALL_MAIL_CONTAINERS).style.display = "none";
     },
     markAsReady() {
-        console.log('---------------------- COMPLETE------------------------');
         if (window.pdfdone) {
             window.pdfdone();
         }
@@ -206,6 +201,9 @@ const Utils = {
         return {...res, ...(properties.map(p => ({[p]: undefined})))}
     },
     getHeight(element) {
+        if (!element) {
+            throw 'Input element can not be null'
+        }
         element.style.visibility = "hidden";
         document.body.appendChild(element);
         const height = element.offsetHeight + 0;
@@ -226,7 +224,6 @@ const Utils = {
         return items
     },
     validateRequiredParams(...params) {
-        console.log({params})
         if (params.length == 0) {
             throw 'Must have at least 1 parameter'
         }
