@@ -2,10 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="59524dee-e6ec-4f66-9171-8ba7ab70fcc2" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/chain.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/assemble_pdf.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/assemble_pdf.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests/unit/factories.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/unit/factories.spec.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests/unit/utils.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/unit/utils.spec.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,14 +30,20 @@
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/src/tests/unit" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/tests/unit" />
       <recent name="$PROJECT_DIR$/src" />
       <recent name="$PROJECT_DIR$" />
     </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src" />
+      <recent name="$PROJECT_DIR$/src/tests/unit" />
+    </key>
+  </component>
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="getprint" />
+    </option>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -51,6 +57,8 @@
       <workItem from="1604337208601" duration="2791000" />
       <workItem from="1604342905196" duration="1848000" />
       <workItem from="1604407080671" duration="3558000" />
+      <workItem from="1604427726865" duration="11801000" />
+      <workItem from="1604494814616" duration="14267000" />
     </task>
     <servers />
   </component>
@@ -58,6 +66,10 @@
     <option name="version" value="3" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="779" y="311" width="424" height="491" key="FileChooserDialogImpl" timestamp="1604506563922">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state x="779" y="311" width="424" height="491" key="FileChooserDialogImpl/72.27.1848.1053/1920.0.1920.1080@72.27.1848.1053" timestamp="1604506563922" />
     <state x="485" y="188" width="1022" height="737" key="SettingsEditor" timestamp="1604336113733">
       <screen x="72" y="27" width="1848" height="1053" />
     </state>
@@ -66,5 +78,9 @@
       <screen x="72" y="27" width="1848" height="1053" />
     </state>
     <state x="687" y="292" width="618" height="522" key="find.popup/72.27.1848.1053/1920.0.1920.1080@72.27.1848.1053" timestamp="1604408316313" />
+    <state x="660" y="252" width="672" height="677" key="run.anything.popup" timestamp="1604502018364">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state x="660" y="252" width="672" height="677" key="run.anything.popup/72.27.1848.1053/1920.0.1920.1080@72.27.1848.1053" timestamp="1604502018364" />
   </component>
 </project>

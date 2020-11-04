@@ -1,65 +1,106 @@
 
-//Override onload funtion or use fallback
+//Override 1 function or use fallback
 const fallbackOnload = window.onload;
 window.onload = onLoad || fallbackOnload;
 
 function onLoad () {
     const widgets = Getters.getWidgets();
     const parsedWidgets = Utils.parseWidgets(widgets)
-    console.log({parsedWidgets})
     const pages = Utils.nodeListToIterable(Getters.getPages())
     const print = Getters.getPrint();
     const validated = Utils.validateRequiredParams(widgets, parsedWidgets, pages, print)
     if (validated) {
-        console.log('Using assemble_pdf onLoad funtion')
         return assemblePDF({
             pages,
-            items: parsedWidgets,
+            items: widgets,
             print,
-            skipPageTreshhold: constants.DEFAULT_SKIP_PAGE_TRESHHOLD,
-            pageHeight: constants.PAGE_HEIGHT,
+            skipFooterThreshold: constants.DEFAULT_SKIP_FOOTER_THRESHOLD,
+            scaleDownThreshold: constants.DEFAULT_SCALE_DOWN,
+            pageHeight: constants.PAGE_HEIGHT
         })
     }
-    console.log('Using fallback onLoad funtion')
+    console.log('Using fallback onLoad function')
     console.warn({MSG: "Could not load assemble_pdf, required elements returned: ", widgets, parsedWidgets, pages, print})
     return null
 }
 
+function makeFooter (){
+    const footer = document.createElement("p");
+    footer.innerHTML = 'SOy un footer';
+    return footer
+}
+
+
 //assemble pdf onload function
- function assemblePDF({items, pages, pageHeight, skipPageTreshhold, print}) {
+function assemblePDF({items, pages, pageHeight, skipFooterThreshold, scaleDownThreshold, print}) {
     let sumOfHeights = 0;
+    let isPageFinished = false;
+    const Instructions = {
+        scaleDownPage(sumOfHeights) {
+            const page = pages[pages.length -1];
+            const scale = constants.PAGE_HEIGHT/ sumOfHeights;
+            page.style['transform'] = `scale(${scale})`;
+        },
+        finishPage() {
+            sumOfHeights = 0;
+            isPageFinished = true;
+        },
+        addFooter() {
+            const footer = makeFooter();
+            print.appendChild(footer)
+        },
+        appendWidget(item) {
+            const page = pages[pages.length -1];
+            sumOfHeights += item.offsetHeight;
+            page.appendChild(item);
+        },
+
+    }
+
     //Iterate over widgets and assign them to a page
     for (let i = 0; i < items.length; i++) {
-        const itemHeight = items[i].offsetHeight;
-        //Grab last page since previous ones are filled
-        let currentPage = pages[pages.length -1];
-        //Delta is equal to the prev sum of heights + the current item height
-        const delta = (sumOfHeights + itemHeight) - pageHeight;
-        //Determine if a new page should be created and filled with the widget
-        if (delta > skipPageTreshhold) {
-            sumOfHeights = 0;
-            //Update currentPage state with new one
-            currentPage = Commands.createNewPage({print, pages});
-            if ((itemHeight >= pageHeight) && items[i].table && !items[i].isHorizontalRow) { //Replace hasTable
-                sumOfHeights = Commands.splitWidgetIntoPage({page: currentPage, pWidget: items[i].widget, pages, print});
-                continue;
-            }
+
+        if (isPageFinished){
+            Commands.createNewPage({print, pages})
+            isPageFinished = false;
         }
-        sumOfHeights += itemHeight;
-        currentPage.appendChild(items[i].widget);
+        const itemHeight = items[i].offsetHeight;
+        //Delta is equal to the prev sum of heights + the current item height - pageHeight
+        const debt =  (sumOfHeights + itemHeight) - pageHeight ;
+
+        if (debt <= 0) {
+           Instructions.appendWidget(items[i])
+            if (i+1 === items.length) {
+                //agregar ultimo footer
+                Instructions.addFooter();
+            }
+        } else if (debt <= scaleDownThreshold) {
+            Instructions.appendWidget(items[i])
+            Instructions.addFooter();
+            Instructions.scaleDownPage(sumOfHeights)
+            Instructions.finishPage();
+        } else if (debt < skipFooterThreshold) {
+            Instructions.appendWidget(items[i])
+            Instructions.finishPage();
+        }else {
+            Instructions.addFooter();
+            Instructions.finishPage();
+        }
+
     }
     Commands.hideElements();
     Commands.markAsReady();
 }
+const default_page_height = (window.customSize)? window.customSize : 1056;
 const constants = {
     ALL_WIDGETS_SELECTOR: "#main > div.mail__container > div",
     ALL_PAGES_SELECTOR: '#print > div.pdf-page > div',
     TABLE_WIDGET_SELECTOR: "table.widget-product",
     ALL_MAIL_CONTAINERS: "#main > div.mail__container",
-    /*1056*/
-    PAGE_HEIGHT: (window.customSize)? window.customSize : 1056,
+    PAGE_HEIGHT: default_page_height,
     PRINT_SELECTOR: 'print',
-    DEFAULT_SKIP_PAGE_TRESHHOLD: 100
+    DEFAULT_SKIP_FOOTER_THRESHOLD: default_page_height*0.1,
+    DEFAULT_SCALE_DOWN: default_page_height*0.05
 }
 const Factories = {
      makeWidget (rawWidget){
@@ -158,6 +199,7 @@ const Commands = {
     createNewPage({print = Getters.getPrint(), pages}) {
         const page = document.createElement("div");
         const pageWrapper = document.createElement("div")
+        page.style['border-style'] = 'dashed'
         pageWrapper.setAttribute('class', 'pdf-page');
         pageWrapper.appendChild(page);
         print.appendChild(pageWrapper);
@@ -185,7 +227,7 @@ const Commands = {
             page.appendChild(pWidget);
             // Recurse on any remaining rows
             const cloneRows = Getters.getRows(itemClone)
-            if (cloneRows.length) { return this.splitWidgetIntoPage(this.createNewPage({print, pages}), itemClone); }
+            if (cloneRows.length) { return this.splitWidgetIntoPage(this.createNewPage({print, pages})) }
         }
         console.count("SPLIT")
 
@@ -230,6 +272,7 @@ const Utils = {
         return params.every(i => !!i)
     }
 }
+
 
 if (typeof exports !== 'undefined') {
     module.exports = {
