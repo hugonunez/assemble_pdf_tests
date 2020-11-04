@@ -2,10 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="59524dee-e6ec-4f66-9171-8ba7ab70fcc2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/chain.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/assemble_pdf.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/assemble_pdf.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,7 +56,7 @@
       <workItem from="1604342905196" duration="1848000" />
       <workItem from="1604407080671" duration="3558000" />
       <workItem from="1604427726865" duration="11801000" />
-      <workItem from="1604494814616" duration="14267000" />
+      <workItem from="1604494814616" duration="22079000" />
     </task>
     <servers />
   </component>
@@ -78,9 +76,21 @@
       <screen x="72" y="27" width="1848" height="1053" />
     </state>
     <state x="687" y="292" width="618" height="522" key="find.popup/72.27.1848.1053/1920.0.1920.1080@72.27.1848.1053" timestamp="1604408316313" />
-    <state x="660" y="252" width="672" height="677" key="run.anything.popup" timestamp="1604502018364">
+    <state x="660" y="252" width="672" height="677" key="run.anything.popup" timestamp="1604510431786">
       <screen x="72" y="27" width="1848" height="1053" />
     </state>
-    <state x="660" y="252" width="672" height="677" key="run.anything.popup/72.27.1848.1053/1920.0.1920.1080@72.27.1848.1053" timestamp="1604502018364" />
+    <state x="660" y="252" width="672" height="677" key="run.anything.popup/72.27.1848.1053/1920.0.1920.1080@72.27.1848.1053" timestamp="1604510431786" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/assemble_pdf.js</url>
+          <line>9</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

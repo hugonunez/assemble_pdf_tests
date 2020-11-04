@@ -26,7 +26,9 @@ function onLoad () {
 
 function makeFooter (){
     const footer = document.createElement("p");
-    footer.innerHTML = 'SOy un footer';
+    footer.setAttribute('class', 'pdf-footer');
+    footer.style['outline'] = '1px solid blue'
+    footer.innerHTML = 'Soy un footer';
     return footer
 }
 
@@ -35,10 +37,17 @@ function makeFooter (){
 function assemblePDF({items, pages, pageHeight, skipFooterThreshold, scaleDownThreshold, print}) {
     let sumOfHeights = 0;
     let isPageFinished = false;
+
     const Instructions = {
-        scaleDownPage(sumOfHeights) {
+        scaleDownWidget(widget) {
+            const scale = constants.PAGE_HEIGHT/ sumOfHeights;
+            console.log({scale, widget})
+            widget.style['transform'] = `scale(${scale})`;
+        },
+        scaleDownPage() {
             const page = pages[pages.length -1];
             const scale = constants.PAGE_HEIGHT/ sumOfHeights;
+            console.log({scale, page})
             page.style['transform'] = `scale(${scale})`;
         },
         finishPage() {
@@ -46,47 +55,53 @@ function assemblePDF({items, pages, pageHeight, skipFooterThreshold, scaleDownTh
             isPageFinished = true;
         },
         addFooter() {
+            const page = pages[pages.length -1];
             const footer = makeFooter();
+            console.log({
+                of:page.offsetWidth,
+                wd: page.style.width,
+                style: page.style
+            })
+            footer.style['width'] = `${page.offsetWidth}px`;
             print.appendChild(footer)
         },
-        appendWidget(item) {
+        appendWidget(widget) {
+            widget.style.outline = '1px dashed grey';
             const page = pages[pages.length -1];
-            sumOfHeights += item.offsetHeight;
-            page.appendChild(item);
+            sumOfHeights += widget.offsetHeight;
+            page.appendChild(widget);
         },
-
     }
 
-    //Iterate over widgets and assign them to a page
     for (let i = 0; i < items.length; i++) {
-
         if (isPageFinished){
             Commands.createNewPage({print, pages})
             isPageFinished = false;
         }
         const itemHeight = items[i].offsetHeight;
         //Delta is equal to the prev sum of heights + the current item height - pageHeight
-        const debt =  (sumOfHeights + itemHeight) - pageHeight ;
-
-        if (debt <= 0) {
+        const debt =  (sumOfHeights + itemHeight) - pageHeight ; //space to fill
+        if (debt <= 0) { // Fits without a problem. Template A
            Instructions.appendWidget(items[i])
             if (i+1 === items.length) {
-                //agregar ultimo footer
+                //Add last footer
                 Instructions.addFooter();
             }
-        } else if (debt <= scaleDownThreshold) {
+        } else if (debt <= scaleDownThreshold) { // Fits but items must be scale down. Template B
             Instructions.appendWidget(items[i])
             Instructions.addFooter();
-            Instructions.scaleDownPage(sumOfHeights)
+            /*Instructions.scaleDownPage();*/
+            Instructions.scaleDownWidget(items[i-1]);
+            Instructions.scaleDownWidget(items[i]);
             Instructions.finishPage();
-        } else if (debt < skipFooterThreshold) {
+        } else if (debt < skipFooterThreshold) { // Fits but will not add footer. Will enlarge working area be reducing margins
+            console.log("")
             Instructions.appendWidget(items[i])
             Instructions.finishPage();
-        }else {
+        } else {
             Instructions.addFooter();
             Instructions.finishPage();
         }
-
     }
     Commands.hideElements();
     Commands.markAsReady();
@@ -199,7 +214,8 @@ const Commands = {
     createNewPage({print = Getters.getPrint(), pages}) {
         const page = document.createElement("div");
         const pageWrapper = document.createElement("div")
-        page.style['border-style'] = 'dashed'
+        page.style['outline'] = '1px solid red'
+        pageWrapper.style['outline'] = '1px solid orange'
         pageWrapper.setAttribute('class', 'pdf-page');
         pageWrapper.appendChild(page);
         print.appendChild(pageWrapper);
@@ -272,7 +288,6 @@ const Utils = {
         return params.every(i => !!i)
     }
 }
-
 
 if (typeof exports !== 'undefined') {
     module.exports = {
