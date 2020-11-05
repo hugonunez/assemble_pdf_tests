@@ -9,6 +9,7 @@ function onLoad () {
     const pages = Utils.nodeListToIterable(Getters.getPages())
     const print = Getters.getPrint();
     const validated = Utils.validateRequiredParams(widgets, parsedWidgets, pages, print)
+    const mode = 'landscape' // portrait or landscape
     if (validated) {
         return assemblePDF({
             pages,
@@ -16,7 +17,8 @@ function onLoad () {
             print,
             skipFooterThreshold: constants.DEFAULT_SKIP_FOOTER_THRESHOLD,
             scaleDownThreshold: constants.DEFAULT_SCALE_DOWN,
-            pageHeight: constants.PAGE_HEIGHT
+            pageHeight: constants.PAGE_HEIGHT,
+            mode
         })
     }
     console.log('Using fallback onLoad function')
@@ -34,7 +36,7 @@ function makeFooter (){
 
 
 //assemble pdf onload function
-function assemblePDF({items, pages, pageHeight, skipFooterThreshold, scaleDownThreshold, print}) {
+function assemblePDF({items, pages, pageHeight, skipFooterThreshold, scaleDownThreshold, print, mode}) {
     let sumOfHeights = 0;
     let isPageFinished = false;
 
@@ -71,18 +73,21 @@ function assemblePDF({items, pages, pageHeight, skipFooterThreshold, scaleDownTh
             sumOfHeights += widget.offsetHeight;
             page.appendChild(widget);
         },
+        transformToLandscape() {
+
+        }
     }
 
     for (let i = 0; i < items.length; i++) {
         if (isPageFinished){
-            Commands.createNewPage({print, pages})
+            Commands.createNewPage({print, pages, mode})
             isPageFinished = false;
         }
         const itemHeight = items[i].offsetHeight;
         //Delta is equal to the prev sum of heights + the current item height - pageHeight
         const debt =  (sumOfHeights + itemHeight) - pageHeight ; //space to fill
         if (debt <= 0) { // Fits without a problem. Template A
-           Instructions.appendWidget(items[i])
+            Instructions.appendWidget(items[i])
             if (i+1 === items.length) {
                 //Add last footer
                 Instructions.addFooter();
@@ -102,6 +107,20 @@ function assemblePDF({items, pages, pageHeight, skipFooterThreshold, scaleDownTh
             Instructions.addFooter();
             Instructions.finishPage();
         }
+    }
+
+    if (mode === 'landscape'){
+        const pages_tuples = [];
+        const pages = Getters.getPages()
+        console.log("MODIFY TO LANDSCAPE", {pages})
+        for (let i=0; i < pages.length; i+=2) {
+            pages_tuples.push([pages[i], pages[i+1]]);
+        }
+        print.innerHTML = ''
+        pages_tuples.forEach(tuple => {
+            const landScape = Commands.createLandscapePage({pages: tuple});
+            print.appendChild(landScape)
+        })
     }
     Commands.hideElements();
     Commands.markAsReady();
@@ -221,6 +240,22 @@ const Commands = {
         print.appendChild(pageWrapper);
         pages.push(page);
         return page;
+    },
+    createLandscapePage({pages}) {
+        const page1 = pages[0];
+        const page2 = pages[1];
+        console.log({page1, page2})
+        const pageWrapper = document.createElement("div")
+        pageWrapper.style['outline'] = '1px dotted purple'
+        pageWrapper.style['display'] = 'flex'
+        pageWrapper.style['align-items'] = 'center'
+        pageWrapper.style['justify-content'] = 'center'
+        pageWrapper.setAttribute('class', 'pdf-page-landscape');
+        pageWrapper.appendChild(page1);
+        if (page2) {
+            pageWrapper.appendChild(page2);
+        }
+        return pageWrapper;
     },
     splitWidgetIntoPage({page, pWidget, pages, print}) {
         const itemClone = pWidget.cloneNode(true);
