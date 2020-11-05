@@ -1,7 +1,7 @@
 
 //Override 1 function or use fallback
 const fallbackOnload = window.onload;
-window.onload = onLoad || fallbackOnload;
+window.onload =  fallbackOnload;
 
 function onLoad () {
     const widgets = Getters.getWidgets();
@@ -29,7 +29,6 @@ function onLoad () {
 function makeFooter (){
     const footer = document.createElement("p");
     footer.setAttribute('class', 'pdf-footer');
-    footer.style['outline'] = '1px solid blue'
     footer.innerHTML = 'Soy un footer';
     return footer
 }
@@ -41,16 +40,8 @@ function assemblePDF({items, pages, pageHeight, skipFooterThreshold, scaleDownTh
     let isPageFinished = false;
 
     const Instructions = {
-        scaleDownWidget(widget) {
-            const scale = constants.PAGE_HEIGHT/ sumOfHeights;
-            console.log({scale, widget})
+        scaleDownWidget(widget, scale = constants.PAGE_HEIGHT/ sumOfHeights) {
             widget.style['transform'] = `scale(${scale})`;
-        },
-        scaleDownPage() {
-            const page = pages[pages.length -1];
-            const scale = constants.PAGE_HEIGHT/ sumOfHeights;
-            console.log({scale, page})
-            page.style['transform'] = `scale(${scale})`;
         },
         finishPage() {
             sumOfHeights = 0;
@@ -68,13 +59,26 @@ function assemblePDF({items, pages, pageHeight, skipFooterThreshold, scaleDownTh
             print.appendChild(footer)
         },
         appendWidget(widget) {
-            widget.style.outline = '1px dashed grey';
             const page = pages[pages.length -1];
             sumOfHeights += widget.offsetHeight;
             page.appendChild(widget);
         },
         transformToLandscape() {
-
+            const pages_tuples = [];
+            const pages = Getters.getPages()
+            for (let i=0; i < pages.length; i+=2) {
+                pages_tuples.push([pages[i], pages[i+1]]);
+                Commands.scalePage({page: pages[i], scale: 0.85})
+                Commands.scalePage({page: pages[i+1], scale: 0.85})
+                if (!pages[i+1]){
+                    /*Commands.scalePage({page: pages[i], scale: 1})*/
+                }
+            }
+            print.innerHTML = ''
+            pages_tuples.forEach(tuple => {
+                const landScape = Commands.createLandscapePage({pages: tuple});
+                print.appendChild(landScape)
+            })
         }
     }
 
@@ -110,17 +114,7 @@ function assemblePDF({items, pages, pageHeight, skipFooterThreshold, scaleDownTh
     }
 
     if (mode === 'landscape'){
-        const pages_tuples = [];
-        const pages = Getters.getPages()
-        console.log("MODIFY TO LANDSCAPE", {pages})
-        for (let i=0; i < pages.length; i+=2) {
-            pages_tuples.push([pages[i], pages[i+1]]);
-        }
-        print.innerHTML = ''
-        pages_tuples.forEach(tuple => {
-            const landScape = Commands.createLandscapePage({pages: tuple});
-            print.appendChild(landScape)
-        })
+        Instructions.transformToLandscape();
     }
     Commands.hideElements();
     Commands.markAsReady();
@@ -212,6 +206,12 @@ const Getters = {
     }
 }
 const Commands = {
+    scalePage({page, scale}) {
+        console.log({scale, page})
+        if (page){
+            page.style['transform'] = `scale(${scale})`;
+        }
+    },
     selfRemoveFromDOM(item) {
         item.parentNode.removeChild(item)
     },
@@ -233,9 +233,8 @@ const Commands = {
     createNewPage({print = Getters.getPrint(), pages}) {
         const page = document.createElement("div");
         const pageWrapper = document.createElement("div")
-        page.style['outline'] = '1px solid red'
-        pageWrapper.style['outline'] = '1px solid orange'
         pageWrapper.setAttribute('class', 'pdf-page');
+        pageWrapper.style['outline'] = '1px dashed black'
         pageWrapper.appendChild(page);
         print.appendChild(pageWrapper);
         pages.push(page);
@@ -245,11 +244,12 @@ const Commands = {
         const page1 = pages[0];
         const page2 = pages[1];
         console.log({page1, page2})
+
         const pageWrapper = document.createElement("div")
-        pageWrapper.style['outline'] = '1px dotted purple'
         pageWrapper.style['display'] = 'flex'
         pageWrapper.style['align-items'] = 'center'
-        pageWrapper.style['justify-content'] = 'center'
+        pageWrapper.style['justify-content'] = 'space-around'
+        pageWrapper.style['outline'] = '1px dashed black';
         pageWrapper.setAttribute('class', 'pdf-page-landscape');
         pageWrapper.appendChild(page1);
         if (page2) {
