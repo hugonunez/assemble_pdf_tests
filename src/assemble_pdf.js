@@ -1,7 +1,7 @@
 
 //Override 1 function or use fallback
 const fallbackOnload = window.onload;
-window.onload =  fallbackOnload;
+window.onload = onLoad || fallbackOnload;
 
 function onLoad () {
     const widgets = Getters.getWidgets();
@@ -9,7 +9,7 @@ function onLoad () {
     const pages = Utils.nodeListToIterable(Getters.getPages())
     const print = Getters.getPrint();
     const validated = Utils.validateRequiredParams(widgets, parsedWidgets, pages, print)
-    const mode = 'landscape' // portrait or landscape
+    const mode = 'landscape'; // portrait or landscape
     if (validated) {
         return assemblePDF({
             pages,
@@ -28,8 +28,12 @@ function onLoad () {
 
 function makeFooter (){
     const footer = document.createElement("p");
+    footer.style['outline'] = '1px dotted blue';
+    footer.style['align-content'] = 'right';
+    footer.style['margin-top'] = '10px';
+    footer.style['margin-bottom'] = '10px';
     footer.setAttribute('class', 'pdf-footer');
-    footer.innerHTML = 'Soy un footer';
+    footer.innerHTML = 'Hello seer.com pagina 1/2';
     return footer
 }
 
@@ -61,6 +65,7 @@ function assemblePDF({items, pages, pageHeight, skipFooterThreshold, scaleDownTh
         appendWidget(widget) {
             const page = pages[pages.length -1];
             sumOfHeights += widget.offsetHeight;
+            widget.style['outline'] = '1px dashed red'
             page.appendChild(widget);
         },
         transformToLandscape() {
@@ -104,7 +109,6 @@ function assemblePDF({items, pages, pageHeight, skipFooterThreshold, scaleDownTh
             Instructions.scaleDownWidget(items[i]);
             Instructions.finishPage();
         } else if (debt < skipFooterThreshold) { // Fits but will not add footer. Will enlarge working area be reducing margins
-            console.log("")
             Instructions.appendWidget(items[i])
             Instructions.finishPage();
         } else {
