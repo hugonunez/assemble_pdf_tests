@@ -37,7 +37,7 @@ function makeFooterAndWrapper ({pageIndex, mode, width} = {mode: 'portrait', pag
     const footer = document.createElement("div");
     const rightSection = document.createElement('small');
     const footerSignature = document.createElement('small');
-
+    const myWIdth = mode === 'landscape'? width*2: width;
     footerSignature.innerHTML = 'SEARS 2020'
 
     //footer
@@ -49,6 +49,11 @@ function makeFooterAndWrapper ({pageIndex, mode, width} = {mode: 'portrait', pag
     footer.style['justify-content'] = 'space-between';
     footer.setAttribute('class', 'pdf-footer');
     footerSignature.style['color'] = 'grey';
+    footerSignature.style['top'] = '10px';
+    footerSignature.style['left'] = '50%'
+    footerSignature.style['position'] = 'relative'
+    footerWrapper.style.width = `${myWIdth}px`
+    footer.style.width = `${myWIdth}px`
     footerSignature.style['margin-left'] = 'auto';
     footerSignature.style['margin-right'] = 'auto';
     if (mode === 'portrait'){
@@ -56,11 +61,11 @@ function makeFooterAndWrapper ({pageIndex, mode, width} = {mode: 'portrait', pag
         rightSection.style['margin-left'] = 'auto';
     }
     rightSection.innerHTML = `page ${pageIndex}`;
-    footer.appendChild(footerSignature)
     footer.appendChild(rightSection);
 
 
-    footerWrapper.appendChild(makeSeparator({width: width}));
+    footerWrapper.appendChild(makeSeparator({width: myWIdth}));
+    footerWrapper.appendChild(footerSignature)
     footerWrapper.appendChild(footer)
     return {footerWrapper, footer}
 }
@@ -288,7 +293,6 @@ const Commands = {
         pageWrapper.setAttribute('class', 'pdf-page');
         pageWrapper.appendChild(page);
         print.appendChild(pageWrapper);
-        page.style['border-top']='1px dotted grey'
         pages.push(page);
         return page;
     },
