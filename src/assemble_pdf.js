@@ -9,7 +9,7 @@ function onLoad () {
     const pages = Utils.nodeListToIterable(Getters.getPages());
     const print = Getters.getPrint();
     const validated = Utils.validateRequiredParams(widgets, parsedWidgets, pages, print);
-    const mode = 'portrait'; // portrait or landscape
+    const mode = 'landscape'; // portrait or landscape
     if (validated) {
         return assemblePDF({
             pages,
@@ -26,18 +26,23 @@ function onLoad () {
     return null
 }
 
-function makeFooter ({mode, pageIndex} = {mode: 'portrait', pageIndex: 1}){
+function makeFooter ({pageIndex} = {mode: 'portrait', pageIndex: 1}){
     const footer = document.createElement("div");
+    const rightSection = document.createElement('small');
+    //footer
     footer.style['outline'] = '1px dotted blue';
     footer.style['display'] = 'flex';
     footer.style['margin-top'] = '10px';
     footer.style['margin-bottom'] = '10px';
     footer.setAttribute('class', 'pdf-footer');
-    const rightSection = document.createElement('small');
-    rightSection.style['margin-left'] = 'auto'
-    rightSection.style['margin-right'] = '0'
-    rightSection.innerHTML = `Pagina ${pageIndex}`;
+    //right section
+    rightSection.style['margin-right'] = 'auto';
+    rightSection.style['margin-left'] = '0';
+    rightSection.style['padding'] = '10';
+    rightSection.innerHTML = `Page ${pageIndex}`;
     footer.appendChild(rightSection);
+
+
     return footer
 }
 
@@ -56,7 +61,7 @@ function assemblePDF({items, pages, pageHeight, skipFooterThreshold, scaleDownTh
         },
         addFooter() {
             const page = pages[pages.length -1];
-            const footer = makeFooter({pageIndex: pages.length, mode});
+            const footer = makeFooter({pageIndex: pages.length});
             console.log({
                 of:page.offsetWidth,
                 wd: page.style.width,
@@ -75,18 +80,35 @@ function assemblePDF({items, pages, pageHeight, skipFooterThreshold, scaleDownTh
             const pages_tuples = [];
             const pages = Getters.getPages();
             for (let i=0; i < pages.length; i+=2) {
-                pages_tuples.push([pages[i], pages[i+1]]);
-                Commands.scalePage({page: pages[i], scale: 0.85});
-                Commands.scalePage({page: pages[i+1], scale: 0.85});
-                if (!pages[i+1]){
-                    /*Commands.scalePage({page: pages[i], scale: 1})*/
+                let sumOfWidths = pages[i].offsetWidth;
+                if ( pages[i+1]) {
+                    sumOfWidths += pages[i+1].offsetWidth
+                    Commands.scalePage({page: pages[i], scale: constants.PAGE_HEIGHT/sumOfWidths})
+                    Commands.scalePage({page: pages[i+1], scale: constants.PAGE_HEIGHT/sumOfWidths})
                 }
+
+                pages_tuples.push([pages[i], pages[i+1]]);
             }
             print.innerHTML = ''
-            pages_tuples.forEach(tuple => {
+            pages_tuples.forEach((tuple, index) => {
                 const landScape = Commands.createLandscapePage({pages: tuple});
                 print.appendChild(landScape);
+                print.appendChild(makeLandscapeFooter({pagesIndex: [index+index +1, index+index+2], noLastPage: !tuple[1]}))
             })
+
+            function makeLandscapeFooter({pagesIndex, noLastPage}) {
+                const footer = makeFooter({pageIndex: pagesIndex[0]});
+                //left section
+                const leftSection = document.createElement('small');
+                leftSection.style['margin-left'] = 'auto';
+                leftSection.style['margin-right'] = '0';
+                leftSection.style['padding'] = '10';
+                leftSection.innerHTML = `Page ${pagesIndex[1]}`;
+                if (!noLastPage){
+                    footer.appendChild(leftSection);
+                }
+                return footer
+            }
         }
     }
 
@@ -220,7 +242,10 @@ const Commands = {
     scalePage({page, scale}) {
         console.log({scale, page})
         if (page){
-            page.style['transform'] = `scale(${scale})`;
+            if (scale !== 0 && scale !== 1){
+                page.style['transform'] = `scale(${scale})`;
+
+            }
         }
     },
     selfRemoveFromDOM(item) {
@@ -254,12 +279,12 @@ const Commands = {
     createLandscapePage({pages}) {
         const page1 = pages[0];
         const page2 = pages[1];
-        console.log({page1, page2});
-
+        const pageWidth = constants.PAGE_HEIGHT;
+        console.log({pageWidth})
         const pageWrapper = document.createElement("div");
         pageWrapper.style['display'] = 'flex';
         pageWrapper.style['align-items'] = 'center';
-        pageWrapper.style['justify-content'] = 'space-around';
+        pageWrapper.style['justify-content'] = 'center';
         pageWrapper.style['outline'] = '1px dashed black';
         pageWrapper.setAttribute('class', 'pdf-page-landscape');
         pageWrapper.appendChild(page1);
