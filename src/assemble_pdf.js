@@ -25,12 +25,14 @@ function onLoad () {
     console.warn({MSG: "Could not load assemble_pdf, required elements returned: ", widgets, parsedWidgets, pages, print});
     return null
 }
-function makeSeparator() {
+function makeSeparator({width}) {
     const separator = document.createElement('hr');
+    separator.style.width = `${width}px`
+    separator.style['margin-left'] = `${Math.floor(width*0.01)}px`
     separator.style['border-top'] = '2px solid grey'
     return separator
 }
-function makeFooterAndWrapper ({pageIndex, mode} = {mode: 'portrait', pageIndex: 1}){
+function makeFooterAndWrapper ({pageIndex, mode, width} = {mode: 'portrait', pageIndex: 1}){
     const footerWrapper = document.createElement('div');
     const footer = document.createElement("div");
     const rightSection = document.createElement('small');
@@ -58,7 +60,7 @@ function makeFooterAndWrapper ({pageIndex, mode} = {mode: 'portrait', pageIndex:
     footer.appendChild(rightSection);
 
 
-    footerWrapper.appendChild(makeSeparator());
+    footerWrapper.appendChild(makeSeparator({width: width}));
     footerWrapper.appendChild(footer)
     return {footerWrapper, footer}
 }
@@ -78,7 +80,7 @@ function assemblePDF({items, pages, pageHeight, skipFooterThreshold, scaleDownTh
         },
         addFooter() {
             const page = pages[pages.length -1];
-            const {footer, footerWrapper} = makeFooterAndWrapper({pageIndex: pages.length, mode});
+            const {footer, footerWrapper} = makeFooterAndWrapper({pageIndex: pages.length, mode, width: page.offsetWidth});
             console.log({
                 of:page.offsetWidth,
                 wd: page.style.width,
@@ -286,6 +288,7 @@ const Commands = {
         pageWrapper.setAttribute('class', 'pdf-page');
         pageWrapper.appendChild(page);
         print.appendChild(pageWrapper);
+        page.style['border-top']='1px dotted grey'
         pages.push(page);
         return page;
     },
