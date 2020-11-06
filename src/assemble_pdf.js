@@ -5,11 +5,11 @@ window.onload = onLoad || fallbackOnload;
 
 function onLoad () {
     const widgets = Getters.getWidgets();
-    const parsedWidgets = Utils.parseWidgets(widgets)
-    const pages = Utils.nodeListToIterable(Getters.getPages())
+    const parsedWidgets = Utils.parseWidgets(widgets);
+    const pages = Utils.nodeListToIterable(Getters.getPages());
     const print = Getters.getPrint();
-    const validated = Utils.validateRequiredParams(widgets, parsedWidgets, pages, print)
-    const mode = 'landscape'; // portrait or landscape
+    const validated = Utils.validateRequiredParams(widgets, parsedWidgets, pages, print);
+    const mode = 'portrait'; // portrait or landscape
     if (validated) {
         return assemblePDF({
             pages,
@@ -19,24 +19,27 @@ function onLoad () {
             scaleDownThreshold: constants.DEFAULT_SCALE_DOWN,
             pageHeight: constants.PAGE_HEIGHT,
             mode
-        })
+        });
     }
-    console.log('Using fallback onLoad function')
-    console.warn({MSG: "Could not load assemble_pdf, required elements returned: ", widgets, parsedWidgets, pages, print})
+    console.log('Using fallback onLoad function');
+    console.warn({MSG: "Could not load assemble_pdf, required elements returned: ", widgets, parsedWidgets, pages, print});
     return null
 }
 
-function makeFooter (){
-    const footer = document.createElement("p");
+function makeFooter ({mode, pageIndex} = {mode: 'portrait', pageIndex: 1}){
+    const footer = document.createElement("div");
     footer.style['outline'] = '1px dotted blue';
-    footer.style['align-content'] = 'right';
+    footer.style['display'] = 'flex';
     footer.style['margin-top'] = '10px';
     footer.style['margin-bottom'] = '10px';
     footer.setAttribute('class', 'pdf-footer');
-    footer.innerHTML = 'Hello seer.com pagina 1/2';
+    const rightSection = document.createElement('small');
+    rightSection.style['margin-left'] = 'auto'
+    rightSection.style['margin-right'] = '0'
+    rightSection.innerHTML = `Pagina ${pageIndex}`;
+    footer.appendChild(rightSection);
     return footer
 }
-
 
 //assemble pdf onload function
 function assemblePDF({items, pages, pageHeight, skipFooterThreshold, scaleDownThreshold, print, mode}) {
@@ -53,28 +56,28 @@ function assemblePDF({items, pages, pageHeight, skipFooterThreshold, scaleDownTh
         },
         addFooter() {
             const page = pages[pages.length -1];
-            const footer = makeFooter();
+            const footer = makeFooter({pageIndex: pages.length, mode});
             console.log({
                 of:page.offsetWidth,
                 wd: page.style.width,
                 style: page.style
             })
             footer.style['width'] = `${page.offsetWidth}px`;
-            print.appendChild(footer)
+            print.appendChild(footer);
         },
         appendWidget(widget) {
             const page = pages[pages.length -1];
             sumOfHeights += widget.offsetHeight;
-            widget.style['outline'] = '1px dashed red'
+            widget.style['outline'] = '1px dashed red';
             page.appendChild(widget);
         },
         transformToLandscape() {
             const pages_tuples = [];
-            const pages = Getters.getPages()
+            const pages = Getters.getPages();
             for (let i=0; i < pages.length; i+=2) {
                 pages_tuples.push([pages[i], pages[i+1]]);
-                Commands.scalePage({page: pages[i], scale: 0.85})
-                Commands.scalePage({page: pages[i+1], scale: 0.85})
+                Commands.scalePage({page: pages[i], scale: 0.85});
+                Commands.scalePage({page: pages[i+1], scale: 0.85});
                 if (!pages[i+1]){
                     /*Commands.scalePage({page: pages[i], scale: 1})*/
                 }
@@ -82,27 +85,27 @@ function assemblePDF({items, pages, pageHeight, skipFooterThreshold, scaleDownTh
             print.innerHTML = ''
             pages_tuples.forEach(tuple => {
                 const landScape = Commands.createLandscapePage({pages: tuple});
-                print.appendChild(landScape)
+                print.appendChild(landScape);
             })
         }
     }
 
     for (let i = 0; i < items.length; i++) {
         if (isPageFinished){
-            Commands.createNewPage({print, pages, mode})
+            Commands.createNewPage({print, pages, mode});
             isPageFinished = false;
         }
         const itemHeight = items[i].offsetHeight;
         //Delta is equal to the prev sum of heights + the current item height - pageHeight
         const debt =  (sumOfHeights + itemHeight) - pageHeight ; //space to fill
         if (debt <= 0) { // Fits without a problem. Template A
-            Instructions.appendWidget(items[i])
+            Instructions.appendWidget(items[i]);
             if (i+1 === items.length) {
                 //Add last footer
                 Instructions.addFooter();
             }
         } else if (debt <= scaleDownThreshold) { // Fits but items must be scale down. Template B
-            Instructions.appendWidget(items[i])
+            Instructions.appendWidget(items[i]);
             Instructions.addFooter();
             /*Instructions.scaleDownPage();*/
             Instructions.scaleDownWidget(items[i-1]);
@@ -123,6 +126,7 @@ function assemblePDF({items, pages, pageHeight, skipFooterThreshold, scaleDownTh
     Commands.hideElements();
     Commands.markAsReady();
 }
+
 const default_page_height = (window.customSize)? window.customSize : 1056;
 const constants = {
     ALL_WIDGETS_SELECTOR: "#main > div.mail__container > div",
@@ -134,9 +138,10 @@ const constants = {
     DEFAULT_SKIP_FOOTER_THRESHOLD: default_page_height*0.1,
     DEFAULT_SCALE_DOWN: default_page_height*0.05
 }
+
 const Factories = {
      makeWidget (rawWidget){
-        if(!rawWidget) return null
+        if(!rawWidget) return null;
         const type = Utils.getWidgetType(rawWidget.classList);
         const rows = Getters.getRows(rawWidget)
         return {
@@ -146,23 +151,23 @@ const Factories = {
             table: Getters.getTableFromWidget(rawWidget),
             tbody: Getters.getTbody(rawWidget),
             rows: rows.map(item => (this.makeRow(item))),
-        }
+        };
     },
      makeRow(item){
         const rawCells = Getters.getCells(item);
-        const cells = rawCells.map(el => (this.makeCell(el)))
-        const isHorizontalRow = !!cells.find(el => el.cell.classList.contains('mail__hr'))
+        const cells = rawCells.map(el => (this.makeCell(el)));
+        const isHorizontalRow = !!cells.find(el => el.cell.classList.contains('mail__hr'));
         return {row: item, cells, isHorizontalRow/*, height: getHeight(item)*/}
     },
      makeCell(item) {
         const img = item.querySelector('img');
         const map = item.querySelector('map');
-        const rawLinks = Utils.nodeListToIterable(item.querySelectorAll('a'))
+        const rawLinks = Utils.nodeListToIterable(item.querySelectorAll('a'));
         return {cell: item, img: this.makeImage(img), map, links: rawLinks.map(item => (this.makeLink(item)))}
     },
      makeImage(item) {
         if (!item) {
-            return null
+            return null;
         }
         return {
             img: item,
@@ -186,6 +191,7 @@ const Factories = {
         }
     },
 }
+
 const Getters = {
     getRows(widget) {
         return Utils.nodeListToIterable(widget.querySelectorAll('tr'));
@@ -194,10 +200,10 @@ const Getters = {
         return Utils.nodeListToIterable(item.querySelectorAll('td'));
     },
     getTbody(widget) {
-        return widget.querySelector('tbody')
+        return widget.querySelector('tbody');
     },
     getPrint() {
-        return document.getElementById(constants.PRINT_SELECTOR)
+        return document.getElementById(constants.PRINT_SELECTOR);
     },
     getWidgets() {
         return document.querySelectorAll(constants.ALL_WIDGETS_SELECTOR);
@@ -206,9 +212,10 @@ const Getters = {
         return document.querySelectorAll(constants.ALL_PAGES_SELECTOR);
     },
     getTableFromWidget(widget){
-    return widget.querySelector(constants.TABLE_WIDGET_SELECTOR)
+        return widget.querySelector(constants.TABLE_WIDGET_SELECTOR);
     }
 }
+
 const Commands = {
     scalePage({page, scale}) {
         console.log({scale, page})
@@ -217,7 +224,7 @@ const Commands = {
         }
     },
     selfRemoveFromDOM(item) {
-        item.parentNode.removeChild(item)
+        item.parentNode.removeChild(item);
     },
     hideElements() {
         document.querySelector(constants.ALL_MAIL_CONTAINERS).style.display = "none";
@@ -236,9 +243,9 @@ const Commands = {
     },
     createNewPage({print = Getters.getPrint(), pages}) {
         const page = document.createElement("div");
-        const pageWrapper = document.createElement("div")
+        const pageWrapper = document.createElement("div");
         pageWrapper.setAttribute('class', 'pdf-page');
-        pageWrapper.style['outline'] = '1px dashed black'
+        pageWrapper.style['outline'] = '1px dashed black';
         pageWrapper.appendChild(page);
         print.appendChild(pageWrapper);
         pages.push(page);
@@ -247,12 +254,12 @@ const Commands = {
     createLandscapePage({pages}) {
         const page1 = pages[0];
         const page2 = pages[1];
-        console.log({page1, page2})
+        console.log({page1, page2});
 
-        const pageWrapper = document.createElement("div")
-        pageWrapper.style['display'] = 'flex'
-        pageWrapper.style['align-items'] = 'center'
-        pageWrapper.style['justify-content'] = 'space-around'
+        const pageWrapper = document.createElement("div");
+        pageWrapper.style['display'] = 'flex';
+        pageWrapper.style['align-items'] = 'center';
+        pageWrapper.style['justify-content'] = 'space-around';
         pageWrapper.style['outline'] = '1px dashed black';
         pageWrapper.setAttribute('class', 'pdf-page-landscape');
         pageWrapper.appendChild(page1);
@@ -285,13 +292,13 @@ const Commands = {
             if (cloneRows.length) { return this.splitWidgetIntoPage(this.createNewPage({print, pages})) }
         }
         console.count("SPLIT")
-
         return sumOfHeights;
     }
 }
+
 const Utils = {
     parseWidgets(widgets) {
-        return [...widgets].map(w =>Factories.makeWidget(w))
+        return [...widgets].map(w =>Factories.makeWidget(w));
     },
     omitProperties(properties = [], fun, ...args){
         const res = fun(args[0], args[1]);
@@ -299,7 +306,7 @@ const Utils = {
     },
     getHeight(element) {
         if (!element) {
-            throw 'Input element can not be null'
+            throw 'Input element can not be null';
         }
         element.style.visibility = "hidden";
         document.body.appendChild(element);
@@ -313,18 +320,18 @@ const Utils = {
         if(classList.length === 0){return 'unclassified'}
         if(classList.contains('mail__signature')){return 'mail__signature'}
         if(classList.contains('mail__intro-text')){return 'mail__intro-text'};
-        return 'mail_widget'
+        return 'mail_widget';
     },
     nodeListToIterable(nodeList) {
         const items = [];
-        nodeList.forEach(el => items.push(el))
-        return items
+        nodeList.forEach(el => items.push(el));
+        return items;
     },
     validateRequiredParams(...params) {
         if (params.length == 0) {
-            throw 'Must have at least 1 parameter'
+            throw 'Must have at least 1 parameter';
         }
-        return params.every(i => !!i)
+        return params.every(i => !!i);
     }
 }
 
