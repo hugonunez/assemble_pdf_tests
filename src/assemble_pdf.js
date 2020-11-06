@@ -112,7 +112,7 @@ function assemblePDF({items, pages, pageHeight, skipFooterThreshold, scaleDownTh
             pages_tuples.forEach((tuple, index) => {
                 const landScape = Commands.createLandscapePage({pages: tuple});
                 print.appendChild(landScape);
-                print.appendChild(makeLandscapeFooter({pagesIndex: [index+index +1, index+index+2], noLastPage: !tuple[1]}))
+                print.appendChild(makeLandscapeFooter({pagesIndex: [index+index +1, index+index+2], noLastPage: !tuple[1], mode}))
             })
 
         }
@@ -154,7 +154,7 @@ function assemblePDF({items, pages, pageHeight, skipFooterThreshold, scaleDownTh
     Commands.hideElements();
     Commands.markAsReady();
 }
-function makeLandscapeFooter({pagesIndex, noLastPage}) {
+function makeLandscapeFooter({pagesIndex, noLastPage, mode}) {
     const {footer, footerWrapper} = makeFooterAndWrapper({pageIndex: pagesIndex[0], mode});
     //left section
     const leftSection = document.createElement('small');
