@@ -9,7 +9,7 @@ function onLoad () {
     const pages = Utils.nodeListToIterable(Getters.getPages());
     const print = Getters.getPrint();
     const validated = Utils.validateRequiredParams(widgets, parsedWidgets, pages, print);
-    const mode = 'landscape'; // portrait or landscape
+    const mode = 'portrait'; // portrait or landscape
     if (validated) {
         return assemblePDF({
             pages,
@@ -25,25 +25,42 @@ function onLoad () {
     console.warn({MSG: "Could not load assemble_pdf, required elements returned: ", widgets, parsedWidgets, pages, print});
     return null
 }
-
-function makeFooter ({pageIndex} = {mode: 'portrait', pageIndex: 1}){
+function makeSeparator() {
+    const separator = document.createElement('hr');
+    separator.style['border-top'] = '2px solid grey'
+    return separator
+}
+function makeFooterAndWrapper ({pageIndex, mode} = {mode: 'portrait', pageIndex: 1}){
+    const footerWrapper = document.createElement('div');
     const footer = document.createElement("div");
     const rightSection = document.createElement('small');
+    const footerSignature = document.createElement('small');
+
+    footerSignature.innerHTML = 'SEARS 2020'
+
     //footer
-    footer.style['outline'] = '1px dotted blue';
-    footer.style['display'] = 'flex';
+    footer.style['padding'] = '10px'
+    footer.style['font-weight'] = 'bold';
     footer.style['margin-top'] = '10px';
     footer.style['margin-bottom'] = '10px';
+    footer.style['display'] = 'flex';
+    footer.style['justify-content'] = 'space-between';
     footer.setAttribute('class', 'pdf-footer');
-    //right section
-    rightSection.style['margin-right'] = 'auto';
-    rightSection.style['margin-left'] = '0';
-    rightSection.style['padding'] = '10';
-    rightSection.innerHTML = `Page ${pageIndex}`;
+    footerSignature.style['color'] = 'grey';
+    footerSignature.style['margin-left'] = 'auto';
+    footerSignature.style['margin-right'] = 'auto';
+    if (mode === 'portrait'){
+        rightSection.style['margin-right'] = '0';
+        rightSection.style['margin-left'] = 'auto';
+    }
+    rightSection.innerHTML = `page ${pageIndex}`;
+    footer.appendChild(footerSignature)
     footer.appendChild(rightSection);
 
 
-    return footer
+    footerWrapper.appendChild(makeSeparator());
+    footerWrapper.appendChild(footer)
+    return {footerWrapper, footer}
 }
 
 //assemble pdf onload function
@@ -61,19 +78,18 @@ function assemblePDF({items, pages, pageHeight, skipFooterThreshold, scaleDownTh
         },
         addFooter() {
             const page = pages[pages.length -1];
-            const footer = makeFooter({pageIndex: pages.length});
+            const {footer, footerWrapper} = makeFooterAndWrapper({pageIndex: pages.length, mode});
             console.log({
                 of:page.offsetWidth,
                 wd: page.style.width,
                 style: page.style
             })
             footer.style['width'] = `${page.offsetWidth}px`;
-            print.appendChild(footer);
+            print.appendChild(footerWrapper);
         },
         appendWidget(widget) {
             const page = pages[pages.length -1];
             sumOfHeights += widget.offsetHeight;
-            widget.style['outline'] = '1px dashed red';
             page.appendChild(widget);
         },
         transformToLandscape() {
@@ -97,17 +113,15 @@ function assemblePDF({items, pages, pageHeight, skipFooterThreshold, scaleDownTh
             })
 
             function makeLandscapeFooter({pagesIndex, noLastPage}) {
-                const footer = makeFooter({pageIndex: pagesIndex[0]});
+                const {footer, footerWrapper} = makeFooterAndWrapper({pageIndex: pagesIndex[0], mode});
                 //left section
                 const leftSection = document.createElement('small');
-                leftSection.style['margin-left'] = 'auto';
-                leftSection.style['margin-right'] = '0';
-                leftSection.style['padding'] = '10';
+      
                 leftSection.innerHTML = `Page ${pagesIndex[1]}`;
                 if (!noLastPage){
                     footer.appendChild(leftSection);
                 }
-                return footer
+                return footerWrapper
             }
         }
     }
@@ -270,7 +284,6 @@ const Commands = {
         const page = document.createElement("div");
         const pageWrapper = document.createElement("div");
         pageWrapper.setAttribute('class', 'pdf-page');
-        pageWrapper.style['outline'] = '1px dashed black';
         pageWrapper.appendChild(page);
         print.appendChild(pageWrapper);
         pages.push(page);
@@ -285,7 +298,6 @@ const Commands = {
         pageWrapper.style['display'] = 'flex';
         pageWrapper.style['align-items'] = 'center';
         pageWrapper.style['justify-content'] = 'center';
-        pageWrapper.style['outline'] = '1px dashed black';
         pageWrapper.setAttribute('class', 'pdf-page-landscape');
         pageWrapper.appendChild(page1);
         if (page2) {
