@@ -9,7 +9,7 @@ function onLoad () {
     const pages = Utils.nodeListToIterable(Getters.getPages());
     const print = Getters.getPrint();
     const validated = Utils.validateRequiredParams(widgets, parsedWidgets, pages, print);
-    const mode = 'portrait'; // portrait or landscape
+    const mode = 'landscape'; // portrait or landscape
     if (validated) {
         return assemblePDF({
             pages,
@@ -37,8 +37,7 @@ function makeFooterAndWrapper ({pageIndex, mode, width} = {mode: 'portrait', pag
     const footer = document.createElement("div");
     const rightSection = document.createElement('small');
     const footerSignature = document.createElement('small');
-    const myWIdth = mode === 'landscape'? width*2: width;
-    footerSignature.innerHTML = 'SEARS 2020'
+    const customWidth = mode === 'landscape'? width*2: width;
 
     //footer
     footer.style['padding'] = '10px'
@@ -47,24 +46,26 @@ function makeFooterAndWrapper ({pageIndex, mode, width} = {mode: 'portrait', pag
     footer.style['margin-bottom'] = '10px';
     footer.style['display'] = 'flex';
     footer.style['justify-content'] = 'space-between';
+    footer.style.width = `${customWidth}px`
     footer.setAttribute('class', 'pdf-footer');
+
     footerSignature.style['color'] = 'grey';
     footerSignature.style['top'] = '10px';
     footerSignature.style['left'] = '50%'
     footerSignature.style['position'] = 'relative'
-    footerWrapper.style.width = `${myWIdth}px`
-    footer.style.width = `${myWIdth}px`
     footerSignature.style['margin-left'] = 'auto';
     footerSignature.style['margin-right'] = 'auto';
+    footerSignature.innerHTML = 'SEARS 2020'
+
     if (mode === 'portrait'){
         rightSection.style['margin-right'] = '0';
         rightSection.style['margin-left'] = 'auto';
     }
     rightSection.innerHTML = `page ${pageIndex}`;
+
     footer.appendChild(rightSection);
-
-
-    footerWrapper.appendChild(makeSeparator({width: myWIdth}));
+    footerWrapper.style.width = `${customWidth}px`
+    footerWrapper.appendChild(makeSeparator({width: customWidth}));
     footerWrapper.appendChild(footerSignature)
     footerWrapper.appendChild(footer)
     return {footerWrapper, footer}
@@ -86,11 +87,6 @@ function assemblePDF({items, pages, pageHeight, skipFooterThreshold, scaleDownTh
         addFooter() {
             const page = pages[pages.length -1];
             const {footer, footerWrapper} = makeFooterAndWrapper({pageIndex: pages.length, mode, width: page.offsetWidth});
-            console.log({
-                of:page.offsetWidth,
-                wd: page.style.width,
-                style: page.style
-            })
             footer.style['width'] = `${page.offsetWidth}px`;
             print.appendChild(footerWrapper);
         },
@@ -119,17 +115,6 @@ function assemblePDF({items, pages, pageHeight, skipFooterThreshold, scaleDownTh
                 print.appendChild(makeLandscapeFooter({pagesIndex: [index+index +1, index+index+2], noLastPage: !tuple[1]}))
             })
 
-            function makeLandscapeFooter({pagesIndex, noLastPage}) {
-                const {footer, footerWrapper} = makeFooterAndWrapper({pageIndex: pagesIndex[0], mode});
-                //left section
-                const leftSection = document.createElement('small');
-      
-                leftSection.innerHTML = `Page ${pagesIndex[1]}`;
-                if (!noLastPage){
-                    footer.appendChild(leftSection);
-                }
-                return footerWrapper
-            }
         }
     }
 
@@ -168,6 +153,17 @@ function assemblePDF({items, pages, pageHeight, skipFooterThreshold, scaleDownTh
     }
     Commands.hideElements();
     Commands.markAsReady();
+}
+function makeLandscapeFooter({pagesIndex, noLastPage}) {
+    const {footer, footerWrapper} = makeFooterAndWrapper({pageIndex: pagesIndex[0], mode});
+    //left section
+    const leftSection = document.createElement('small');
+
+    leftSection.innerHTML = `Page ${pagesIndex[1]}`;
+    if (!noLastPage){
+        footer.appendChild(leftSection);
+    }
+    return footerWrapper
 }
 
 const default_page_height = (window.customSize)? window.customSize : 1056;
