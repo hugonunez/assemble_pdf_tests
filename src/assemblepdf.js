@@ -58,51 +58,98 @@ var constants = {
 /*
 * Commands collection
 * */
-var Commands = {
-    scalePage: function (props) {
-        if (page){
-            if (props.scale !== 0 && props.scale !== 1){
-                page.style['transform'] = formatScale(props.scale);
 
+/*
+* Command dispatcher
+* */
+var Commander = {}
+Commander.execute = function ( command ) {
+    var Commands = {
+        scalePage: function (props) {
+            if (page){
+                if (props.scale !== 0 && props.scale !== 1){
+                    page.style['transform'] = formatScale(props.scale);
+
+                }
             }
+        },
+        selfRemoveFromDOM: function (item) {
+            item.parentNode.removeChild(item);
+        },
+        hideElements: function () {
+            document.querySelector(constants.ALL_MAIL_CONTAINERS).style.display = "none";
+        },
+        createNewPage: function (props) {
+            var page = document.createElement("div");
+            var pageWrapper = document.createElement("div");
+            pageWrapper.setAttribute('class', 'pdf-page');
+            pageWrapper.appendChild(page);
+            props.print.appendChild(pageWrapper);
+            props.pages.push(page);
+            return page;
+        },
+        createLandscapePage: function (props) {
+            var page1 = props.pages[0];
+            var page2 = props.pages[1];
+            var pageWrapper = document.createElement("div");
+            pageWrapper.style['display'] = 'flex';
+            pageWrapper.style['align-items'] = 'center';
+            pageWrapper.style['justify-content'] = 'center';
+            pageWrapper.setAttribute('class', 'pdf-page-landscape');
+            pageWrapper.appendChild(page1);
+            if (page2) {
+                pageWrapper.appendChild(page2);
+            }
+            return pageWrapper;
+        },
+        scaleDownWidget: function (widget) {
+            var scale = constants.PAGE_HEIGHT/ sumOfHeights;
+            widget.style['transform'] = formatScale(scale);
+        },
+        finishPage: function (sumOfHeights, isPageFinished) {
+            sumOfHeights = 0;
+            isPageFinished = true;
+        },
+        addFooter: function (pages, mode) {
+            var page = pages[pages.length -1];
+            var footerTuple = makeFooterAndWrapper({pageIndex: pages.length, mode: mode, width: page.offsetWidth});
+            footerTuple[0].style['width'] = page.offsetWidth + 'px';
+            print.appendChild(footerTuple[1]);
+        },
+        appendWidget: function (pages, widget, sumOfHeights) {
+            var page = pages[pages.length -1];
+            sumOfHeights += widget.offsetHeight;
+            widget.style.border = '1px dashed red'
+            page.appendChild(widget);
+        },
+        transformToLandscape: function (print) {
+            var pages_tuples = [];
+            var pages = []/*Getters.getPages()*/;
+            for (var i=0; i < pages.length; i+=2) {
+                var sumOfWidths = pages[i].offsetWidth;
+                if ( pages[i+1]) {
+                    sumOfWidths += pages[i+1].offsetWidth
+                       Commander.execute("scalePage", {page: pages[i], scale: constants.PAGE_HEIGHT/sumOfWidths})
+                       Commander.execute("scalePage", {page: pages[i+1], scale: constants.PAGE_HEIGHT/sumOfWidths})
+                }
+
+                pages_tuples.push([pages[i], pages[i+1]]);
+            }
+            print.innerHTML = ''
+            for (var i=0; i< pages_tuples.length; i++){
+                var landScape = Commander.execute("createLandscapePage", {pages: pages_tuples[i]});
+                print.appendChild(landScape);
+                /*                print.appendChild(makeLandscapeFooter({pagesIndex: [index+index +1, index+index+2], noLastPage: !tuple[1], mode}))*/
+            }
+
         }
-    },
-    selfRemoveFromDOM: function (item) {
-        item.parentNode.removeChild(item);
-    },
-    hideElements: function () {
-        document.querySelector(constants.ALL_MAIL_CONTAINERS).style.display = "none";
-    },
-    createNewPage: function (props) {
-        var page = document.createElement("div");
-        var pageWrapper = document.createElement("div");
-        pageWrapper.setAttribute('class', 'pdf-page');
-        pageWrapper.appendChild(page);
-        props.print.appendChild(pageWrapper);
-        props.pages.push(page);
-        return page;
-    },
-    createLandscapePage: function (props) {
-        var page1 = props.pages[0];
-        var page2 = props.pages[1];
-        var pageWrapper = document.createElement("div");
-        pageWrapper.style['display'] = 'flex';
-        pageWrapper.style['align-items'] = 'center';
-        pageWrapper.style['justify-content'] = 'center';
-        pageWrapper.setAttribute('class', 'pdf-page-landscape');
-        pageWrapper.appendChild(page1);
-        if (page2) {
-            pageWrapper.appendChild(page2);
-        }
-        return pageWrapper;
-    },
-}
-Commands.execute = function ( command ) {
+    }
     if (!Commands[command]) {
-        throw 'Command ' + command + ' not found in commands collection.'
+        throw 'ERROR: ' + command + ' <- command not found in commands collection.'
     }
     return Commands[command].apply( Commands, [].slice.call(arguments, 1) );
 };
+
 /*
 * Execute program when document loads.
 * */
@@ -134,51 +181,6 @@ function assemblePDF(props) {
     console.log('---------------------- Stage 1 ------------------------');
     var sumOfHeights = 0;
     var isPageFinished = false;
-
-    var Instructions = {
-        scaleDownWidget: function (widget) {
-            var scale = props.scale = constants.PAGE_HEIGHT/ sumOfHeights;
-            widget.style['transform'] = formatScale(scale);
-        },
-        finishPage: function () {
-            sumOfHeights = 0;
-            isPageFinished = true;
-        },
-        addFooter: function () {
-            var page = pages[pages.length -1];
-            var footerTuple = makeFooterAndWrapper({pageIndex: pages.length, mode: props.mode, width: page.offsetWidth});
-            footerTuple[0].style['width'] = page.offsetWidth + 'px';
-            props.print.appendChild(footerTuple[1]);
-        },
-        appendWidget: function (widget) {
-            var page = pages[pages.length -1];
-            sumOfHeights += widget.offsetHeight;
-            widget.style.border = '1px dashed red'
-            page.appendChild(widget);
-        },
-        transformToLandscape: function () {
-            var pages_tuples = [];
-            var pages = []/*Getters.getPages()*/;
-            for (var i=0; i < pages.length; i+=2) {
-                var sumOfWidths = pages[i].offsetWidth;
-                if ( pages[i+1]) {
-                    sumOfWidths += pages[i+1].offsetWidth
-                 /*   Commands.scalePage({page: pages[i], scale: constants.PAGE_HEIGHT/sumOfWidths})
-                    Commands.scalePage({page: pages[i+1], scale: constants.PAGE_HEIGHT/sumOfWidths})*/
-                }
-
-                pages_tuples.push([pages[i], pages[i+1]]);
-            }
-            props.print.innerHTML = ''
-/*            pages_tuples.forEach((tuple, index) => {
-                const landScape = Commands.createLandscapePage({pages: tuple});
-                print.appendChild(landScape);
-                print.appendChild(makeLandscapeFooter({pagesIndex: [index+index +1, index+index+2], noLastPage: !tuple[1], mode}))
-            })*/
-
-        }
-    }
-
 
     var total = 0
     var widgets = document.querySelectorAll("#main > div.mail__container > div");
