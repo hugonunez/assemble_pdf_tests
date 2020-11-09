@@ -59,9 +59,6 @@ var constants = {
 * Commands collection
 * */
 var Commands = {
-    alert: function (msg) {
-        alert(msg)
-    },
     scalePage: function (props) {
         if (page){
             if (props.scale !== 0 && props.scale !== 1){
@@ -100,11 +97,12 @@ var Commands = {
         return pageWrapper;
     },
 }
-
 Commands.execute = function ( command ) {
-    return Commands[command] && Commands[command].apply( Commands, [].slice.call(arguments, 1) );
+    if (!Commands[command]) {
+        throw 'Command ' + command + ' not found in commands collection.'
+    }
+    return Commands[command].apply( Commands, [].slice.call(arguments, 1) );
 };
-Commands.execute('alert', "pepe", "2")
 /*
 * Execute program when document loads.
 * */
