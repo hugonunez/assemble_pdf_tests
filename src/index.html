@@ -901,7 +901,7 @@
 
 
 
-                <area alt="" coords="627,366,722,473" href="https://www.farfetch.com/shopping/women/lauren-rubinski-14kt-yellow-gold-chain-bracelet-item-15341032.aspx?storeid=9359" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+                <area alt="" coords="627,366,722,473" href="https://www.farfetch.com/shopping/women/lauren-rubinski-14kt-yellow-gold-chain-bracevar-item-15341032.aspx?storeid=9359" shape="rect" style="border: #00000000 1px solid;" target="_blank">
 
 
 
@@ -940,7 +940,7 @@
 
 
 
-              <a href="https://www.farfetch.com/shopping/women/lauren-rubinski-14kt-yellow-gold-chain-bracelet-item-15341032.aspx?storeid=9359" class="maplink" style="position: absolute; top: 56%; left: 78%; width: 12%; height: 16%;"></a>
+              <a href="https://www.farfetch.com/shopping/women/lauren-rubinski-14kt-yellow-gold-chain-bracevar-item-15341032.aspx?storeid=9359" class="maplink" style="position: absolute; top: 56%; left: 78%; width: 12%; height: 16%;"></a>
 
 
 
@@ -2050,135 +2050,7 @@
 
 
 </div>
-
-<script>
-
-  var pageHeight = (window.customSize)? window.customSize : 1056;
-
-  function addProductWidget(page, pWidget) {
-
-    console.log("Add product widget");
-    console.log(pWidget)
-    console.log("===================")
-    var itemClone = pWidget.cloneNode(true);
-    var total = 0;
-    var rows = pWidget.querySelectorAll('tr');
-    var count = 0;
-
-    if (rows.length) {
-      // Remove rows from widget, copy over from clone individually to fit to page
-      for (var i = 0; i < rows.length; i++) { rows[i].parentNode.removeChild(rows[i]); }
-
-      var nextRow = itemClone.querySelector('tr');
-      var rowHeight = getHeight(nextRow);
-      while (nextRow && count < 2 && total + rowHeight < pageHeight) {
-        pWidget.querySelector('tbody').appendChild(nextRow);
-        total += rowHeight;
-        nextRow = itemClone.querySelector('tr');
-        count++;
-      }
-
-      page.appendChild(pWidget);
-      console.log("Product widget split and added to page");
-
-      // Recurse on any remaining rows
-      if (itemClone.querySelector('tr')) { return addProductWidget(createPage(), itemClone); }
-    }
-
-    return total;
-
-  }
-
-  function createPage() {
-    console.log("Create new page");
-    var print = document.getElementById('print');
-    var pageWrapper = document.createElement("div")
-    pageWrapper.setAttribute('class', 'pdf-page');
-    page = document.createElement("div");
-/*    page.style['border-style'] = 'dashed'*/
-
-    pageWrapper.appendChild(page);
-    print.appendChild(pageWrapper);
-    return page;
-  }
-
-  function getHeight(element) {
-    element.style.visibility = "hidden";
-    document.body.appendChild(element);
-    var height = element.offsetHeight + 0;
-    document.body.removeChild(element);
-    element.style.visibility = "visible";
-    return height;
-  }
-
-
-  // Note: Must use vanilla Javascript support whtmltopdf and other pdf converters which do not support es6 and jQuery
-  window.onload = function () {
-
-    console.log('---------------------- Stage 1 ------------------------');
-
-    var total = 0
-    var widgets = document.querySelectorAll("#main > div.mail__container > div");
-    for (var i = 0; i < widgets.length; i++) {
-
-      var pages = document.querySelectorAll('#print > div.pdf-page > div');
-      var page = pages[pages.length - 1];
-
-      var itemHeight = widgets[i].offsetHeight;
-
-      var delta = (total + itemHeight) - pageHeight;
-      // Create and add to a new page
-      if (delta > 100) {
-        console.log("Create new page. Delta: ",   delta)
-        page = createPage();
-        total = 0;
-
-        if (itemHeight >= pageHeight && widgets[i].querySelector("table.widget-product")) {
-          console.log("ENTRA AL AIFENTRA AL AIF")
-          total = addProductWidget(page, widgets[i]);
-          continue;
-        }
-      }
-
-      total += itemHeight;
-      page.appendChild(widgets[i]);
-      console.log("Widget added to page ", i);
-    }
-
-    /*     var links = document.querySelectorAll("a.maplink");
-        console.log(links.length);
-        for (var i = 0; i < links.length; i++) {
-            var frame = links[i].getAttribute('data-frame').replace(/'/g, '"');
-            frame = JSON.parse(frame);
-            var images = links[i].querySelector("#" + image.getAttribute('data-image-id'));
-            var image = images[images.length -1];
-
-            image.style.top = img.offsetTop + frame.top;
-            image.style.left = mg.offsetLeft + frame.left;
-            image.style.width = frame.width;
-            image.style.height = frame.height;
-
-            console.log("Image links updated");
-        }
- */
-    // Hide extra element
-    document.querySelector("#main > div.mail__container").style.display = "none";
-    console.log('---------------------- COMPLETE------------------------');
-
-    if (window.pdfdone) {
-      window.pdfdone();
-    }
-
-    if (page) {
-      var readyElem = document.createElement("div");
-      readyElem.setAttribute('id', 'pdf-ready');
-      page.appendChild(readyElem);
-    }
-    window.status = 'ready';
-  }
-
-</script>
-<script type="text/javascript" src="assemble_pdf.js">
+<script type="text/javascript" src="assemblepdf.js">
 
 </script>
 

@@ -1,7 +1,8 @@
 
 //Override 1 function or use fallback
+/*
 const fallbackOnload = window.onload;
-window.onload = onLoad || fallbackOnload;
+window.onload = onLoad;
 
 function onLoad () {
     const widgets = Getters.getWidgets();
@@ -9,7 +10,7 @@ function onLoad () {
     const pages = Utils.nodeListToIterable(Getters.getPages());
     const print = Getters.getPrint();
     const validated = Utils.validateRequiredParams(widgets, parsedWidgets, pages, print);
-    const mode = 'landscape'; // portrait or landscape
+    const mode = 'portrait'; // portrait or landscape
     if (validated) {
         return assemblePDF({
             pages,
@@ -93,6 +94,7 @@ function assemblePDF({items, pages, pageHeight, skipFooterThreshold, scaleDownTh
         appendWidget(widget) {
             const page = pages[pages.length -1];
             sumOfHeights += widget.offsetHeight;
+            widget.style.border = '1px dashed red'
             page.appendChild(widget);
         },
         transformToLandscape() {
@@ -135,7 +137,7 @@ function assemblePDF({items, pages, pageHeight, skipFooterThreshold, scaleDownTh
         } else if (debt <= scaleDownThreshold) { // Fits but items must be scale down. Template B
             Instructions.appendWidget(items[i]);
             Instructions.addFooter();
-            /*Instructions.scaleDownPage();*/
+            /!*Instructions.scaleDownPage();*!/
             Instructions.scaleDownWidget(items[i-1]);
             Instructions.scaleDownWidget(items[i]);
             Instructions.finishPage();
@@ -151,8 +153,19 @@ function assemblePDF({items, pages, pageHeight, skipFooterThreshold, scaleDownTh
     if (mode === 'landscape'){
         Instructions.transformToLandscape();
     }
-    Commands.hideElements();
-    Commands.markAsReady();
+    document.querySelector("#main > div.mail__container").style.display = "none";
+    console.log('---------------------- COMPLETE------------------------');
+
+    if (window.pdfdone) {
+        window.pdfdone();
+    }
+
+    if (pages[pages.length -1]) {
+        var readyElem = document.createElement("div");
+        readyElem.setAttribute('id', 'pdf-ready');
+        pages[pages.length -1].appendChild(readyElem);
+    }
+    window.status = 'ready';
 }
 function makeLandscapeFooter({pagesIndex, noLastPage, mode}) {
     const {footer, footerWrapper} = makeFooterAndWrapper({pageIndex: pagesIndex[0], mode});
@@ -196,7 +209,7 @@ const Factories = {
         const rawCells = Getters.getCells(item);
         const cells = rawCells.map(el => (this.makeCell(el)));
         const isHorizontalRow = !!cells.find(el => el.cell.classList.contains('mail__hr'));
-        return {row: item, cells, isHorizontalRow/*, height: getHeight(item)*/}
+        return {row: item, cells, isHorizontalRow/!*, height: getHeight(item)*!/}
     },
      makeCell(item) {
         const img = item.querySelector('img');
@@ -279,7 +292,7 @@ const Commands = {
         if (page || true) {
             const readyElem = document.createElement("div");
             readyElem.setAttribute('id', 'pdf-ready');
-            /*        page.appendChild(readyElem);*/
+            /!*        page.appendChild(readyElem);*!/
         }
         window.status = 'ready';
     },
@@ -381,7 +394,8 @@ if (typeof exports !== 'undefined') {
         Factories,
         Commands,
         Getters,
-        constants, 
+        constants,
         assemblePDF,
     };
 }
+*/
