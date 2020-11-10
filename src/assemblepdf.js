@@ -17,29 +17,7 @@ var pageHeight = (window.customSize)? window.customSize : 1056;
 /*
 * Create a new page and append it to the print node.
 * */
-function createPage() {
-    console.log("Create new page");
-    var print = document.getElementById('print');
-    var pageWrapper = document.createElement("div")
-    pageWrapper.setAttribute('class', 'pdf-page');
-    page = document.createElement("div");
-    /*    page.style['border-style'] = 'dashed'*/
 
-    pageWrapper.appendChild(page);
-    print.appendChild(pageWrapper);
-    return page;
-}
-/*
-* return the height of an element.
-* */
-function getHeight(element) {
-    element.style.visibility = "hidden";
-    document.body.appendChild(element);
-    var height = element.offsetHeight + 0;
-    document.body.removeChild(element);
-    element.style.visibility = "visible";
-    return height;
-}
 
 /*
 * Constants collection
@@ -70,6 +48,9 @@ var Commander = {
 }
 Commander.execute = function ( command ) {
     var Commands = {
+        formatScale: function(scale){
+            return 'scale('+scale+')'
+        },
         resetPageStatus: function (isPageFinished) {
             Commander.state.isPageFinished = false;
         },
@@ -112,7 +93,7 @@ Commander.execute = function ( command ) {
         },
         scaleDownWidget: function (widget) {
             var scale = constants.PAGE_HEIGHT/ Commander.state.sumOfHeights;
-            widget.style['transform'] = formatScale(scale);
+            widget.style['transform'] = Commander.execute('formatScale', scale)
         },
         finishPage: function () {
             Commander.state.sumOfHeights = 0;
@@ -120,16 +101,101 @@ Commander.execute = function ( command ) {
         },
         addFooter: function (pages, mode, print) {
             var page = pages[pages.length -1];
-            page.style.position = 'relative'
-            var footerTuple = makeFooterAndWrapper({pageIndex: pages.length, mode: mode, width: page.offsetWidth});
+            var footerTuple = Commander.execute('makeFooterAndWrapper', {pageIndex: pages.length, mode: mode, width: page.offsetWidth});
             footerTuple[0].style['width'] = page.offsetWidth + 'px';
             print.appendChild(footerTuple[0]);
         },
         appendWidget: function (pages, widget) {
             var page = pages[pages.length -1];
             Commander.state.sumOfHeights += widget.offsetHeight;
-            widget.style.border = '1px dashed red'
+/*            widget.style.border = '1px dashed red'*/
             page.appendChild(widget);
+        },
+        makeSeparator: function(width) {
+            const separator = document.createElement('hr');
+            separator.style.width = width+'px'
+            separator.style['margin-left'] = Math.floor(width*0.01) + 'px';
+            separator.style['border-top'] = '2px solid grey'
+            return separator
+        },
+        makeFooterAndWrapper: function (props){
+            var footerWrapper = document.createElement('div');
+            var footer = document.createElement("div");
+            var rightSection = document.createElement('small');
+            var footerSignature = document.createElement('small');
+            var customWidth = props.width;
+
+            //footer
+            footer.style['padding'] = '10px'
+            footer.style['font-weight'] = 'bold';
+            footer.style['margin-top'] = '10px';
+            footer.style['margin-bottom'] = '10px';
+            footer.style['display'] = 'flex';
+            footer.style['justify-content'] = 'space-between';
+            footer.style['width'] = customWidth + 'px'
+            footer.setAttribute('class', 'pdf-footer');
+
+            //Signature
+            footerSignature.style['color'] = 'grey';
+            footerSignature.style['top'] = '10px';
+            footerSignature.style['left'] = '50%'
+            footerSignature.style['position'] = 'relative';
+            footerSignature.style['margin-left'] = 'auto';
+            footerSignature.style['margin-right'] = 'auto';
+            footerSignature.innerHTML = 'SEARS 2020';
+
+            if (props.mode === 'portrait'){
+                rightSection.style['margin-right'] = '0';
+                rightSection.style['margin-left'] = 'auto';
+            }
+
+            rightSection.innerHTML = 'page ' + props.pageIndex;
+            footer.appendChild(rightSection);
+            footerWrapper.style.width = customWidth + 'px'
+
+            footerWrapper.appendChild(Commander.execute('makeSeparator', customWidth));
+            footerWrapper.appendChild(footerSignature)
+            footerWrapper.appendChild(footer)
+            var returnValue = [footerWrapper, footer] //INTERESANTE, no puedo retornar {footerWrapper, footer}?? o que sucede
+            return returnValue
+        },
+         hideRemainingElements: function() {
+            // Hide extra element
+            document.querySelector("#main > div.mail__container").style.display = "none";
+        },
+        markDocAsReady: function() {
+            console.log('---------------------- COMPLETE------------------------');
+
+            if (window.pdfdone) {
+                window.pdfdone();
+            }
+            if (true) {
+                var readyElem = document.createElement("div");
+                readyElem.setAttribute('id', 'pdf-ready');
+                document.body.appendChild(readyElem);
+            }
+            window.status = 'ready';
+        },
+        createPage: function() {
+            console.log("Create new page");
+            var print = document.getElementById('print');
+            var pageWrapper = document.createElement("div")
+            pageWrapper.setAttribute('class', 'pdf-page');
+            page = document.createElement("div");
+            /*    page.style['border-style'] = 'dashed'*/
+
+            pageWrapper.appendChild(page);
+            print.appendChild(pageWrapper);
+            return page;
+        },
+
+        getHeight: function(element) {
+            element.style.visibility = "hidden";
+            document.body.appendChild(element);
+            var height = element.offsetHeight + 0;
+            document.body.removeChild(element);
+            element.style.visibility = "visible";
+            return height;
         },
         transformToLandscape: function (print) {
             var pages_tuples = [];
@@ -188,14 +254,12 @@ window.onload = function () {
         mode: mode
     });
 
-    hideRemainingElements();
-    markDocAsReady();
+    Commander.execute('hideRemainingElements');
+    Commander.execute('markDocAsReady');
 
 }
 
-function formatScale(scale){
-    return 'scale('+scale+')'
-}
+
 
 /*
 *
@@ -228,8 +292,6 @@ function assemblePDF(props) {
         } else {
             Commander.execute('addFooter', pages, props.mode, props.print);
             Commander.execute('finishPage')
-/*            Instructions.addFooter();
-            Instructions.finishPage();*/
         }
         console.log("COMMANDER STATE", Commander.state)
     }
@@ -255,71 +317,4 @@ function assemblePDF(props) {
         page.appendChild(widgets[i]);
         console.log("Widget added to page ", i);
     }*/
-}
-function makeSeparator(width) {
-    const separator = document.createElement('hr');
-    separator.style.width = width+'px'
-    separator.style['margin-left'] = Math.floor(width*0.01) + 'px';
-    separator.style['border-top'] = '2px solid grey'
-    return separator
-}
-function makeFooterAndWrapper (props){
-    var footerWrapper = document.createElement('div');
-    var footer = document.createElement("div");
-    var rightSection = document.createElement('small');
-    var footerSignature = document.createElement('small');
-    var customWidth = props.width;
-
-    //footer
-    footer.style['padding'] = '10px'
-    footer.style['font-weight'] = 'bold';
-    footer.style['margin-top'] = '10px';
-    footer.style['margin-bottom'] = '10px';
-    footer.style['display'] = 'flex';
-    footer.style['justify-content'] = 'space-between';
-    footer.style['width'] = customWidth + 'px'
-    footer.setAttribute('class', 'pdf-footer');
-
-    //Signature
-    footerSignature.style['color'] = 'grey';
-    footerSignature.style['top'] = '10px';
-    footerSignature.style['left'] = '50%'
-    footerSignature.style['position'] = 'relative';
-    footerSignature.style['margin-left'] = 'auto';
-    footerSignature.style['margin-right'] = 'auto';
-    footerSignature.innerHTML = 'SEARS 2020';
-
-    if (props.mode === 'portrait'){
-        rightSection.style['margin-right'] = '0';
-        rightSection.style['margin-left'] = 'auto';
-    }
-    footerWrapper.style.cssText = 'display: block; position: absolute'
-
-    rightSection.innerHTML = 'page ' + props.pageIndex;
-    footer.appendChild(rightSection);
-    footerWrapper.style.width = customWidth + 'px'
-
-    footerWrapper.appendChild(makeSeparator(customWidth));
-    footerWrapper.appendChild(footerSignature)
-    footerWrapper.appendChild(footer)
-    var returnValue = [footerWrapper, footer] //INTERESANTE, no puedo retornar {footerWrapper, footer}?? o que sucede
-    return returnValue
-}
-
-function hideRemainingElements() {
-    // Hide extra element
-    document.querySelector("#main > div.mail__container").style.display = "none";
-}
-function markDocAsReady() {
-    console.log('---------------------- COMPLETE------------------------');
-
-    if (window.pdfdone) {
-        window.pdfdone();
-    }
-    if (true) {
-        var readyElem = document.createElement("div");
-        readyElem.setAttribute('id', 'pdf-ready');
-        document.body.appendChild(readyElem);
-    }
-    window.status = 'ready';
 }
