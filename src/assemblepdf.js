@@ -11,14 +11,6 @@
 * Must use vanilla JS without ES6 for compatibility issues.
 * */
 
-
-
-var pageHeight = (window.customSize)? window.customSize : 1056;
-/*
-* Create a new page and append it to the print node.
-* */
-
-
 /*
 * Constants collection
 * */
@@ -33,9 +25,6 @@ var constants = {
     DEFAULT_SKIP_FOOTER_THRESHOLD: default_page_height*0.1,
     DEFAULT_SCALE_DOWN: default_page_height*0.05
 }
-/*
-* Commands collection
-* */
 
 /*
 * Command dispatcher
@@ -47,26 +36,31 @@ var Commander = {
     }
 }
 Commander.execute = function ( command ) {
+    /*
+    * Commands collection
+    * */
     var Commands = {
+        nodeListToIterable: function(nodeList) {
+            var items = [];
+            for (var i = 0; i < nodeList.length; i++){
+                items.push(nodeList[i])
+            }
+            return items;
+        },
         formatScale: function(scale){
             return 'scale('+scale+')'
         },
-        resetPageStatus: function (isPageFinished) {
+        resetPageStatus: function () {
             Commander.state.isPageFinished = false;
         },
         scalePage: function (props) {
-  /*          if (page){
-                if (props.scale !== 0 && props.scale !== 1){
-                    page.style['transform'] = formatScale(props.scale);
 
+            if (props.page){
+                if (props.scale !== 0 && props.scale !== 1){
+                    console.log("formatting scale")
+                    props.page.style['transform'] = Commander.execute('formatScale', props.scale);
                 }
-            }*/
-        },
-        selfRemoveFromDOM: function (item) {
-            item.parentNode.removeChild(item);
-        },
-        hideElements: function () {
-            document.querySelector(constants.ALL_MAIL_CONTAINERS).style.display = "none";
+            }
         },
         createNewPage: function (props) {
             var page = document.createElement("div");
@@ -74,7 +68,7 @@ Commander.execute = function ( command ) {
             pageWrapper.setAttribute('class', 'pdf-page');
             pageWrapper.appendChild(page);
             props.print.appendChild(pageWrapper);
-/*            pages.push(page);*/
+            props.pages.push(page);
             return page;
         },
         createLandscapePage: function (props) {
@@ -91,8 +85,11 @@ Commander.execute = function ( command ) {
             }
             return pageWrapper;
         },
-        scaleDownWidget: function (widget) {
+        scaleDownWidget: function (widget, customScale) {
             var scale = constants.PAGE_HEIGHT/ Commander.state.sumOfHeights;
+            if (customScale){
+                scale = customScale
+            }
             widget.style['transform'] = Commander.execute('formatScale', scale)
         },
         finishPage: function () {
@@ -108,7 +105,7 @@ Commander.execute = function ( command ) {
         appendWidget: function (pages, widget) {
             var page = pages[pages.length -1];
             Commander.state.sumOfHeights += widget.offsetHeight;
-/*            widget.style.border = '1px dashed red'*/
+            widget.style.border = '1px dashed red'
             page.appendChild(widget);
         },
         makeSeparator: function(width) {
@@ -240,13 +237,13 @@ var Getters = {
 * */
 window.onload = function () {
     var widgets = Getters.getWidgets();
-    /*var pages = Getters.getPages()*/
+    var pages = Commander.execute('nodeListToIterable', Getters.getPages())
     var print = Getters.getPrint();
     var mode = 'portrait';
 
     assemblePDF({
         items: widgets,
-/*        pages: pages,*/
+        pages: pages,
         skipFooterThreshold: constants.DEFAULT_SKIP_FOOTER_THRESHOLD,
         scaleDownThreshold: constants.DEFAULT_SCALE_DOWN,
         pageHeight: constants.PAGE_HEIGHT,
@@ -267,30 +264,44 @@ window.onload = function () {
 function assemblePDF(props) {
 
     for (var i = 0; i < props.items.length; i++) {
-        var pages = Getters.getPages();
+        var itemHeight = props.items[i].offsetHeight;
+        var debt = (Commander.state.sumOfHeights + itemHeight) - props.pageHeight ; //space to fill
+
         if (Commander.state.isPageFinished){
-            Commander.execute('createNewPage', {print: props.print, pages: pages, mode: props.mode});
+            console.count('1st')
+            Commander.execute('createNewPage', {print: props.print, pages: props.pages, mode: props.mode});
             Commander.execute('resetPageStatus')
         }
-        var itemHeight = props.items[i].offsetHeight;
-        var debt = (Commander.state.sumOfHeights + itemHeight) - pageHeight ; //space to fill
-        if (debt <= 0) { // Fits without a problem. Template A
-            Commander.execute('appendWidget', pages, props.items[i])
+        if(itemHeight > constants.PAGE_HEIGHT){
+            console.count('2')
+            Commander.execute('appendWidget', props.pages, props.items[i]);
+            Commander.execute('scaleDownWidget', props.items[i], (constants.PAGE_HEIGHT / itemHeight))
+            Commander.execute('addFooter', props.pages, props.mode, props.print);
+            Commander.execute('finishPage');
+            continue;
+        }
+        if (debt <= 0) { // Fits without a problem. Add it and continue
+            console.count('2')
+            Commander.execute('appendWidget', props.pages, props.items[i])
             if (i+1 === props.items.length) {
-                Commander.execute('addFooter', pages, props.mode, props.print)
+                console.count('2 2')
+                Commander.execute('addFooter', props.pages, props.mode, props.print)
             }
-        } else if (debt <= props.scaleDownThreshold) { // Fits but items must be scale down. Template B
-            Commander.execute('appendWidget', pages, props.items[i]);
-            Commander.execute('addFooter', pages, props.mode, props.print);
+        continue;
+        } else if (debt <= props.scaleDownThreshold) { // Fits but items must be scale down. Add current item and end the page
+            console.count('3')
+            Commander.execute('appendWidget', props.pages, props.items[i]);
+            Commander.execute('addFooter', props.pages, props.mode, props.print);
             Commander.execute('scaleDownWidget', props.items[i-1]);
             Commander.execute('scaleDownWidget', props.items[i]);
             Commander.execute('finishPage');
         } else if (debt < props.skipFooterThreshold) { // Fits but will not add footer. Will enlarge working area be reducing margins
-/*            Instructions.appendWidget(items[i])
-            Instructions.finishPage();*/
-            Commander.execute('appendWidget')
+            Commander.execute('appendWidget', props.pages, props.items[i])
+            Commander.execute('finishPage')
+            console.count('4')
         } else {
-            Commander.execute('addFooter', pages, props.mode, props.print);
+            console.count('5')
+            Commander.execute('addFooter', props.pages, props.mode, props.print);
             Commander.execute('finishPage')
         }
         console.log("COMMANDER STATE", Commander.state)
