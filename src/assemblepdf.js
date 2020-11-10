@@ -40,6 +40,17 @@ Commander.execute = function ( command ) {
     * Commands collection
     * */
     var Commands = {
+        makeLandscapeFooter: function({pagesIndex, noLastPage, mode}) {
+            var tuple = Commander.execute('makeFooterAndWrapper', {pageIndex: pagesIndex[0], mode});
+            //left section
+            var leftSection = document.createElement('small');
+
+            leftSection.innerHTML = 'Page ' + pagesIndex[1];
+            if (!noLastPage){
+                tuple[1].appendChild(leftSection);
+            }
+            return tuple[0]
+        },
         nodeListToIterable: function(nodeList) {
             var items = [];
             for (var i = 0; i < nodeList.length; i++){
@@ -72,8 +83,8 @@ Commander.execute = function ( command ) {
             return page;
         },
         createLandscapePage: function (props) {
-            var page1 = pages[0];
-            var page2 = pages[1];
+            var page1 = props.pages[0];
+            var page2 = props.pages[1];
             var pageWrapper = document.createElement("div");
             pageWrapper.style['display'] = 'flex';
             pageWrapper.style['align-items'] = 'center';
@@ -120,7 +131,7 @@ Commander.execute = function ( command ) {
             var footer = document.createElement("div");
             var rightSection = document.createElement('small');
             var footerSignature = document.createElement('small');
-            var customWidth = props.width;
+            var customWidth = props.mode === 'landscape'? props.width*2: props.width;
 
             //footer
             footer.style['padding'] = '10px'
@@ -194,9 +205,8 @@ Commander.execute = function ( command ) {
             element.style.visibility = "visible";
             return height;
         },
-        transformToLandscape: function (print) {
+        transformToLandscape: function (print, pages) {
             var pages_tuples = [];
-            var pages = []/*Getters.getPages()*/;
             for (var i=0; i < pages.length; i+=2) {
                 var sumOfWidths = pages[i].offsetWidth;
                 if ( pages[i+1]) {
@@ -211,7 +221,7 @@ Commander.execute = function ( command ) {
             for (var i=0; i< pages_tuples.length; i++){
                 var landScape = Commander.execute("createLandscapePage", {pages: pages_tuples[i]});
                 print.appendChild(landScape);
-                /*                print.appendChild(makeLandscapeFooter({pagesIndex: [index+index +1, index+index+2], noLastPage: !tuple[1], mode}))*/
+                print.appendChild(Commander.execute('makeLandscapeFooter', {pagesIndex: [i+i +1, i+i+2], noLastPage: !pages_tuples[1], mode: 'landscape'}))
             }
 
         }
@@ -239,7 +249,7 @@ window.onload = function () {
     var widgets = Getters.getWidgets();
     var pages = Commander.execute('nodeListToIterable', Getters.getPages())
     var print = Getters.getPrint();
-    var mode = 'portrait';
+    var mode = 'landscape';
 
     assemblePDF({
         items: widgets,
@@ -305,6 +315,9 @@ function assemblePDF(props) {
             Commander.execute('finishPage')
         }
         console.log("COMMANDER STATE", Commander.state)
+    }
+    if (props.mode === 'landscape'){
+        Commander.execute('transformToLandscape', props.print, props.pages);
     }
     /*var total = 0
     var widgets = document.querySelectorAll("#main > div.mail__container > div");
