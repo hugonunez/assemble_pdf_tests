@@ -62,16 +62,24 @@ var constants = {
 /*
 * Command dispatcher
 * */
-var Commander = {}
+var Commander = {
+    state: {
+        isPageFinished: false,
+        sumOfHeights: 0
+    }
+}
 Commander.execute = function ( command ) {
     var Commands = {
+        resetPageStatus: function (isPageFinished) {
+            Commander.state.isPageFinished = false;
+        },
         scalePage: function (props) {
-            if (page){
+  /*          if (page){
                 if (props.scale !== 0 && props.scale !== 1){
                     page.style['transform'] = formatScale(props.scale);
 
                 }
-            }
+            }*/
         },
         selfRemoveFromDOM: function (item) {
             item.parentNode.removeChild(item);
@@ -85,12 +93,12 @@ Commander.execute = function ( command ) {
             pageWrapper.setAttribute('class', 'pdf-page');
             pageWrapper.appendChild(page);
             props.print.appendChild(pageWrapper);
-            props.pages.push(page);
+/*            pages.push(page);*/
             return page;
         },
         createLandscapePage: function (props) {
-            var page1 = props.pages[0];
-            var page2 = props.pages[1];
+            var page1 = pages[0];
+            var page2 = pages[1];
             var pageWrapper = document.createElement("div");
             pageWrapper.style['display'] = 'flex';
             pageWrapper.style['align-items'] = 'center';
@@ -103,22 +111,23 @@ Commander.execute = function ( command ) {
             return pageWrapper;
         },
         scaleDownWidget: function (widget) {
-            var scale = constants.PAGE_HEIGHT/ sumOfHeights;
+            var scale = constants.PAGE_HEIGHT/ Commander.state.sumOfHeights;
             widget.style['transform'] = formatScale(scale);
         },
-        finishPage: function (sumOfHeights, isPageFinished) {
-            sumOfHeights = 0;
-            isPageFinished = true;
+        finishPage: function () {
+            Commander.state.sumOfHeights = 0;
+            Commander.state.isPageFinished = true;
         },
-        addFooter: function (pages, mode) {
+        addFooter: function (pages, mode, print) {
             var page = pages[pages.length -1];
+            page.style.position = 'relative'
             var footerTuple = makeFooterAndWrapper({pageIndex: pages.length, mode: mode, width: page.offsetWidth});
             footerTuple[0].style['width'] = page.offsetWidth + 'px';
-            print.appendChild(footerTuple[1]);
+            print.appendChild(footerTuple[0]);
         },
-        appendWidget: function (pages, widget, sumOfHeights) {
+        appendWidget: function (pages, widget) {
             var page = pages[pages.length -1];
-            sumOfHeights += widget.offsetHeight;
+            Commander.state.sumOfHeights += widget.offsetHeight;
             widget.style.border = '1px dashed red'
             page.appendChild(widget);
         },
@@ -149,20 +158,34 @@ Commander.execute = function ( command ) {
     }
     return Commands[command].apply( Commands, [].slice.call(arguments, 1) );
 };
-
+var Getters = {
+    getPrint: function () {
+        return document.getElementById(constants.PRINT_SELECTOR);
+    },
+    getWidgets: function () {
+        return document.querySelectorAll(constants.ALL_WIDGETS_SELECTOR);
+    },
+    getPages: function () {
+        return document.querySelectorAll(constants.ALL_PAGES_SELECTOR);
+    },
+}
 /*
 * Execute program when document loads.
 * */
 window.onload = function () {
+    var widgets = Getters.getWidgets();
+    /*var pages = Getters.getPages()*/
+    var print = Getters.getPrint();
+    var mode = 'portrait';
 
     assemblePDF({
-        items: [], 
-        pages: [],
-        pageHeight: 1000,
-        skipFooterThreshold: 100,
-        scaleDownThreshold: 50,
-        print: null,
-        mode: 'portrait'
+        items: widgets,
+/*        pages: pages,*/
+        skipFooterThreshold: constants.DEFAULT_SKIP_FOOTER_THRESHOLD,
+        scaleDownThreshold: constants.DEFAULT_SCALE_DOWN,
+        pageHeight: constants.PAGE_HEIGHT,
+        print: print,
+        mode: mode
     });
 
     hideRemainingElements();
@@ -178,11 +201,39 @@ function formatScale(scale){
 *
 * */
 function assemblePDF(props) {
-    console.log('---------------------- Stage 1 ------------------------');
-    var sumOfHeights = 0;
-    var isPageFinished = false;
 
-    var total = 0
+    for (var i = 0; i < props.items.length; i++) {
+        var pages = Getters.getPages();
+        if (Commander.state.isPageFinished){
+            Commander.execute('createNewPage', {print: props.print, pages: pages, mode: props.mode});
+            Commander.execute('resetPageStatus')
+        }
+        var itemHeight = props.items[i].offsetHeight;
+        var debt = (Commander.state.sumOfHeights + itemHeight) - pageHeight ; //space to fill
+        if (debt <= 0) { // Fits without a problem. Template A
+            Commander.execute('appendWidget', pages, props.items[i])
+            if (i+1 === props.items.length) {
+                Commander.execute('addFooter', pages, props.mode, props.print)
+            }
+        } else if (debt <= props.scaleDownThreshold) { // Fits but items must be scale down. Template B
+            Commander.execute('appendWidget', pages, props.items[i]);
+            Commander.execute('addFooter', pages, props.mode, props.print);
+            Commander.execute('scaleDownWidget', props.items[i-1]);
+            Commander.execute('scaleDownWidget', props.items[i]);
+            Commander.execute('finishPage');
+        } else if (debt < props.skipFooterThreshold) { // Fits but will not add footer. Will enlarge working area be reducing margins
+/*            Instructions.appendWidget(items[i])
+            Instructions.finishPage();*/
+            Commander.execute('appendWidget')
+        } else {
+            Commander.execute('addFooter', pages, props.mode, props.print);
+            Commander.execute('finishPage')
+/*            Instructions.addFooter();
+            Instructions.finishPage();*/
+        }
+        console.log("COMMANDER STATE", Commander.state)
+    }
+    /*var total = 0
     var widgets = document.querySelectorAll("#main > div.mail__container > div");
     for (var i = 0; i < widgets.length; i++) {
 
@@ -203,9 +254,15 @@ function assemblePDF(props) {
         widgets[i].style.border = '1px dashed red'
         page.appendChild(widgets[i]);
         console.log("Widget added to page ", i);
-    }
+    }*/
 }
-
+function makeSeparator(width) {
+    const separator = document.createElement('hr');
+    separator.style.width = width+'px'
+    separator.style['margin-left'] = Math.floor(width*0.01) + 'px';
+    separator.style['border-top'] = '2px solid grey'
+    return separator
+}
 function makeFooterAndWrapper (props){
     var footerWrapper = document.createElement('div');
     var footer = document.createElement("div");
@@ -223,6 +280,7 @@ function makeFooterAndWrapper (props){
     footer.style['width'] = customWidth + 'px'
     footer.setAttribute('class', 'pdf-footer');
 
+    //Signature
     footerSignature.style['color'] = 'grey';
     footerSignature.style['top'] = '10px';
     footerSignature.style['left'] = '50%'
@@ -235,10 +293,13 @@ function makeFooterAndWrapper (props){
         rightSection.style['margin-right'] = '0';
         rightSection.style['margin-left'] = 'auto';
     }
+    footerWrapper.style.cssText = 'display: block; position: absolute'
+
     rightSection.innerHTML = 'page ' + props.pageIndex;
     footer.appendChild(rightSection);
     footerWrapper.style.width = customWidth + 'px'
 
+    footerWrapper.appendChild(makeSeparator(customWidth));
     footerWrapper.appendChild(footerSignature)
     footerWrapper.appendChild(footer)
     var returnValue = [footerWrapper, footer] //INTERESANTE, no puedo retornar {footerWrapper, footer}?? o que sucede
@@ -255,11 +316,10 @@ function markDocAsReady() {
     if (window.pdfdone) {
         window.pdfdone();
     }
-
-    if (page) {
+    if (true) {
         var readyElem = document.createElement("div");
         readyElem.setAttribute('id', 'pdf-ready');
-        page.appendChild(readyElem);
+        document.body.appendChild(readyElem);
     }
     window.status = 'ready';
 }

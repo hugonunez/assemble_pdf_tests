@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="59524dee-e6ec-4f66-9171-8ba7ab70fcc2" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/assemblepdf.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/assemblepdf.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -59,6 +60,7 @@
       <workItem from="1604577932767" duration="13868000" />
       <workItem from="1604667411675" duration="7707000" />
       <workItem from="1604927118072" duration="9569000" />
+      <workItem from="1605009946600" duration="7801000" />
     </task>
     <servers />
   </component>
@@ -74,17 +76,17 @@
       <screen x="72" y="27" width="1848" height="1053" />
     </state>
     <state x="485" y="188" width="1022" height="737" key="SettingsEditor/72.27.1848.1053/1920.0.1920.1080@72.27.1848.1053" timestamp="1604336113733" />
-    <state x="687" y="292" width="618" height="522" key="find.popup" timestamp="1604693870140">
+    <state x="687" y="292" width="618" height="522" key="find.popup" timestamp="1605013796425">
       <screen x="72" y="27" width="1848" height="1053" />
     </state>
-    <state x="687" y="292" width="618" height="522" key="find.popup/72.27.1848.1053/1920.0.1920.1080@72.27.1848.1053" timestamp="1604693870140" />
-    <state x="660" y="252" width="672" height="677" key="run.anything.popup" timestamp="1604949822299">
+    <state x="687" y="292" width="618" height="522" key="find.popup/72.27.1848.1053/1920.0.1920.1080@72.27.1848.1053" timestamp="1605013796425" />
+    <state x="660" y="252" width="672" height="677" key="run.anything.popup" timestamp="1605019058656">
       <screen x="72" y="27" width="1848" height="1053" />
     </state>
-    <state x="660" y="252" width="672" height="677" key="run.anything.popup/72.27.1848.1053/1920.0.1920.1080@72.27.1848.1053" timestamp="1604949822299" />
-    <state x="659" y="259" key="search.everywhere.popup" timestamp="1604937128891">
+    <state x="660" y="252" width="672" height="677" key="run.anything.popup/72.27.1848.1053/1920.0.1920.1080@72.27.1848.1053" timestamp="1605019058656" />
+    <state x="659" y="259" width="672" height="678" key="search.everywhere.popup" timestamp="1605014882538">
       <screen x="72" y="27" width="1848" height="1053" />
     </state>
-    <state x="659" y="259" key="search.everywhere.popup/72.27.1848.1053/1920.0.1920.1080@72.27.1848.1053" timestamp="1604937128891" />
+    <state x="659" y="259" width="672" height="678" key="search.everywhere.popup/72.27.1848.1053/1920.0.1920.1080@72.27.1848.1053" timestamp="1605014882538" />
   </component>
 </project>
