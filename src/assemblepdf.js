@@ -40,13 +40,13 @@ Commander.execute = function ( command ) {
     * Commands collection
     * */
     var Commands = {
-        makeLandscapeFooter: function({pagesIndex, noLastPage, mode}) {
-            var tuple = Commander.execute('makeFooterAndWrapper', {pageIndex: pagesIndex[0], mode});
+        makeLandscapeFooter: function(props) {
+            var tuple = Commander.execute('makeFooterAndWrapper', {pageIndex: props.pagesIndex[0], mode: 'landscape'});
             //left section
             var leftSection = document.createElement('small');
 
-            leftSection.innerHTML = 'Page ' + pagesIndex[1];
-            if (!noLastPage){
+            leftSection.innerHTML = 'Page ' + props.pagesIndex[1];
+            if (!props.noLastPage){
                 tuple[1].appendChild(leftSection);
             }
             return tuple[0]
@@ -116,7 +116,7 @@ Commander.execute = function ( command ) {
         appendWidget: function (pages, widget) {
             var page = pages[pages.length -1];
             Commander.state.sumOfHeights += widget.offsetHeight;
-            widget.style.border = '1px dashed red'
+/*            widget.style.border = '1px dashed red'*/
             page.appendChild(widget);
         },
         makeSeparator: function(width) {
@@ -221,7 +221,7 @@ Commander.execute = function ( command ) {
             for (var i=0; i< pages_tuples.length; i++){
                 var landScape = Commander.execute("createLandscapePage", {pages: pages_tuples[i]});
                 print.appendChild(landScape);
-                print.appendChild(Commander.execute('makeLandscapeFooter', {pagesIndex: [i+i +1, i+i+2], noLastPage: !pages_tuples[1], mode: 'landscape'}))
+                print.appendChild(Commander.execute('makeLandscapeFooter', {pagesIndex: [i+i +1, i+i+2], noLastPage: !pages_tuples[i][1], mode: 'landscape'}))
             }
 
         }
