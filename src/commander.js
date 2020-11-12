@@ -69,12 +69,10 @@ var Commander = {
             },
             createNewPage: function (props) {
                 var page = document.createElement("div");
-                var pageWrapper = document.createElement("div");
-                pageWrapper.setAttribute('class', 'pdf-page');
-                pageWrapper.appendChild(page);
-                props.print.appendChild(pageWrapper);
+                page.setAttribute('class', 'page');
+                props.print.appendChild(page);
                 props.pages.push(page);
-                page.style.border = '1px solid green';
+             /*   page.style.border = '1px solid green';*/
                 return page;
             },
             createLandscapePage: function (props) {
@@ -105,45 +103,50 @@ var Commander = {
             addFooter: function (pages, mode, print) {
                 var page = pages[pages.length -1];
                 var footerTuple = Commander.execute('makeFooterAndWrapper', {pageIndex: pages.length, mode: mode, width: page.offsetWidth});
-                /*footerTuple[0].style['margin-top'] = '100%'*/
-                page.style.position = 'relative'
-                footerTuple[0].style.position = 'absolute'
-                footerTuple[0].style.bottom = '0'
                 Commander.state.sumOfHeights += footerTuple[0].offsetHeight;
                 page.appendChild(footerTuple[0]);
             },
             appendWidget: function (pages, widget) {
                 var page = pages[pages.length -1];
-                Commander.state.sumOfHeights += widget.offsetHeight;
-                widget.style.border = '1px dashed red'
+                Commander.execute('addHeight', widget.offsetHeight)
+      /*          widget.style.border = '1px dashed red'*/
+                Commander.execute('addBorder', widget, 'red')
+                widget.classList.remove('mail__widget')
+                widget.classList.add('widget')
+                //flex-wrap: wrap; justify-content: center; margin: auto 0px; padding-bottom: 10px; vertical-align: middle; background-color: white; padding-top: 10px; border: 1px solid red; transform: scale(0.963504);
+                widget.removeAttribute('style')
+                widget.removeAttribute('valign')
                 page.appendChild(widget);
             },
             makeSeparator: function(width) {
                 const separator = document.createElement('hr');
-                separator.style.width = width+'px'
-                separator.style['margin-left'] = Math.floor(width*0.01) + 'px';
                 separator.style['border-top'] = '2px solid grey'
                 return separator
+            },
+            addHeight: function (height){
+                Commander.state.sumOfHeights += height
+            },
+            addBorder: function (element, color) {
+                element.style.border = '1px solid ' + color
             },
             makeFooterAndWrapper: function (props){
                 console.log("LENGTH", props)
                 var footerWrapper = document.createElement('div');
-                var footer = document.createElement("div");
                 var rightSection = document.createElement('small');
                 var footerSignature = document.createElement('small');
                 var customWidth = props.mode === 'landscape'? props.width*2: props.width;
-
+                footerWrapper.classList.add('footer')
                 //footer
-                footer.style['padding'] = '10px'
-                footer.style['font-weight'] = 'bold';
-                footer.style['margin-top'] = '10px';
-                footer.style['margin-bottom'] = '10px';
-                footer.style['display'] = 'flex';
-                footer.style['justify-content'] = 'space-between';
-                footer.style['width'] = customWidth + 'px'
-                footer.setAttribute('class', 'pdf-footer');
+/*
+                footerWrapper.style['padding'] = '10px'
+                footerWrapper.style['font-weight'] = 'bold';
+                footerWrapper.style['margin-top'] = '10px';
+                footerWrapper.style['margin-bottom'] = '10px';
+                footerWrapper.style['display'] = 'flex';
+                footerWrapper.style['justify-content'] = 'space-between';
+*/
 
-                //Signature
+          /*      //Signature
                 footerSignature.style['color'] = 'grey';
                 footerSignature.style['top'] = '10px';
                 footerSignature.style['left'] = '50%'
@@ -151,20 +154,18 @@ var Commander = {
                 footerSignature.style['margin-left'] = 'auto';
                 footerSignature.style['margin-right'] = 'auto';
                 footerSignature.innerHTML = 'SEARS 2020';
-
-                if (props.mode === 'portrait'){
+*/
+/*                if (props.mode === 'portrait'){
                     rightSection.style['margin-right'] = '15px';
                     rightSection.style['margin-left'] = 'auto';
                 }
 
                 rightSection.innerHTML = 'page ' + props.pageIndex;
-                footer.appendChild(rightSection);
-                footerWrapper.style.width = customWidth + 'px'
-
-                footerWrapper.appendChild(Commander.execute('makeSeparator', customWidth));
+                footerWrapper.appendChild(rightSection);*/
+                footerSignature.innerHTML = 'SEARS 2020';
+                footerWrapper.appendChild(Commander.execute('makeSeparator'));
                 footerWrapper.appendChild(footerSignature)
-                footerWrapper.appendChild(footer)
-                var returnValue = [footerWrapper, footer] //INTERESANTE, no puedo retornar {footerWrapper, footer}?? o que sucede
+                var returnValue = [footerWrapper, footerWrapper] //INTERESANTE, no puedo retornar {footerWrapper, footer}?? o que sucede
                 return returnValue
             },
             hideRemainingElements: function() {
@@ -200,7 +201,7 @@ var Commander = {
                 for (var i=0; i< pages_tuples.length; i++){
                     var landScape = Commander.execute("createLandscapePage", {pages: pages_tuples[i]});
                     print.appendChild(landScape);
-                    print.appendChild(Commander.execute('makeLandscapeFooter', {pagesIndex: [i+i +1, i+i+2], noLastPage: !pages_tuples[i][1], mode: 'landscape'}))
+           /*         print.appendChild(Commander.execute('makeLandscapeFooter', {pagesIndex: [i+i +1, i+i+2], noLastPage: !pages_tuples[i][1], mode: 'landscape'}))*/
                 }
 
             }

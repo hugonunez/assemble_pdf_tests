@@ -44,7 +44,7 @@ ScaleDownSingleWidget.prototype.handleRequest = function (request){
         console.log("ScaleDownSingleWidget")
         Commander.execute('appendWidget', request.pages, request.items[request.index]);
         Commander.execute('addFooter', request.pages, request.mode, request.print);
-        Commander.execute('scaleDownWidget', request.items[request.index], (constants.PAGE_HEIGHT / request.itemHeight))
+/*        Commander.execute('scaleDownWidget', request.items[request.index], (constants.PAGE_HEIGHT / request.itemHeight))*/
         Commander.execute('finishPage');
         return ;
     }

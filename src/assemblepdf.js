@@ -17,7 +17,7 @@
 var default_page_height = (window.customSize)? window.customSize : 1056;
 var constants = {
     ALL_WIDGETS_SELECTOR: "#main > div.mail__container > div",
-    ALL_PAGES_SELECTOR: '#print > div.pdf-page > div',
+    ALL_PAGES_SELECTOR: '#print > div.page > div',
     TABLE_WIDGET_SELECTOR: "table.widget-product",
     ALL_MAIL_CONTAINERS: "#main > div.mail__container",
     PAGE_HEIGHT: default_page_height,
