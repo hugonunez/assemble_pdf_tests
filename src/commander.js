@@ -14,7 +14,7 @@ var Commander = {
             assemblePDF: function(props) {
                 for (var i = 0; i < props.items.length; i++) {
                     var itemHeight = props.items[i].offsetHeight;
-                    var debt = (Commander.state.sumOfHeights + itemHeight) - props.pageHeight ; //space to fill
+                    var debt = (Commander.state.sumOfHeights + itemHeight) - props.pageHeight ;
                     var request = {
                         index: i,
                         items: props.items,
@@ -74,7 +74,7 @@ var Commander = {
                 pageWrapper.appendChild(page);
                 props.print.appendChild(pageWrapper);
                 props.pages.push(page);
-        /*        page.style.border = '1px solid green';*/
+                page.style.border = '1px solid green';
                 return page;
             },
             createLandscapePage: function (props) {
@@ -92,7 +92,7 @@ var Commander = {
                 return pageWrapper;
             },
             scaleDownWidget: function (widget, customScale) {
-                var scale = constants.PAGE_HEIGHT/ Commander.state.sumOfHeights;
+                var scale = constants.PAGE_HEIGHT/ (Commander.state.sumOfHeights);
                 if (customScale){
                     scale = customScale
                 }
@@ -105,13 +105,17 @@ var Commander = {
             addFooter: function (pages, mode, print) {
                 var page = pages[pages.length -1];
                 var footerTuple = Commander.execute('makeFooterAndWrapper', {pageIndex: pages.length, mode: mode, width: page.offsetWidth});
-                footerTuple[0].style['width'] = page.offsetWidth + 'px';
-                print.appendChild(footerTuple[0]);
+                /*footerTuple[0].style['margin-top'] = '100%'*/
+                page.style.position = 'relative'
+                footerTuple[0].style.position = 'absolute'
+                footerTuple[0].style.bottom = '0'
+                Commander.state.sumOfHeights += footerTuple[0].offsetHeight;
+                page.appendChild(footerTuple[0]);
             },
             appendWidget: function (pages, widget) {
                 var page = pages[pages.length -1];
                 Commander.state.sumOfHeights += widget.offsetHeight;
-   /*             widget.style.border = '1px dashed red'*/
+                widget.style.border = '1px dashed red'
                 page.appendChild(widget);
             },
             makeSeparator: function(width) {
@@ -122,6 +126,7 @@ var Commander = {
                 return separator
             },
             makeFooterAndWrapper: function (props){
+                console.log("LENGTH", props)
                 var footerWrapper = document.createElement('div');
                 var footer = document.createElement("div");
                 var rightSection = document.createElement('small');
@@ -148,7 +153,7 @@ var Commander = {
                 footerSignature.innerHTML = 'SEARS 2020';
 
                 if (props.mode === 'portrait'){
-                    rightSection.style['margin-right'] = '0';
+                    rightSection.style['margin-right'] = '15px';
                     rightSection.style['margin-left'] = 'auto';
                 }
 
