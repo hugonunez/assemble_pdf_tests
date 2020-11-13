@@ -102,7 +102,26 @@ Default.prototype.handleRequest = function (request){
     Commander.execute('finishPage')
     return ;
 }
-
+var HandleSignature = function (){}
+HandleSignature.prototype = new Handler();
+HandleSignature.prototype.handleRequest = function (request){
+    console.log("PRE", request.index + 1 === request.items.length, request.index + 1, request.items.length)
+    if(request.index + 1 === request.items.length){
+        console.log("HandleSignature", request.index)
+        var widget = request.items[request.index];
+        var template = {
+            'grid-template-area':'"widget"\n' +
+                '"signature"\n' +
+                '  "footer";',
+            'grid-template-rows': "1fr 50fr 76px'"
+        }``
+        var page = request.pages[request.pages.length -1]
+        var position = '-2/-3'
+        Commander.execute('setPageTemplate', page, template)
+        Commander.execute('setElementPosition', widget, position)
+    }
+    this.next.handleRequest(request);
+}
 
 
 //Chain of responsibility for widgets assignments
@@ -114,9 +133,10 @@ var chain = {
         var strategy3 = new ScaleDownWidgets();
         var strategy4 = new RemoveFooter();
         var strategy5 = new Default();
-
+        var handleSignature = new HandleSignature();
         strategy0
             .setNext(strategy1)
+            .setNext(handleSignature)
             .setNext(strategy2)
             .setNext(strategy3)
             .setNext(strategy4)
