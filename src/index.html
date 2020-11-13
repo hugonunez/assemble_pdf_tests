@@ -503,21 +503,22 @@
       display: grid;
       width: 210mm;
       height: 297mm;
-      grid-template-areas: ".... widget ...."
-                           ".... widget ...."
-                           "footer footer footer";
+      grid-template-areas: "widget"
+                           "widget"
+                           "footer";
       grid-template-rows: 1fr 1fr 76px;
-      gap: 3em;
+      grid-template-columns: 1fr;
+      gap: 1em;
+      border: 1px solid grey;
     }
 
 
     .widget {
-      grid-area: widget;
+      border: 1px solid red;
     }
     .footer {
-      grid-row: 1 / 2;
       grid-area: footer;
-
+      border: 1px solid green;
     }
 
     .mail__brand{

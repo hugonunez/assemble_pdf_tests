@@ -110,12 +110,13 @@ var Commander = {
                 var page = pages[pages.length -1];
                 Commander.execute('addHeight', widget.offsetHeight)
       /*          widget.style.border = '1px dashed red'*/
-                Commander.execute('addBorder', widget, 'red')
                 widget.classList.remove('mail__widget')
                 widget.classList.add('widget')
-                //flex-wrap: wrap; justify-content: center; margin: auto 0px; padding-bottom: 10px; vertical-align: middle; background-color: white; padding-top: 10px; border: 1px solid red; transform: scale(0.963504);
                 widget.removeAttribute('style')
                 widget.removeAttribute('valign')
+
+                widget.cssText = 'margin: 0; padding: 0;'
+
                 page.appendChild(widget);
             },
             makeSeparator: function(width) {
