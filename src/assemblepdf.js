@@ -64,16 +64,28 @@ window.onload = function () {
     var pages = Commander.execute('nodeListToIterable', document.querySelectorAll(constants.ALL_PAGES_SELECTOR));
     var mode = 'portrait';
 
-    Commander.execute('assemblePDF', {
-        items: widgets,
-        pages: pages,
-        skipFooterThreshold: constants.DEFAULT_SKIP_FOOTER_THRESHOLD,
-        scaleDownThreshold: constants.DEFAULT_SCALE_DOWN,
-        pageHeight: constants.PAGE_HEIGHT,
-        pageWidth: constants.PAGE_WIDTH,
-        print: print,
-        mode: mode
-    });
+    for (var i = 0; i < widgets.length; i++) {
+        var itemHeight = widgets[i].offsetHeight;
+        var debt = (Commander.state.sumOfHeights + itemHeight) - constants.PAGE_HEIGHT ;
+        var request = {
+            index: i,
+            items: widgets,
+            isPageFinished: Commander.state.isPageFinished,
+            pageHeight: constants.PAGE_HEIGHT,
+            pageWidth: constants.PAGE_WIDTH,
+            pages: pages,
+            print: print,
+            mode: mode,
+            itemHeight: itemHeight,
+            debt: debt,
+            removeFooterThreshold: constants.DEFAULT_SKIP_FOOTER_THRESHOLD,
+            scaleDownThreshold: constants.DEFAULT_SCALE_DOWN
+        }
+        chain.handle(request)
+    }
+    if (mode === 'landscape'){
+        Commander.execute('transformToLandscape', print, pages);
+    }
     Commander.execute('hideRemainingElements');
     Commander.execute('markDocAsReady');
 }

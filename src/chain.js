@@ -36,20 +36,24 @@ CheckIfPageFinished.prototype.handleRequest = function (request){
     this.next.handleRequest(request);
 }
 
+/*
 /////////////////      Strategy 2     /////////////////////
-var ScaleDownSingleWidget = function (){}
-ScaleDownSingleWidget.prototype = new Handler();
-ScaleDownSingleWidget.prototype.handleRequest = function (request){
-    if(request.itemHeight > request.pageHeight){
-        console.log("ScaleDownSingleWidget")
+var ScaleDownSingleWidgetX = function (){
+}
+ScaleDownSingleWidgetX.prototype = new Handler();
+ScaleDownSingleWidgetX.prototype.handleRequest = function (request){
+    var width = request.items[request.index].offsetWidth;
+    console.log("width vs pagewidth", width, request.pageWidth)
+    if(width > request.pageWidth){
         Commander.execute('appendWidget', request.pages, request.items[request.index]);
         Commander.execute('addFooter', request.pages, request.mode, request.print);
-/*        Commander.execute('scaleDownWidget', request.items[request.index], (constants.PAGE_HEIGHT / request.itemHeight))*/
+        Commander.execute('scaleDownWidget', request.items[request.index], 0.9);
         Commander.execute('finishPage');
-        return ;
+        return
     }
     this.next.handleRequest(request);
 }
+*/
 
 /////////////////      Strategy  3   /////////////////////
 var AddWidgetAndContinue = function (){}
@@ -70,14 +74,13 @@ AddWidgetAndContinue.prototype.handleRequest = function (request){
 var ScaleDownWidgets = function (){}
 ScaleDownWidgets.prototype = new Handler();
 ScaleDownWidgets.prototype.handleRequest = function (request){
+    console.log("ScaleDownWidgets", {ts:  request.scaleDownThreshold, debt: request.debt})
     if(request.debt <= request.scaleDownThreshold){
-        console.log("ScaleDownWidgets", request)
         Commander.execute('appendWidget', request.pages, request.items[request.index]);
         Commander.execute('addFooter', request.pages, request.mode, request.print);
         Commander.execute('scaleDownWidget', request.items[request.index-1]);
         Commander.execute('scaleDownWidget', request.items[request.index]);
         Commander.execute('finishPage');
-        return ;
     }
     this.next.handleRequest(request);
 }
@@ -86,8 +89,19 @@ ScaleDownWidgets.prototype.handleRequest = function (request){
 var RemoveFooter = function (){}
 RemoveFooter.prototype = new Handler();
 RemoveFooter.prototype.handleRequest = function (request){
+    console.log("RemoveFooter", {ts:  request.removeFooterThreshold, debt: request.debt})
+
     if(request.debt <= request.removeFooterThreshold){
-        console.log("RemoveFooter")
+        var page = request.pages[request.pages.length-1];
+        var footer = page.querySelector('.footer')
+        footer.remove()
+        var template = {
+            'grid-template-areas':'"widget"\n',
+            'gap': '0em',
+            'grid-template-rows': "1fr 1rf",
+            'align-items': 'center'
+        };
+        Commander.execute('setStyle', page, template)
         return;
     }
     this.next.handleRequest(request);
@@ -130,7 +144,7 @@ HandleSignature.prototype.handleRequest = function (request){
 var chain = {
     handle: function (request) {
         var handlePageFinished = new CheckIfPageFinished();
-        var scaleDownSingleWidget = new ScaleDownSingleWidget();
+        /*var scaleDownSingleWidget = new ScaleDownSingleWidgetX();*/
         var addWidgetAndContinue = new AddWidgetAndContinue();
         var scaleDownWidgets = new ScaleDownWidgets();
         var removeFooter = new RemoveFooter();
@@ -138,10 +152,10 @@ var chain = {
         var handleSignature = new HandleSignature();
 
         handlePageFinished
-            .setNext(scaleDownSingleWidget)
             .setNext(handleSignature)
             .setNext(addWidgetAndContinue)
             .setNext(scaleDownWidgets)
+/*            .setNext(scaleDownSingleWidget)*/
             .setNext(removeFooter)
             .setNext(defaultAssignment);
 

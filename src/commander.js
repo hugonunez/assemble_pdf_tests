@@ -24,30 +24,6 @@ var Commander = {
             removeClass: function (element, className){
                 element.classList.remove(className)
             },
-            assemblePDF: function(props) {
-                for (var i = 0; i < props.items.length; i++) {
-                    var itemHeight = props.items[i].offsetHeight;
-                    var debt = (Commander.state.sumOfHeights + itemHeight) - props.pageHeight ;
-                    var request = {
-                        index: i,
-                        items: props.items,
-                        isPageFinished: Commander.state.isPageFinished,
-                        pageHeight: constants.PAGE_HEIGHT,
-                        pages: props.pages,
-                        print: props.print,
-                        mode: props.mode,
-                        itemHeight: itemHeight,
-                        debt: debt,
-                        removeFooterThreshold: constants.DEFAULT_SKIP_FOOTER_THRESHOLD,
-                        scaleDownThreshold: constants.DEFAULT_SCALE_DOWN
-                    }
-                    chain.handle(request)
-                }
-                if (props.mode === 'landscape'){
-                    Commander.execute('transformToLandscape', props.print, props.pages);
-                }
-
-            },
             makeLandscapeFooter: function(props) {
                 var tuple = Commander.execute('makeFooterAndWrapper', {pageIndex: props.pagesIndex[0], mode: 'landscape'});
                 //left section
@@ -107,7 +83,7 @@ var Commander = {
                 if (customScale){
                     scale = customScale
                 }
-                widget.style['transform'] = Commander.execute('formatScale', scale*0.95)
+                widget.style['transform'] = Commander.execute('formatScale', scale)
             },
             finishPage: function () {
                 Commander.state.sumOfHeights = 0;
@@ -127,7 +103,7 @@ var Commander = {
                 widget.classList.add('widget')
                 widget.removeAttribute('style')
                 widget.removeAttribute('valign')
-
+                Commander.execute('setStyle', {gridArea: 'widget'})
                 widget.cssText = 'margin: 0; padding: 0;'
 
                 page.appendChild(widget);
