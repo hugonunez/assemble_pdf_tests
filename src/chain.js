@@ -107,18 +107,20 @@ HandleSignature.prototype = new Handler();
 HandleSignature.prototype.handleRequest = function (request){
     console.log("PRE", request.index + 1 === request.items.length, request.index + 1, request.items.length)
     if(request.index + 1 === request.items.length){
-        console.log("HandleSignature", request.index)
         var widget = request.items[request.index];
         var template = {
-            'grid-template-area':'"widget"\n' +
-                '"signature"\n' +
-                '  "footer";',
-            'grid-template-rows': "1fr 50fr 76px'"
-        }``
-        var page = request.pages[request.pages.length -1]
-        var position = '-2/-3'
-        Commander.execute('setPageTemplate', page, template)
-        Commander.execute('setElementPosition', widget, position)
+            'grid-template-areas':'"widget"\n' +
+                                '"signature"\n' +
+                                '"footer"',
+            'gap': '0em',
+            'grid-template-rows': "4fr auto 76px",
+            'align-items': 'center'
+        };
+        var page = request.pages[request.pages.length -1];
+        Commander.execute('removeClass', widget,'widget')
+        Commander.execute('removeClass', widget,'mail__signature')
+        Commander.execute('setStyle', page, template)
+        Commander.execute('setStyle', widget, {position: '-2/-3', gridArea: 'signature', alignSelf: 'end', })
     }
     this.next.handleRequest(request);
 }

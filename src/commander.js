@@ -11,6 +11,19 @@ var Commander = {
         * Commands collection
         * */
         var Commands = {
+            setStyle: function (element, style){
+                for(var k in style){
+                    if (style.hasOwnProperty(k)){
+                        element.style[k] = style[k]
+                    }
+                }
+            },
+            addClass: function (element, className){
+                element.classList.add(className)
+            },
+            removeClass: function (element, className){
+                element.classList.remove(className)
+            },
             assemblePDF: function(props) {
                 for (var i = 0; i < props.items.length; i++) {
                     var itemHeight = props.items[i].offsetHeight;
