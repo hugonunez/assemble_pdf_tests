@@ -107,7 +107,7 @@ var Commander = {
                 if (customScale){
                     scale = customScale
                 }
-                widget.style['transform'] = Commander.execute('formatScale', scale)
+                widget.style['transform'] = Commander.execute('formatScale', scale*0.95)
             },
             finishPage: function () {
                 Commander.state.sumOfHeights = 0;

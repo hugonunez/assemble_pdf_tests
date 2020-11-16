@@ -14,6 +14,7 @@
 /*
 * Constants collection
 * */
+/*
 var default_page_height = (window.customSize)? window.customSize : 1056;
 var constants = {
     ALL_WIDGETS_SELECTOR: "#main > div.mail__container > div",
@@ -22,10 +23,38 @@ var constants = {
     ALL_MAIL_CONTAINERS: "#main > div.mail__container",
     PAGE_HEIGHT: default_page_height,
     PRINT_SELECTOR: 'print',
-    DEFAULT_SKIP_FOOTER_THRESHOLD: default_page_height*0.1,
-    DEFAULT_SCALE_DOWN: default_page_height*0.05
+    DEFAULT_SKIP_FOOTER_THRESHOLD: default_page_height*0.05,
+    DEFAULT_SCALE_DOWN: default_page_height*0.1
+}
+*/
+
+/*
+* Constants collection
+* */
+var A4 = {
+    w: 210,
+    h: 279
+}
+function mmToPx(value, factor = 3.7795275591) {
+    return Math.floor(value * factor)
 }
 
+console.log("A4", {w: mmToPx(A4.w), h: mmToPx(A4.h)});
+var default_page_height = mmToPx(A4.h)
+var default_page_width = mmToPx(A4.w) /*(window.customSize)? window.customSize : 1056;*/
+var constants = {
+    ALL_WIDGETS_SELECTOR: "#main > div.mail__container > div",
+    ALL_PAGES_SELECTOR: '#print > div.page > div',
+    TABLE_WIDGET_SELECTOR: "table.widget-product",
+    ALL_MAIL_CONTAINERS: "#main > div.mail__container",
+    PAGE_HEIGHT: default_page_height,
+    PAGE_WIDTH: default_page_width,
+    PRINT_SELECTOR: 'print',
+    DEFAULT_SKIP_FOOTER_THRESHOLD: default_page_height*0.05,
+    DEFAULT_SCALE_DOWN: default_page_height*0.1
+}
+
+console.log("2",constants)
 /*
 * Execute program when document loads.
 * */
@@ -41,6 +70,7 @@ window.onload = function () {
         skipFooterThreshold: constants.DEFAULT_SKIP_FOOTER_THRESHOLD,
         scaleDownThreshold: constants.DEFAULT_SCALE_DOWN,
         pageHeight: constants.PAGE_HEIGHT,
+        pageWidth: constants.PAGE_WIDTH,
         print: print,
         mode: mode
     });

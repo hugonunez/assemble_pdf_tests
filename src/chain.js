@@ -71,7 +71,7 @@ var ScaleDownWidgets = function (){}
 ScaleDownWidgets.prototype = new Handler();
 ScaleDownWidgets.prototype.handleRequest = function (request){
     if(request.debt <= request.scaleDownThreshold){
-        console.log("ScaleDownWidgets")
+        console.log("ScaleDownWidgets", request)
         Commander.execute('appendWidget', request.pages, request.items[request.index]);
         Commander.execute('addFooter', request.pages, request.mode, request.print);
         Commander.execute('scaleDownWidget', request.items[request.index-1]);
@@ -129,21 +129,22 @@ HandleSignature.prototype.handleRequest = function (request){
 //Chain of responsibility for widgets assignments
 var chain = {
     handle: function (request) {
-        var strategy0 = new CheckIfPageFinished();
-        var strategy1 = new ScaleDownSingleWidget();
-        var strategy2 = new AddWidgetAndContinue();
-        var strategy3 = new ScaleDownWidgets();
-        var strategy4 = new RemoveFooter();
-        var strategy5 = new Default();
+        var handlePageFinished = new CheckIfPageFinished();
+        var scaleDownSingleWidget = new ScaleDownSingleWidget();
+        var addWidgetAndContinue = new AddWidgetAndContinue();
+        var scaleDownWidgets = new ScaleDownWidgets();
+        var removeFooter = new RemoveFooter();
+        var defaultAssignment = new Default();
         var handleSignature = new HandleSignature();
-        strategy0
-            .setNext(strategy1)
-            .setNext(handleSignature)
-            .setNext(strategy2)
-            .setNext(strategy3)
-            .setNext(strategy4)
-            .setNext(strategy5);
 
-        strategy0.handleRequest(request);
+        handlePageFinished
+            .setNext(scaleDownSingleWidget)
+            .setNext(handleSignature)
+            .setNext(addWidgetAndContinue)
+            .setNext(scaleDownWidgets)
+            .setNext(removeFooter)
+            .setNext(defaultAssignment);
+
+        handlePageFinished.handleRequest(request);
     }
 }
