@@ -1,6 +1,3 @@
-
-
-
 //Handler Abstract Class
 var Handler = function (){
     this.next = {
@@ -16,9 +13,11 @@ Handler.prototype.setNext = function (next) {
 };
 Handler.prototype.handleRequest = function (request){};
 
+
 /*
 * Define Strategies to assign widgets
 * */
+
 
 var HandleFirstPage = function (){};
 HandleFirstPage.prototype = new Handler();
@@ -32,7 +31,6 @@ HandleFirstPage.prototype.handleRequest = function (request) {
     this.next.handleRequest(request)
 }
 
-/////////////////      Strategy  1    /////////////////////
 var CheckIfPageFinished = function (){}
 CheckIfPageFinished.prototype = new Handler();
 CheckIfPageFinished.prototype.handleRequest = function (request){
@@ -48,9 +46,6 @@ CheckIfPageFinished.prototype.handleRequest = function (request){
     this.next.handleRequest(request);
 }
 
-
-
-/////////////////      Strategy  3   /////////////////////
 var AddWidgetAndContinue = function (){}
 AddWidgetAndContinue.prototype = new Handler();
 AddWidgetAndContinue.prototype.handleRequest = function (request){
@@ -65,7 +60,6 @@ AddWidgetAndContinue.prototype.handleRequest = function (request){
     this.next.handleRequest(request);
 }
 
-/////////////////      Strategy   4   /////////////////////
 var ScaleDownWidgets = function (){}
 ScaleDownWidgets.prototype = new Handler();
 ScaleDownWidgets.prototype.handleRequest = function (request){
@@ -76,15 +70,14 @@ ScaleDownWidgets.prototype.handleRequest = function (request){
         Commander.execute('scaleDownWidget', request.items[request.index-1]);
         Commander.execute('scaleDownWidget', request.items[request.index]);
         Commander.execute('finishPage');
+        return ;
     }
     this.next.handleRequest(request);
 }
 
-/////////////////      Strategy  5    /////////////////////
 var RemoveFooter = function (){}
 RemoveFooter.prototype = new Handler();
 RemoveFooter.prototype.handleRequest = function (request){
-    console.log("RemoveFooter", {ts:  request.removeFooterThreshold, debt: request.debt})
 
     if(request.debt <= request.removeFooterThreshold){
         var page = request.pages[request.pages.length-1];
@@ -102,7 +95,6 @@ RemoveFooter.prototype.handleRequest = function (request){
     this.next.handleRequest(request);
 }
 
-/////////////////      Strategy  6   /////////////////////
 var Default = function (){}
 Default.prototype = new Handler();
 Default.prototype.handleRequest = function (request){
@@ -152,7 +144,6 @@ var chain = {
             .setNext(handleSignature)
             .setNext(addWidgetAndContinue)
             .setNext(scaleDownWidgets)
-/*            .setNext(scaleDownSingleWidget)*/
             .setNext(removeFooter)
             .setNext(defaultAssignment);
 

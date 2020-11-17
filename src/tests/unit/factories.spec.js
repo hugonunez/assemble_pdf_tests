@@ -3,26 +3,11 @@ import '@testing-library/jest-dom/extend-expect'
 import { JSDOM } from 'jsdom'
 import fs from 'fs'
 import path from 'path'
-import {Factories} from '../../assemble_pdf'
 /*const html = fs.readFileSync(path.resolve(__dirname, '../../index.html'), 'utf8');
 
 let dom
 let document
 let body*/
-
-describe("Test Factories", () => {
-/*  beforeEach(() => {
-    dom = new JSDOM(html, {runScripts: 'dangerously'})
-    body = dom.window.document.body;
-    document = dom.window.document
-  })*/
-
-  it("makeWidget with null input", async () => {
-    const rawWidget = null;
-    const widget = Factories.makeWidget(rawWidget)
-    expect(widget).toBe(null)
-  })
-})
 
 /*
 
@@ -48,7 +33,7 @@ describe('index.html', () => {
 
   it('renders a new paragraph via JavaScript when the button is clicked', async () => {
     const button = getByText(container, 'Click me for a terrible pun')
-    
+
     fireEvent.click(button)
     let generatedParagraphs = container.querySelectorAll('#pun-container p')
     expect(generatedParagraphs.length).toBe(1)
