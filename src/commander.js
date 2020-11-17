@@ -28,7 +28,7 @@ var Commander = {
 
             },
             unwrap: function (wrapper) {
-                const parent = wrapper.parentNode;
+                var parent = wrapper.parentNode;
 
                 setTimeout(function (){
                     while (wrapper.firstChild) {
@@ -36,8 +36,6 @@ var Commander = {
                     }
                     parent.removeChild(wrapper);
                 })
-
-
             },
           /*  makeLandscapeFooter: function(props) {
                 var tuple = Commander.execute('makeFooterAndWrapper', {pageIndex: props.pagesIndex[0], mode: 'landscape'});
