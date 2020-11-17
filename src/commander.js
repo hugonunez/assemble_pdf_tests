@@ -24,7 +24,22 @@ var Commander = {
             removeClass: function (element, className){
                 element.classList.remove(className)
             },
-            makeLandscapeFooter: function(props) {
+            removeParent: function (el) {
+
+            },
+            unwrap: function (wrapper) {
+                const parent = wrapper.parentNode;
+
+                setTimeout(function (){
+                    while (wrapper.firstChild) {
+                        parent.insertBefore(wrapper.firstChild, wrapper);
+                    }
+                    parent.removeChild(wrapper);
+                })
+
+
+            },
+          /*  makeLandscapeFooter: function(props) {
                 var tuple = Commander.execute('makeFooterAndWrapper', {pageIndex: props.pagesIndex[0], mode: 'landscape'});
                 //left section
                 var leftSection = document.createElement('small');
@@ -34,7 +49,7 @@ var Commander = {
                     tuple[1].appendChild(leftSection);
                 }
                 return tuple[0]
-            },
+            },*/
             nodeListToIterable: function(nodeList) {
                 var items = [];
                 for (var i = 0; i < nodeList.length; i++){

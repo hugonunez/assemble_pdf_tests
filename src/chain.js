@@ -20,6 +20,18 @@ Handler.prototype.handleRequest = function (request){};
 * Define Strategies to assign widgets
 * */
 
+var HandleFirstPage = function (){};
+HandleFirstPage.prototype = new Handler();
+HandleFirstPage.prototype.handleRequest = function (request) {
+    console.log("request.pages.length === 1", request.pages.length === 1)
+    if (request.index === 0){
+        var page = request.pages[0];
+        console.log("@page", page, request.pages)
+        Commander.execute('unwrap', page)
+    }
+    this.next.handleRequest(request)
+}
+
 /////////////////      Strategy  1    /////////////////////
 var CheckIfPageFinished = function (){}
 CheckIfPageFinished.prototype = new Handler();
@@ -36,24 +48,7 @@ CheckIfPageFinished.prototype.handleRequest = function (request){
     this.next.handleRequest(request);
 }
 
-/*
-/////////////////      Strategy 2     /////////////////////
-var ScaleDownSingleWidgetX = function (){
-}
-ScaleDownSingleWidgetX.prototype = new Handler();
-ScaleDownSingleWidgetX.prototype.handleRequest = function (request){
-    var width = request.items[request.index].offsetWidth;
-    console.log("width vs pagewidth", width, request.pageWidth)
-    if(width > request.pageWidth){
-        Commander.execute('appendWidget', request.pages, request.items[request.index]);
-        Commander.execute('addFooter', request.pages, request.mode, request.print);
-        Commander.execute('scaleDownWidget', request.items[request.index], 0.9);
-        Commander.execute('finishPage');
-        return
-    }
-    this.next.handleRequest(request);
-}
-*/
+
 
 /////////////////      Strategy  3   /////////////////////
 var AddWidgetAndContinue = function (){}
@@ -143,6 +138,7 @@ HandleSignature.prototype.handleRequest = function (request){
 //Chain of responsibility for widgets assignments
 var chain = {
     handle: function (request) {
+        var handleFirstPage = new HandleFirstPage();
         var handlePageFinished = new CheckIfPageFinished();
         /*var scaleDownSingleWidget = new ScaleDownSingleWidgetX();*/
         var addWidgetAndContinue = new AddWidgetAndContinue();
@@ -152,6 +148,7 @@ var chain = {
         var handleSignature = new HandleSignature();
 
         handlePageFinished
+            .setNext(handleFirstPage)
             .setNext(handleSignature)
             .setNext(addWidgetAndContinue)
             .setNext(scaleDownWidgets)
