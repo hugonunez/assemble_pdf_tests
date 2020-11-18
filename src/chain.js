@@ -1,4 +1,25 @@
+//Chain of responsibility for widgets assignments
+var chain = {
+    handle: function (request) {
+        var handleFirstPage = new HandleFirstPage();
+        var handleSignature = new HandleSignature();
+        var handleCreateNewPage = new ChangeCreateNewPage();
+        var addWidgetAndContinue = new AddWidgetAndContinue();
+        var scaleDownWidgets = new ScaleDownWidgets();
+        var removeFooter = new RemoveFooter();
+        var defaultAssignment = new DefaultAddAndCreatePage();
 
+        handleCreateNewPage
+            .setNext(handleFirstPage)
+            .setNext(handleSignature)
+            .setNext(addWidgetAndContinue)
+            .setNext(scaleDownWidgets)
+            .setNext(removeFooter)
+            .setNext(defaultAssignment);
+
+            handleCreateNewPage.handleRequest(request);
+    }
+}
 
 
 //Handler Abstract Class
@@ -23,21 +44,18 @@ Handler.prototype.handleRequest = function (request){};
 var HandleFirstPage = function (){};
 HandleFirstPage.prototype = new Handler();
 HandleFirstPage.prototype.handleRequest = function (request) {
-    console.log("request.pages.length === 1", request.pages.length === 1)
     if (request.index === 0){
         var page = request.pages[0];
-        console.log("@page", page, request.pages)
         Commander.execute('unwrap', page)
     }
     this.next.handleRequest(request)
 }
 
 /////////////////      Strategy  1    /////////////////////
-var CheckIfPageFinished = function (){}
-CheckIfPageFinished.prototype = new Handler();
-CheckIfPageFinished.prototype.handleRequest = function (request){
+var ChangeCreateNewPage = function (){}
+ChangeCreateNewPage.prototype = new Handler();
+ChangeCreateNewPage.prototype.handleRequest = function (request){
     if(request.isPageFinished){
-        console.log("CheckIfPageFinished")
         Commander.execute('createNewPage', {
             print: request.print,
             pages: request.pages,
@@ -54,8 +72,8 @@ CheckIfPageFinished.prototype.handleRequest = function (request){
 var AddWidgetAndContinue = function (){}
 AddWidgetAndContinue.prototype = new Handler();
 AddWidgetAndContinue.prototype.handleRequest = function (request){
+
     if(request.debt <= 0){
-        console.log("AddWidgetAndContinue")
         Commander.execute('appendWidget', request.pages, request.items[request.index])
         if (request.index+1 === request.items.length) {
             Commander.execute('addFooter', request.pages, request.mode, request.print)
@@ -69,7 +87,6 @@ AddWidgetAndContinue.prototype.handleRequest = function (request){
 var ScaleDownWidgets = function (){}
 ScaleDownWidgets.prototype = new Handler();
 ScaleDownWidgets.prototype.handleRequest = function (request){
-    console.log("ScaleDownWidgets", {ts:  request.scaleDownThreshold, debt: request.debt})
     if(request.debt <= request.scaleDownThreshold){
         Commander.execute('appendWidget', request.pages, request.items[request.index]);
         Commander.execute('addFooter', request.pages, request.mode, request.print);
@@ -84,7 +101,6 @@ ScaleDownWidgets.prototype.handleRequest = function (request){
 var RemoveFooter = function (){}
 RemoveFooter.prototype = new Handler();
 RemoveFooter.prototype.handleRequest = function (request){
-    console.log("RemoveFooter", {ts:  request.removeFooterThreshold, debt: request.debt})
 
     if(request.debt <= request.removeFooterThreshold){
         var page = request.pages[request.pages.length-1];
@@ -103,10 +119,16 @@ RemoveFooter.prototype.handleRequest = function (request){
 }
 
 /////////////////      Strategy  6   /////////////////////
-var Default = function (){}
-Default.prototype = new Handler();
-Default.prototype.handleRequest = function (request){
-    console.log("DefaultAssignment")
+var DefaultAddAndCreatePage = function (){}
+DefaultAddAndCreatePage.prototype = new Handler();
+DefaultAddAndCreatePage.prototype.handleRequest = function (request){
+    Commander.execute('createNewPage', {
+        print: request.print,
+        pages: request.pages,
+        mode: request.mode
+    });
+    Commander.execute('resetPageStatus')
+    Commander.execute('appendWidget', request.pages, request.items[request.index])
     Commander.execute('addFooter', request.pages, request.mode, request.print);
     Commander.execute('finishPage')
     return ;
@@ -114,7 +136,6 @@ Default.prototype.handleRequest = function (request){
 var HandleSignature = function (){}
 HandleSignature.prototype = new Handler();
 HandleSignature.prototype.handleRequest = function (request){
-    console.log("PRE", request.index + 1 === request.items.length, request.index + 1, request.items.length)
     if(request.index + 1 === request.items.length){
         var widget = request.items[request.index];
         var template = {
@@ -135,27 +156,3 @@ HandleSignature.prototype.handleRequest = function (request){
 }
 
 
-//Chain of responsibility for widgets assignments
-var chain = {
-    handle: function (request) {
-        var handleFirstPage = new HandleFirstPage();
-        var handlePageFinished = new CheckIfPageFinished();
-        /*var scaleDownSingleWidget = new ScaleDownSingleWidgetX();*/
-        var addWidgetAndContinue = new AddWidgetAndContinue();
-        var scaleDownWidgets = new ScaleDownWidgets();
-        var removeFooter = new RemoveFooter();
-        var defaultAssignment = new Default();
-        var handleSignature = new HandleSignature();
-
-        handlePageFinished
-            .setNext(handleFirstPage)
-            .setNext(handleSignature)
-            .setNext(addWidgetAndContinue)
-            .setNext(scaleDownWidgets)
-/*            .setNext(scaleDownSingleWidget)*/
-            .setNext(removeFooter)
-            .setNext(defaultAssignment);
-
-        handlePageFinished.handleRequest(request);
-    }
-}

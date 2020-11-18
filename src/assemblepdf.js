@@ -39,7 +39,6 @@ function mmToPx(value, factor = 3.7795275591) {
     return Math.floor(value * factor)
 }
 
-console.log("A4", {w: mmToPx(A4.w), h: mmToPx(A4.h)});
 var default_page_height = mmToPx(A4.h)
 var default_page_width = mmToPx(A4.w) /*(window.customSize)? window.customSize : 1056;*/
 var constants = {
@@ -54,7 +53,6 @@ var constants = {
     DEFAULT_SCALE_DOWN: default_page_height*0.1
 }
 
-console.log("2",constants)
 /*
 * Execute program when document loads.
 * */
@@ -86,6 +84,6 @@ window.onload = function () {
     if (mode === 'landscape'){
         Commander.execute('transformToLandscape', print, pages);
     }
-    Commander.execute('hideRemainingElements');
+    // Commander.execute('hideRemainingElements');
     Commander.execute('markDocAsReady');
 }

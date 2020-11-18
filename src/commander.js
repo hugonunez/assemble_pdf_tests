@@ -133,7 +133,6 @@ var Commander = {
                 element.style.border = '1px solid ' + color
             },
             makeFooterAndWrapper: function (props){
-                console.log("LENGTH", props)
                 var footerWrapper = document.createElement('div');
                 var rightSection = document.createElement('small');
                 var footerSignature = document.createElement('small');
@@ -176,7 +175,6 @@ var Commander = {
                 document.querySelector("#main > div.mail__container").style.display = "none";
             },
             markDocAsReady: function() {
-                console.log('---------------------- COMPLETE------------------------');
 
                 if (window.pdfdone) {
                     window.pdfdone();
