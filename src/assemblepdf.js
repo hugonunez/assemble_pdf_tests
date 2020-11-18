@@ -57,6 +57,10 @@ var constants = {
 * Execute program when document loads.
 * */
 window.onload = function () {
+    var state =  {
+        isPageFinished: false,
+        sumOfHeights: 0
+    }
     var widgets = document.querySelectorAll(constants.ALL_WIDGETS_SELECTOR);
     var print = document.getElementById(constants.PRINT_SELECTOR);
     var pages = Commander.execute('nodeListToIterable', document.querySelectorAll(constants.ALL_PAGES_SELECTOR));
@@ -64,11 +68,11 @@ window.onload = function () {
 
     for (var i = 0; i < widgets.length; i++) {
         var itemHeight = widgets[i].offsetHeight;
-        var debt = (Commander.state.sumOfHeights + itemHeight) - constants.PAGE_HEIGHT ;
+        var debt = ( Commander.state.sumOfHeights + itemHeight) - constants.PAGE_HEIGHT ;
         var request = {
             index: i,
             items: widgets,
-            isPageFinished: Commander.state.isPageFinished,
+            isPageFinished: state.isPageFinished,
             pageHeight: constants.PAGE_HEIGHT,
             pageWidth: constants.PAGE_WIDTH,
             pages: pages,
@@ -77,13 +81,14 @@ window.onload = function () {
             itemHeight: itemHeight,
             debt: debt,
             removeFooterThreshold: constants.DEFAULT_SKIP_FOOTER_THRESHOLD,
-            scaleDownThreshold: constants.DEFAULT_SCALE_DOWN
+            scaleDownThreshold: constants.DEFAULT_SCALE_DOWN,
+            state
         }
         chain.handle(request)
     }
     if (mode === 'landscape'){
         Commander.execute('transformToLandscape', print, pages);
     }
-    // Commander.execute('hideRemainingElements');
+    Commander.execute('hideRemainingElements');
     Commander.execute('markDocAsReady');
 }

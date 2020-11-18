@@ -2,10 +2,6 @@
 * Command dispatcher
 * */
 var Commander = {
-    state: {
-        isPageFinished: false,
-        sumOfHeights: 0
-    },
     execute: function ( command ) {
         /*
         * Commands collection
@@ -47,8 +43,8 @@ var Commander = {
             formatScale: function(scale){
                 return 'scale('+scale+')'
             },
-            resetPageStatus: function () {
-                Commander.state.isPageFinished = false;
+            resetPageStatus: function (state) {
+                state.isPageFinished = false;
             },
             scalePage: function (props) {
 
@@ -80,18 +76,18 @@ var Commander = {
                 }
                 return pageWrapper;
             },
-            scaleDownWidget: function (widget, customScale) {
-                var scale = constants.PAGE_HEIGHT/ (Commander.state.sumOfHeights);
+            scaleDownWidget: function (state, widget, customScale) {
+                var scale = constants.PAGE_HEIGHT/ (state.sumOfHeights);
                 if (customScale){
                     scale = customScale
                 }
                 widget.style['transform'] = Commander.execute('formatScale', scale)
             },
-            finishPage: function () {
-                Commander.state.sumOfHeights = 0;
-                Commander.state.isPageFinished = true;
+            finishPage: function (state) {
+                state.sumOfHeights = 0;
+                state.isPageFinished = true;
             },
-            addFooter: function (page, mode) {
+            addFooter: function (state, page, mode) {
                 var footerWrapper = document.createElement('div');
                 var footerSignature = document.createElement('small');
                 footerWrapper.classList.add('footer')
@@ -99,12 +95,12 @@ var Commander = {
                 footerWrapper.appendChild(Commander.execute('makeSeparator'));
                 footerWrapper.appendChild(footerSignature)
                 var footerTuple = [footerWrapper, footerWrapper]
-                Commander.state.sumOfHeights += footerTuple[0].offsetHeight;
+                state.sumOfHeights += footerTuple[0].offsetHeight;
                 page.appendChild(footerTuple[0]);
             },
-            appendWidget: function (pages, widget) {
+            appendWidget: function (state, pages, widget) {
                 var page = pages[pages.length -1];
-                Commander.execute('addHeight', widget.offsetHeight)
+                state.sumOfHeights += height
       /*          widget.style.border = '1px dashed red'*/
                 widget.classList.remove('mail__widget')
                 widget.classList.add('widget')
@@ -119,9 +115,6 @@ var Commander = {
                 const separator = document.createElement('hr');
                 separator.style['border-top'] = '2px solid grey'
                 return separator
-            },
-            addHeight: function (height){
-                Commander.state.sumOfHeights += height
             },
             addBorder: function (element, color) {
                 element.style.border = '1px solid ' + color

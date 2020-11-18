@@ -81,7 +81,7 @@ ChangeCreateNewPage.prototype.handleRequest = function (request){
             pages: request.pages,
             mode: request.mode
         });
-        Commander.execute('resetPageStatus')
+        Commander.execute('resetPageStatus', state)
     }
     this.next.handleRequest(request);
 }
@@ -94,9 +94,9 @@ AddWidgetAndContinue.prototype = new Handler();
 AddWidgetAndContinue.prototype.handleRequest = function (request){
 
     if(request.debt <= 0){
-        Commander.execute('appendWidget', request.pages, request.items[request.index])
+        Commander.execute('appendWidget', request.state, request.pages, request.items[request.index])
         if (request.index+1 === request.items.length) {
-            Commander.execute('addFooter', request.pages[request.pages.length -1], request.mode)
+            Commander.execute('addFooter', request.state, request.pages[request.pages.length -1], request.mode)
         }
         return ;
     }
@@ -108,11 +108,11 @@ var ScaleDownWidgets = function (){}
 ScaleDownWidgets.prototype = new Handler();
 ScaleDownWidgets.prototype.handleRequest = function (request){
     if(request.debt <= request.scaleDownThreshold){
-        Commander.execute('appendWidget', request.pages, request.items[request.index]);
-        Commander.execute('addFooter', request.pages[request.pages.length -1], request.mode)
-        Commander.execute('scaleDownWidget', request.items[request.index-1]);
-        Commander.execute('scaleDownWidget', request.items[request.index]);
-        Commander.execute('finishPage');
+        Commander.execute('appendWidget',request.state,  request.pages, request.items[request.index]);
+        Commander.execute('addFooter', request.state, request.pages[request.pages.length -1], request.mode)
+        Commander.execute('scaleDownWidget', request.state, request.items[request.index-1]);
+        Commander.execute('scaleDownWidget', request.state, request.items[request.index]);
+        Commander.execute('finishPage', request.state);
     }
     this.next.handleRequest(request);
 }
@@ -148,8 +148,8 @@ DefaultAddAndCreatePage.prototype.handleRequest = function (request){
         mode: request.mode
     });
     Commander.execute('resetPageStatus')
-    Commander.execute('appendWidget', request.pages, request.items[request.index])
-    Commander.execute('addFooter', request.pages[request.pages.length -1], request.mode)
+    Commander.execute('appendWidget', request.state, request.pages, request.items[request.index])
+    Commander.execute('addFooter', request.state, request.pages[request.pages.length -1], request.mode)
     Commander.execute('finishPage')
     return ;
 }
