@@ -2,14 +2,14 @@
 var chain = {
     handle: function (request) {
 
-        var handleCreateNewPage = new ChangeCreateNewPage();
+        var handleNewPage = new handleCreateNewPage();
         var addWidgetAndContinue = new AddWidgetAndContinue();
         var scaleDownWidgets = new ScaleDownWidgets();
         var removeFooter = new RemoveFooter();
         var defaultAssignment = new DefaultAddAndCreatePage();
 
 
-        handleCreateNewPage
+        handleNewPage
           
             .setNext(addWidgetAndContinue)
             .setNext(scaleDownWidgets)
@@ -19,12 +19,13 @@ var chain = {
         //repair work (handle width values)
         var handleFirstPage = new HandleFirstPage();
         var handleSignature = new HandleSignature();
-        var handleWidgetSize = new HandleWidgetSize()
+        var handleWidgetSize = new HandleWidgetSize();
+
         handleWidgetSize
             .setNext(handleFirstPage)
             .setNext(handleSignature)
-            
-        handleCreateNewPage.handleRequest(request);
+
+        handleNewPage.handleRequest(request);
         handleWidgetSize.handleRequest(request)
     }
 }
@@ -48,7 +49,26 @@ Handler.prototype.handleRequest = function (request){};
 /*
 * Define Strategies to assign widgets
 * */
+var HandleSingleWidgetInPage = function (){};
+HandleSingleWidgetInPage.prototype = new Handler();
+HandleSingleWidgetInPage.prototype.handleRequest = function (request) {
+    var page = request.items[request.index].parentNode;
+    var nitems = page.childElementCount;
+    console.log("nitems",request.index, nitems, page)
 
+    if (nitems == 1){
+        Commander.execute('addFooter', request.state, page, request.pageWidth)
+        var template = {
+            'grid-template-areas':'"widget"\n' +
+                                '"footer"',
+            'gap': '0em',
+            'grid-template-rows': "auto 76px",
+            'align-items': 'center'
+        };
+        Commander.execute('setStyle', page, template)
+    }
+    this.next.handleRequest(request)
+}
 var HandleWidgetSize = function (){};
 HandleWidgetSize.prototype = new Handler();
 HandleWidgetSize.prototype.handleRequest = function (request) {
@@ -74,9 +94,9 @@ HandleFirstPage.prototype.handleRequest = function (request) {
 }
 
 /////////////////      Strategy  1    /////////////////////
-var ChangeCreateNewPage = function (){}
-ChangeCreateNewPage.prototype = new Handler();
-ChangeCreateNewPage.prototype.handleRequest = function (request){
+var handleCreateNewPage = function (){}
+handleCreateNewPage.prototype = new Handler();
+handleCreateNewPage.prototype.handleRequest = function (request){
     if(request.state.isPageFinished){
         Commander.execute('createNewPage', {
             print: request.print,
@@ -96,10 +116,12 @@ AddWidgetAndContinue.prototype = new Handler();
 AddWidgetAndContinue.prototype.handleRequest = function (request){
 
     if(request.debt <= 0){
+        console.log("AddWidgetAndContinue", {request})
         Commander.execute('appendWidget', request.state, request.pages, request.items[request.index])
         if (request.index+1 === request.items.length) {
             Commander.execute('addFooter', request.state, request.pages[request.pages.length -1], request.pageWidth)
         }
+
         return ;
     }
     this.next.handleRequest(request);
@@ -123,8 +145,10 @@ ScaleDownWidgets.prototype.handleRequest = function (request){
 var RemoveFooter = function (){}
 RemoveFooter.prototype = new Handler();
 RemoveFooter.prototype.handleRequest = function (request){
-
     if(request.debt <= request.removeFooterThreshold){
+        console.log("RemoveFooter", {request})
+
+
         var page = request.pages[request.pages.length-1];
         var footer = page.querySelector('.footer')
         footer.remove()
@@ -149,6 +173,15 @@ DefaultAddAndCreatePage.prototype.handleRequest = function (request){
         pages: request.pages,
         mode: request.mode
     });
+    var page = request.pages[request.pages.length-1];
+    var template = {
+        'grid-template-areas':'"widget"\n' +
+                            '"footer"',
+        'gap': '0em',
+        'grid-template-rows': "auto 76px",
+        'align-items': 'center'
+    };
+    Commander.execute('setStyle', page, template)
     Commander.execute('resetPageStatus', request.state)
     Commander.execute('appendWidget', request.state, request.pages, request.items[request.index])
     Commander.execute('addFooter', request.state, request.pages[request.pages.length -1], request.pageWidth)

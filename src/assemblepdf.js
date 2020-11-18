@@ -59,7 +59,7 @@ var constants = {
 window.onload = function () {
     var state =  {
         isPageFinished: false,
-        sumOfHeights: 0
+        sumOfHeights: 0,
     }
     var widgets = document.querySelectorAll(constants.ALL_WIDGETS_SELECTOR);
     var print = document.getElementById(constants.PRINT_SELECTOR);

@@ -87,6 +87,7 @@ var Commander = {
             finishPage: function (state) {
                 state.sumOfHeights = 0;
                 state.isPageFinished = true;
+                
             },
             addFooter: function (state, page, width) {
                 var footer = document.createElement('div');
