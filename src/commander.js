@@ -88,18 +88,18 @@ var Commander = {
                 state.sumOfHeights = 0;
                 state.isPageFinished = true;
             },
-            addFooter: function (state, page, mode) {
-                var footerWrapper = document.createElement('div');
+            addFooter: function (state, page, width) {
+                var footer = document.createElement('div');
                 var footerSignature = document.createElement('small');
                 var separator = document.createElement('hr');
-                separator.style['border-top'] = '2px solid grey'
-                footerWrapper.classList.add('footer')
+      
+                footer.classList.add('footer')
+                footer.style.width=width+'px'
                 footerSignature.innerHTML = 'SEARS 2020';
-                footerWrapper.appendChild(separator);
-                footerWrapper.appendChild(footerSignature)
-                var footerTuple = [footerWrapper, footerWrapper]
-                state.sumOfHeights += footerTuple[0].offsetHeight;
-                page.appendChild(footerTuple[0]);
+                footer.appendChild(separator);
+                footer.appendChild(footerSignature)
+                state.sumOfHeights += footer.offsetHeight;
+                page.appendChild(footer);
             },
             appendWidget: function (state, pages, widget) {
                 var page = pages[pages.length -1];

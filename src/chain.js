@@ -96,7 +96,7 @@ AddWidgetAndContinue.prototype.handleRequest = function (request){
     if(request.debt <= 0){
         Commander.execute('appendWidget', request.state, request.pages, request.items[request.index])
         if (request.index+1 === request.items.length) {
-            Commander.execute('addFooter', request.state, request.pages[request.pages.length -1], request.mode)
+            Commander.execute('addFooter', request.state, request.pages[request.pages.length -1], request.pageWidth)
         }
         return ;
     }
@@ -149,7 +149,7 @@ DefaultAddAndCreatePage.prototype.handleRequest = function (request){
     });
     Commander.execute('resetPageStatus', request.state)
     Commander.execute('appendWidget', request.state, request.pages, request.items[request.index])
-    Commander.execute('addFooter', request.state, request.pages[request.pages.length -1], request.mode)
+    Commander.execute('addFooter', request.state, request.pages[request.pages.length -1], request.pageWidth)
     Commander.execute('finishPage', request.state)
     return ;
 }
