@@ -55,7 +55,7 @@ HandleWidgetSize.prototype.handleRequest = function (request) {
     console.log({width: widget.offsetWidth, w2: widget.width, condition, widget})
     if (condition){
         var page = request.pages[0];
-        Commander.execute('scaleDownWidget', widget, (request.pageWidth / widget.offsetWidth))
+        Commander.execute('scaleDownWidget', request.state, widget, (request.pageWidth / widget.offsetWidth))
     }
     this.next.handleRequest(request)
 }
@@ -75,13 +75,13 @@ HandleFirstPage.prototype.handleRequest = function (request) {
 var ChangeCreateNewPage = function (){}
 ChangeCreateNewPage.prototype = new Handler();
 ChangeCreateNewPage.prototype.handleRequest = function (request){
-    if(request.isPageFinished){
+    if(request.state.isPageFinished){
         Commander.execute('createNewPage', {
             print: request.print,
             pages: request.pages,
             mode: request.mode
         });
-        Commander.execute('resetPageStatus', state)
+        Commander.execute('resetPageStatus', request.state)
     }
     this.next.handleRequest(request);
 }
@@ -147,10 +147,10 @@ DefaultAddAndCreatePage.prototype.handleRequest = function (request){
         pages: request.pages,
         mode: request.mode
     });
-    Commander.execute('resetPageStatus')
+    Commander.execute('resetPageStatus', request.state)
     Commander.execute('appendWidget', request.state, request.pages, request.items[request.index])
     Commander.execute('addFooter', request.state, request.pages[request.pages.length -1], request.mode)
-    Commander.execute('finishPage')
+    Commander.execute('finishPage', request.state)
     return ;
 }
 var HandleSignature = function (){}

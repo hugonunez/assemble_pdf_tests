@@ -68,11 +68,10 @@ window.onload = function () {
 
     for (var i = 0; i < widgets.length; i++) {
         var itemHeight = widgets[i].offsetHeight;
-        var debt = ( Commander.state.sumOfHeights + itemHeight) - constants.PAGE_HEIGHT ;
+        var debt = ( state.sumOfHeights + itemHeight) - constants.PAGE_HEIGHT ;
         var request = {
             index: i,
             items: widgets,
-            isPageFinished: state.isPageFinished,
             pageHeight: constants.PAGE_HEIGHT,
             pageWidth: constants.PAGE_WIDTH,
             pages: pages,

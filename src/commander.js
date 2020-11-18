@@ -77,6 +77,7 @@ var Commander = {
                 return pageWrapper;
             },
             scaleDownWidget: function (state, widget, customScale) {
+                console.log("scaledownwidget", state, widget, customScale)
                 var scale = constants.PAGE_HEIGHT/ (state.sumOfHeights);
                 if (customScale){
                     scale = customScale
@@ -90,9 +91,11 @@ var Commander = {
             addFooter: function (state, page, mode) {
                 var footerWrapper = document.createElement('div');
                 var footerSignature = document.createElement('small');
+                var separator = document.createElement('hr');
+                separator.style['border-top'] = '2px solid grey'
                 footerWrapper.classList.add('footer')
                 footerSignature.innerHTML = 'SEARS 2020';
-                footerWrapper.appendChild(Commander.execute('makeSeparator'));
+                footerWrapper.appendChild(separator);
                 footerWrapper.appendChild(footerSignature)
                 var footerTuple = [footerWrapper, footerWrapper]
                 state.sumOfHeights += footerTuple[0].offsetHeight;
@@ -100,7 +103,7 @@ var Commander = {
             },
             appendWidget: function (state, pages, widget) {
                 var page = pages[pages.length -1];
-                state.sumOfHeights += height
+                state.sumOfHeights +=  widget.offsetHeight
       /*          widget.style.border = '1px dashed red'*/
                 widget.classList.remove('mail__widget')
                 widget.classList.add('widget')
@@ -110,11 +113,6 @@ var Commander = {
                 widget.cssText = 'margin: 0; padding: 0;'
 
                 page.appendChild(widget);
-            },
-            makeSeparator: function(width) {
-                const separator = document.createElement('hr');
-                separator.style['border-top'] = '2px solid grey'
-                return separator
             },
             addBorder: function (element, color) {
                 element.style.border = '1px solid ' + color
