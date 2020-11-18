@@ -9,6 +9,8 @@ var chain = {
         var removeFooter = new RemoveFooter();
         var defaultAssignment = new DefaultAddAndCreatePage();
 
+
+        //repair work (handle X values)
         handleCreateNewPage
             .setNext(handleFirstPage)
             .setNext(handleSignature)
@@ -17,7 +19,11 @@ var chain = {
             .setNext(removeFooter)
             .setNext(defaultAssignment);
 
-            handleCreateNewPage.handleRequest(request);
+        //repair work (handle width values)
+        var handleWidgetSize = new HandleWidgetSize()
+        
+        handleCreateNewPage.handleRequest(request);
+        handleWidgetSize.handleRequest(request)
     }
 }
 
@@ -40,6 +46,20 @@ Handler.prototype.handleRequest = function (request){};
 /*
 * Define Strategies to assign widgets
 * */
+
+var HandleWidgetSize = function (){};
+HandleWidgetSize.prototype = new Handler();
+HandleWidgetSize.prototype.handleRequest = function (request) {
+    var widget = request.items[request.index]
+    var condition = widget.offsetWidth >= request.pageWidth
+    console.log({width: widget.offsetWidth, w2: widget.width, condition, widget})
+    if (condition){
+        var page = request.pages[0];
+        Commander.execute('scaleDownWidget', widget, (request.pageWidth / widget.offsetWidth))
+    }
+    this.next.handleRequest(request)
+}
+
 
 var HandleFirstPage = function (){};
 HandleFirstPage.prototype = new Handler();

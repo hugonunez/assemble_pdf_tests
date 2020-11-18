@@ -175,6 +175,7 @@ var Commander = {
                 document.querySelector("#main > div.mail__container").style.display = "none";
             },
             markDocAsReady: function() {
+                console.log('---------------------- COMPLETE------------------------');
 
                 if (window.pdfdone) {
                     window.pdfdone();
