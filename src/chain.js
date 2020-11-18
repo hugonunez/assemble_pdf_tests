@@ -1,8 +1,7 @@
 //Chain of responsibility for widgets assignments
 var chain = {
     handle: function (request) {
-        var handleFirstPage = new HandleFirstPage();
-        var handleSignature = new HandleSignature();
+
         var handleCreateNewPage = new ChangeCreateNewPage();
         var addWidgetAndContinue = new AddWidgetAndContinue();
         var scaleDownWidgets = new ScaleDownWidgets();
@@ -10,18 +9,21 @@ var chain = {
         var defaultAssignment = new DefaultAddAndCreatePage();
 
 
-        //repair work (handle X values)
         handleCreateNewPage
-            .setNext(handleFirstPage)
-            .setNext(handleSignature)
+          
             .setNext(addWidgetAndContinue)
             .setNext(scaleDownWidgets)
             .setNext(removeFooter)
             .setNext(defaultAssignment);
 
         //repair work (handle width values)
+        var handleFirstPage = new HandleFirstPage();
+        var handleSignature = new HandleSignature();
         var handleWidgetSize = new HandleWidgetSize()
-        
+        handleWidgetSize
+            .setNext(handleFirstPage)
+            .setNext(handleSignature)
+            
         handleCreateNewPage.handleRequest(request);
         handleWidgetSize.handleRequest(request)
     }
