@@ -37,17 +37,6 @@ var Commander = {
                     parent.removeChild(wrapper);
                 })
             },
-          /*  makeLandscapeFooter: function(props) {
-                var tuple = Commander.execute('makeFooterAndWrapper', {pageIndex: props.pagesIndex[0], mode: 'landscape'});
-                //left section
-                var leftSection = document.createElement('small');
-
-                leftSection.innerHTML = 'Page ' + props.pagesIndex[1];
-                if (!props.noLastPage){
-                    tuple[1].appendChild(leftSection);
-                }
-                return tuple[0]
-            },*/
             nodeListToIterable: function(nodeList) {
                 var items = [];
                 for (var i = 0; i < nodeList.length; i++){
@@ -102,9 +91,14 @@ var Commander = {
                 Commander.state.sumOfHeights = 0;
                 Commander.state.isPageFinished = true;
             },
-            addFooter: function (pages, mode, print) {
-                var page = pages[pages.length -1];
-                var footerTuple = Commander.execute('makeFooterAndWrapper', {pageIndex: pages.length, mode: mode, width: page.offsetWidth});
+            addFooter: function (page, mode) {
+                var footerWrapper = document.createElement('div');
+                var footerSignature = document.createElement('small');
+                footerWrapper.classList.add('footer')
+                footerSignature.innerHTML = 'SEARS 2020';
+                footerWrapper.appendChild(Commander.execute('makeSeparator'));
+                footerWrapper.appendChild(footerSignature)
+                var footerTuple = [footerWrapper, footerWrapper]
                 Commander.state.sumOfHeights += footerTuple[0].offsetHeight;
                 page.appendChild(footerTuple[0]);
             },
@@ -131,44 +125,6 @@ var Commander = {
             },
             addBorder: function (element, color) {
                 element.style.border = '1px solid ' + color
-            },
-            makeFooterAndWrapper: function (props){
-                var footerWrapper = document.createElement('div');
-                var rightSection = document.createElement('small');
-                var footerSignature = document.createElement('small');
-                var customWidth = props.mode === 'landscape'? props.width*2: props.width;
-                footerWrapper.classList.add('footer')
-                //footer
-/*
-                footerWrapper.style['padding'] = '10px'
-                footerWrapper.style['font-weight'] = 'bold';
-                footerWrapper.style['margin-top'] = '10px';
-                footerWrapper.style['margin-bottom'] = '10px';
-                footerWrapper.style['display'] = 'flex';
-                footerWrapper.style['justify-content'] = 'space-between';
-*/
-
-          /*      //Signature
-                footerSignature.style['color'] = 'grey';
-                footerSignature.style['top'] = '10px';
-                footerSignature.style['left'] = '50%'
-                footerSignature.style['position'] = 'relative';
-                footerSignature.style['margin-left'] = 'auto';
-                footerSignature.style['margin-right'] = 'auto';
-                footerSignature.innerHTML = 'SEARS 2020';
-*/
-/*                if (props.mode === 'portrait'){
-                    rightSection.style['margin-right'] = '15px';
-                    rightSection.style['margin-left'] = 'auto';
-                }
-
-                rightSection.innerHTML = 'page ' + props.pageIndex;
-                footerWrapper.appendChild(rightSection);*/
-                footerSignature.innerHTML = 'SEARS 2020';
-                footerWrapper.appendChild(Commander.execute('makeSeparator'));
-                footerWrapper.appendChild(footerSignature)
-                var returnValue = [footerWrapper, footerWrapper] //INTERESANTE, no puedo retornar {footerWrapper, footer}?? o que sucede
-                return returnValue
             },
             hideRemainingElements: function() {
                 // Hide extra element

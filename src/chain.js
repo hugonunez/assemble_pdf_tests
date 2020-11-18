@@ -96,7 +96,7 @@ AddWidgetAndContinue.prototype.handleRequest = function (request){
     if(request.debt <= 0){
         Commander.execute('appendWidget', request.pages, request.items[request.index])
         if (request.index+1 === request.items.length) {
-            Commander.execute('addFooter', request.pages, request.mode, request.print)
+            Commander.execute('addFooter', request.pages[request.pages.length -1], request.mode)
         }
         return ;
     }
@@ -109,7 +109,7 @@ ScaleDownWidgets.prototype = new Handler();
 ScaleDownWidgets.prototype.handleRequest = function (request){
     if(request.debt <= request.scaleDownThreshold){
         Commander.execute('appendWidget', request.pages, request.items[request.index]);
-        Commander.execute('addFooter', request.pages, request.mode, request.print);
+        Commander.execute('addFooter', request.pages[request.pages.length -1], request.mode)
         Commander.execute('scaleDownWidget', request.items[request.index-1]);
         Commander.execute('scaleDownWidget', request.items[request.index]);
         Commander.execute('finishPage');
@@ -149,7 +149,7 @@ DefaultAddAndCreatePage.prototype.handleRequest = function (request){
     });
     Commander.execute('resetPageStatus')
     Commander.execute('appendWidget', request.pages, request.items[request.index])
-    Commander.execute('addFooter', request.pages, request.mode, request.print);
+    Commander.execute('addFooter', request.pages[request.pages.length -1], request.mode)
     Commander.execute('finishPage')
     return ;
 }
