@@ -67,21 +67,19 @@ window.onload = function () {
     var mode = 'portrait';
 
     for (var i = 0; i < widgets.length; i++) {
-        var itemHeight = widgets[i].offsetHeight;
-        var debt = ( state.sumOfHeights + itemHeight) - constants.PAGE_HEIGHT ;
+
         var request = {
-            index: i,
+            state,
+            print: print,
             items: widgets,
+            pages: pages,
+            index: i,
+            mode: mode,
+            //Constants
             pageHeight: constants.PAGE_HEIGHT,
             pageWidth: constants.PAGE_WIDTH,
-            pages: pages,
-            print: print,
-            mode: mode,
-            itemHeight: itemHeight,
-            debt: debt,
             removeFooterThreshold: constants.DEFAULT_SKIP_FOOTER_THRESHOLD,
             scaleDownThreshold: constants.DEFAULT_SCALE_DOWN,
-            state
         }
         chain.handle(request)
     }

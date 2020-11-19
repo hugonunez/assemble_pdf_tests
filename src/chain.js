@@ -10,13 +10,12 @@ var chain = {
 
 
         handleNewPage
-          
             .setNext(addWidgetAndContinue)
             .setNext(scaleDownWidgets)
             .setNext(removeFooter)
             .setNext(defaultAssignment);
 
-        //repair work (handle width values)
+        //repair work (handle width values and edge cases)
         var handleFirstPage = new HandleFirstPage();
         var handleSignature = new HandleSignature();
         var handleWidgetSize = new HandleWidgetSize();
@@ -114,8 +113,9 @@ handleCreateNewPage.prototype.handleRequest = function (request){
 var AddWidgetAndContinue = function (){}
 AddWidgetAndContinue.prototype = new Handler();
 AddWidgetAndContinue.prototype.handleRequest = function (request){
-
-    if(request.debt <= 0){
+    var itemHeight = request.items[request.index].offsetHeight;
+    var debt = ( request.state.sumOfHeights + itemHeight) - request.pageHeight ;
+    if(debt <= 0){
         console.log("AddWidgetAndContinue", {request})
         Commander.execute('appendWidget', request.state, request.pages, request.items[request.index])
         if (request.index+1 === request.items.length) {
@@ -131,7 +131,10 @@ AddWidgetAndContinue.prototype.handleRequest = function (request){
 var ScaleDownWidgets = function (){}
 ScaleDownWidgets.prototype = new Handler();
 ScaleDownWidgets.prototype.handleRequest = function (request){
-    if(request.debt <= request.scaleDownThreshold){
+    var itemHeight = request.items[request.index].offsetHeight;
+    var debt = ( request.state.sumOfHeights + itemHeight) - request.pageHeight ;
+    if(debt <= request.scaleDownThreshold){
+        console.log("ScaleDownWidgets", {index:request.index, sum: request.state.sumOfHeights, itemH: request.items[request.index].offsetHeight } )
         Commander.execute('appendWidget',request.state,  request.pages, request.items[request.index]);
         Commander.execute('addFooter', request.state, request.pages[request.pages.length -1], request.mode)
         Commander.execute('scaleDownWidget', request.state, request.items[request.index-1]);
@@ -145,9 +148,10 @@ ScaleDownWidgets.prototype.handleRequest = function (request){
 var RemoveFooter = function (){}
 RemoveFooter.prototype = new Handler();
 RemoveFooter.prototype.handleRequest = function (request){
-    if(request.debt <= request.removeFooterThreshold){
-        console.log("RemoveFooter", {request})
-
+    var itemHeight = request.items[request.index].offsetHeight;
+    var debt = ( request.state.sumOfHeights + itemHeight) - request.pageHeight ;
+    if(debt <= request.removeFooterThreshold){
+        console.log("RemoveFooter", {index:request.index, sum: request.state.sumOfHeights, itemH: request.items[request.index].offsetHeight } )
 
         var page = request.pages[request.pages.length-1];
         var footer = page.querySelector('.footer')
