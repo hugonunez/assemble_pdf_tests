@@ -85,15 +85,18 @@ var HandleFirstPage = function (){};
 HandleFirstPage.prototype = new Handler();
 HandleFirstPage.prototype.handleRequest = function (request) {
     if (request.index === 0){
-        var itemToDelete = request.print.firstElementChild;
+        var itemToDelete = request.pages[0].firstElementChild;
         console.log({itemToDelete})
-        request.print.removeChild(itemToDelete)
+        request.pages[0].removeChild(itemToDelete)
         Commander.execute('createNewPage', {
             print: request.print,
             pages: request.pages,
             mode: request.mode
         });
+        request.print.removeChild(request.print.firstElementChild)
+
     }
+
     this.next.handleRequest(request)
 }
 

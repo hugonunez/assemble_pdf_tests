@@ -43,7 +43,7 @@ var default_page_height = mmToPx(A4.h)
 var default_page_width = mmToPx(A4.w) /*(window.customSize)? window.customSize : 1056;*/
 var constants = {
     ALL_WIDGETS_SELECTOR: "#main > div.mail__container > div",
-    ALL_PAGES_SELECTOR: '#print > div.page > div',
+    ALL_PAGES_SELECTOR: '#print > div.page',
     TABLE_WIDGET_SELECTOR: "table.widget-product",
     ALL_MAIL_CONTAINERS: "#main > div.mail__container",
     PAGE_HEIGHT: default_page_height,
@@ -64,11 +64,10 @@ window.onload = function () {
     var widgets = document.querySelectorAll(constants.ALL_WIDGETS_SELECTOR);
     var print = document.getElementById(constants.PRINT_SELECTOR);
     var pages = Commander.execute('nodeListToIterable', document.querySelectorAll(constants.ALL_PAGES_SELECTOR));
-    var mode = 'portrait';
+    var mode = 'landscape';
 
     for (var i = 0; i < widgets.length; i++) {
-
-        var request = {
+        chain.handle({
             state,
             print: print,
             items: widgets,
@@ -80,8 +79,7 @@ window.onload = function () {
             pageWidth: constants.PAGE_WIDTH,
             removeFooterThreshold: constants.DEFAULT_SKIP_FOOTER_THRESHOLD,
             scaleDownThreshold: constants.DEFAULT_SCALE_DOWN,
-        }
-        chain.handle(request)
+        })
     }
     if (mode === 'landscape'){
         Commander.execute('transformToLandscape', print, pages);

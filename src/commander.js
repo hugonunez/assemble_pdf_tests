@@ -126,7 +126,7 @@ var Commander = {
                 window.status = 'ready';
             },
             transformToLandscape: function (print, pages) {
-                for (var i=0; i < pages.length; i+=2) {
+                for (var i=1; i < pages.length; i+=2) {
                     var landscapePage = document.createElement('div')
                     landscapePage.classList.add('landscape-page')
                     landscapePage.appendChild(pages[i])
