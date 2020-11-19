@@ -87,7 +87,8 @@ HandleFirstPage.prototype = new Handler();
 HandleFirstPage.prototype.handleRequest = function (request) {
     if (request.index === 0){
         var page = request.pages[0];
-        Commander.execute('unwrap', page)
+        var frag = Commander.execute('unwrap', page)
+        console.log({frag})
     }
     this.next.handleRequest(request)
 }

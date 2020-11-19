@@ -24,14 +24,16 @@ var Commander = {
 
             },
             unwrap: function (wrapper) {
+                var clone = wrapper.cloneNode();
+                var fragment = document.createDocumentFragment()
                 var parent = wrapper.parentNode;
 
-                setTimeout(function (){
-                    while (wrapper.firstChild) {
-                        parent.insertBefore(wrapper.firstChild, wrapper);
+                    while (clone.firstChild) {
+                        // parent.insertBefore(wrapper.firstChild, wrapper);
+                        fragment.appendChild(clone.firstChild)
                     }
-                    parent.removeChild(wrapper);
-                })
+                    // parent.removeChild(wrapper);
+                return fragment
             },
             nodeListToIterable: function(nodeList) {
                 var items = [];
@@ -62,20 +64,7 @@ var Commander = {
              /*   page.style.border = '1px solid green';*/
                 return page;
             },
-            createLandscapePage: function (props) {
-                var page1 = props.pages[0];
-                var page2 = props.pages[1];
-                var pageWrapper = document.createElement("div");
-                pageWrapper.style['display'] = 'flex';
-                pageWrapper.style['align-items'] = 'center';
-                pageWrapper.style['justify-content'] = 'center';
-                pageWrapper.setAttribute('class', 'pdf-page-landscape');
-                pageWrapper.appendChild(page1);
-                if (page2) {
-                    pageWrapper.appendChild(page2);
-                }
-                return pageWrapper;
-            },
+
             scaleDownWidget: function (state, widget, customScale) {
                 console.log("scaledownwidget", state, widget, customScale)
                 var scale = constants.PAGE_HEIGHT/ (state.sumOfHeights);
@@ -136,21 +125,15 @@ var Commander = {
                 window.status = 'ready';
             },
             transformToLandscape: function (print, pages) {
+                print.innerHTML = ''
                 for (var i=0; i < pages.length; i+=2) {
                     var landscapePage = document.createElement('div')
                     landscapePage.classList.add('landscape-page')
                
-                    if (i ==0) {
-                        var clone = print.firstChild;
-                        landscapePage.appendChild(clone)
-                        Commander.execute('setStyle', pages[i], {position: '2/1'})
-                 
-
-                    }else {
-                      landscapePage.appendChild(pages[i])  
+          
+                    landscapePage.appendChild(pages[i])  
                     Commander.execute('setStyle', pages[i], {position: '2/1'})
 
-                    }
 
                     if (pages[i+1]){
                         landscapePage.appendChild(pages[i+1])
@@ -159,7 +142,9 @@ var Commander = {
                     }
                     print.appendChild(landscapePage)
                 }
-
+                setTimeout(function(){
+                
+                }, 5000)
       /*          var pages_tuples = [];
                 for (var i=0; i < pages.length; i+=2) {
                     var sumOfWidths = pages[i].offsetWidth;
