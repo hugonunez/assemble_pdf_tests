@@ -136,26 +136,30 @@ var Commander = {
                 window.status = 'ready';
             },
             transformToLandscape: function (print, pages) {
-                var pages_tuples = [];
                 for (var i=0; i < pages.length; i+=2) {
-                    pages_tuples.push([pages[i], pages[i+1]]);
-                }
-                console.log({pages_tuples})
-                for (var i=0; i< pages_tuples.length; i++){
                     var landscapePage = document.createElement('div')
                     landscapePage.classList.add('landscape-page')
-                    var page1 = pages_tuples[i][0]
-                    var page2 = pages_tuples[i][1]
-                    landscapePage.appendChild(page1)
-                    Commander.execute('setStyle', page1, {position: '2/1'})
+               
+                    if (i ==0) {
+                        var clone = print.firstChild;
+                        landscapePage.appendChild(clone)
+                        Commander.execute('setStyle', pages[i], {position: '2/1'})
+                 
 
-                    if (page2){
-                        landscapePage.appendChild(page2)
-                        Commander.execute('setStyle', page2, {position: '3/2'})
+                    }else {
+                      landscapePage.appendChild(pages[i])  
+                    Commander.execute('setStyle', pages[i], {position: '2/1'})
+
+                    }
+
+                    if (pages[i+1]){
+                        landscapePage.appendChild(pages[i+1])
+                        Commander.execute('setStyle', pages[i+1], {position: '3/2'})
 
                     }
                     print.appendChild(landscapePage)
                 }
+
       /*          var pages_tuples = [];
                 for (var i=0; i < pages.length; i+=2) {
                     var sumOfWidths = pages[i].offsetWidth;
