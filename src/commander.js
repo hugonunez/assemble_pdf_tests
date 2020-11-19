@@ -138,6 +138,26 @@ var Commander = {
             transformToLandscape: function (print, pages) {
                 var pages_tuples = [];
                 for (var i=0; i < pages.length; i+=2) {
+                    pages_tuples.push([pages[i], pages[i+1]]);
+                }
+                console.log({pages_tuples})
+                for (var i=0; i< pages_tuples.length; i++){
+                    var landscapePage = document.createElement('div')
+                    landscapePage.classList.add('landscape-page')
+                    var page1 = pages_tuples[i][0]
+                    var page2 = pages_tuples[i][1]
+                    landscapePage.appendChild(page1)
+                    Commander.execute('setStyle', page1, {position: '2/1'})
+
+                    if (page2){
+                        landscapePage.appendChild(page2)
+                        Commander.execute('setStyle', page2, {position: '3/2'})
+
+                    }
+                    print.appendChild(landscapePage)
+                }
+      /*          var pages_tuples = [];
+                for (var i=0; i < pages.length; i+=2) {
                     var sumOfWidths = pages[i].offsetWidth;
                     if ( pages[i+1]) {
                         sumOfWidths += pages[i+1].offsetWidth
@@ -151,8 +171,8 @@ var Commander = {
                 for (var i=0; i< pages_tuples.length; i++){
                     var landScape = Commander.execute("createLandscapePage", {pages: pages_tuples[i]});
                     print.appendChild(landScape);
-           /*         print.appendChild(Commander.execute('makeLandscapeFooter', {pagesIndex: [i+i +1, i+i+2], noLastPage: !pages_tuples[i][1], mode: 'landscape'}))*/
-                }
+           /!*         print.appendChild(Commander.execute('makeLandscapeFooter', {pagesIndex: [i+i +1, i+i+2], noLastPage: !pages_tuples[i][1], mode: 'landscape'}))*!/
+                }*/
 
             }
         }
