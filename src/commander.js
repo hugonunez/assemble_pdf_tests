@@ -26,15 +26,13 @@ var Commander = {
             unwrap: function (wrapper) {
                 // place childNodes in document fragment
                 var docFrag = document.createDocumentFragment();
-                setTimeout(function (){
-                    while (wrapper.firstChild) {
-                        var child = wrapper.removeChild(wrapper.firstChild);
-                        docFrag.appendChild(child);
-                    }
+                while (wrapper.firstChild) {
+                    var child = wrapper.removeChild(wrapper.firstChild);
+                    docFrag.appendChild(child);
+                }
 
-                    // replace wrapper with document fragment
-                    wrapper.parentNode.replaceChild(docFrag, wrapper);
-                })
+                // replace wrapper with document fragment
+                wrapper.parentNode.replaceChild(docFrag, wrapper);
             },
             nodeListToIterable: function(nodeList) {
                 var items = [];
@@ -128,43 +126,19 @@ var Commander = {
                 window.status = 'ready';
             },
             transformToLandscape: function (print, pages) {
-                print.innerHTML = ''
                 for (var i=0; i < pages.length; i+=2) {
                     var landscapePage = document.createElement('div')
                     landscapePage.classList.add('landscape-page')
-               
-          
-                    landscapePage.appendChild(pages[i])  
+                    landscapePage.appendChild(pages[i])
                     Commander.execute('setStyle', pages[i], {position: '2/1'})
-
-
                     if (pages[i+1]){
                         landscapePage.appendChild(pages[i+1])
                         Commander.execute('setStyle', pages[i+1], {position: '3/2'})
 
                     }
                     print.appendChild(landscapePage)
+                    console.log("@pages2", pages)
                 }
-                setTimeout(function(){
-                
-                }, 5000)
-      /*          var pages_tuples = [];
-                for (var i=0; i < pages.length; i+=2) {
-                    var sumOfWidths = pages[i].offsetWidth;
-                    if ( pages[i+1]) {
-                        sumOfWidths += pages[i+1].offsetWidth
-                        Commander.execute("scalePage", {page: pages[i], scale: constants.PAGE_HEIGHT/sumOfWidths})
-                        Commander.execute("scalePage", {page: pages[i+1], scale: constants.PAGE_HEIGHT/sumOfWidths})
-                    }
-
-                    pages_tuples.push([pages[i], pages[i+1]]);
-                }
-                print.innerHTML = ''
-                for (var i=0; i< pages_tuples.length; i++){
-                    var landScape = Commander.execute("createLandscapePage", {pages: pages_tuples[i]});
-                    print.appendChild(landScape);
-           /!*         print.appendChild(Commander.execute('makeLandscapeFooter', {pagesIndex: [i+i +1, i+i+2], noLastPage: !pages_tuples[i][1], mode: 'landscape'}))*!/
-                }*/
 
             }
         }
