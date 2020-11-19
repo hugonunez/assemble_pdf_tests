@@ -61,7 +61,7 @@ HandleSingleWidgetInPage.prototype.handleRequest = function (request) {
             'grid-template-areas':'"widget"\n' +
                                 '"footer"',
             'gap': '0em',
-            'grid-template-rows': "auto 76px",
+            'grid-template-rows': "1fr 76px",
             'align-items': 'center'
         };
         Commander.execute('setStyle', page, template)
@@ -75,8 +75,7 @@ HandleWidgetSize.prototype.handleRequest = function (request) {
     var condition = widget.offsetWidth >= request.pageWidth
     console.log({width: widget.offsetWidth, w2: widget.width, condition, widget})
     if (condition){
-        var page = request.pages[0];
-        Commander.execute('scaleDownWidget', request.state, widget, (request.pageWidth / widget.offsetWidth))
+        Commander.execute('scaleDownWidget', request.state, widget, (request.pageWidth / widget.offsetWidth)*0.99)
     }
     this.next.handleRequest(request)
 }
@@ -87,8 +86,8 @@ HandleFirstPage.prototype = new Handler();
 HandleFirstPage.prototype.handleRequest = function (request) {
     if (request.index === 0){
         var page = request.pages[0];
-        var frag = Commander.execute('unwrap', page)
-        console.log({frag})
+        Commander.execute('unwrap', page)
+        Commander.execute('addFooter', null, page, request.pageWidth)
     }
     this.next.handleRequest(request)
 }
@@ -138,8 +137,8 @@ ScaleDownWidgets.prototype.handleRequest = function (request){
         console.log("ScaleDownWidgets", {index:request.index, sum: request.state.sumOfHeights, itemH: request.items[request.index].offsetHeight } )
         Commander.execute('appendWidget',request.state,  request.pages, request.items[request.index]);
         Commander.execute('addFooter', request.state, request.pages[request.pages.length -1], request.mode)
-        Commander.execute('scaleDownWidget', request.state, request.items[request.index-1]);
-        Commander.execute('scaleDownWidget', request.state, request.items[request.index]);
+        Commander.execute('scaleDownWidget', request.state, request.items[request.index-1], (constants.PAGE_HEIGHT/ (request.state.sumOfHeights)*0.95));
+        Commander.execute('scaleDownWidget', request.state, request.items[request.index], (constants.PAGE_HEIGHT/ (request.state.sumOfHeights)*0.95));
         Commander.execute('finishPage', request.state);
     }
     this.next.handleRequest(request);

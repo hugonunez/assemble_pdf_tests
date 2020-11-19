@@ -24,16 +24,17 @@ var Commander = {
 
             },
             unwrap: function (wrapper) {
-                var clone = wrapper.cloneNode();
-                var fragment = document.createDocumentFragment()
-                var parent = wrapper.parentNode;
-
-                    while (clone.firstChild) {
-                        // parent.insertBefore(wrapper.firstChild, wrapper);
-                        fragment.appendChild(clone.firstChild)
+                // place childNodes in document fragment
+                var docFrag = document.createDocumentFragment();
+                setTimeout(function (){
+                    while (wrapper.firstChild) {
+                        var child = wrapper.removeChild(wrapper.firstChild);
+                        docFrag.appendChild(child);
                     }
-                    // parent.removeChild(wrapper);
-                return fragment
+
+                    // replace wrapper with document fragment
+                    wrapper.parentNode.replaceChild(docFrag, wrapper);
+                })
             },
             nodeListToIterable: function(nodeList) {
                 var items = [];
@@ -88,7 +89,9 @@ var Commander = {
                 footerSignature.innerHTML = 'SEARS 2020';
                 footer.appendChild(separator);
                 footer.appendChild(footerSignature)
-                state.sumOfHeights += footer.offsetHeight;
+                if (state) {
+                    state.sumOfHeights += footer.offsetHeight;
+                }
                 page.appendChild(footer);
             },
             appendWidget: function (state, pages, widget) {
