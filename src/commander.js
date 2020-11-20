@@ -47,14 +47,7 @@ var Commander = {
             resetPageStatus: function (state) {
                 state.isPageFinished = false;
             },
-            scalePage: function (props) {
 
-                if (props.page){
-                    if (props.scale !== 0 && props.scale !== 1){
-                        props.page.style['transform'] = Commander.execute('formatScale', props.scale);
-                    }
-                }
-            },
             createNewPage: function (props) {
                 var page = document.createElement("div");
                 page.setAttribute('class', 'page');
@@ -65,7 +58,7 @@ var Commander = {
             },
 
             scaleDownWidget: function (state, widget, customScale) {
-                console.log("scaledownwidget", state, widget, customScale)
+    /*            console.log("scaledownwidget", state, widget, customScale)*/
                 var scale = constants.PAGE_HEIGHT/ (state.sumOfHeights);
                 if (customScale){
                     scale = customScale
@@ -75,7 +68,6 @@ var Commander = {
             finishPage: function (state) {
                 state.sumOfHeights = 0;
                 state.isPageFinished = true;
-                
             },
             addFooter: function (state, page, width) {
                 var footer = document.createElement('div');
