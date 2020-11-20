@@ -74,7 +74,7 @@ HandleWidgetSize.prototype.handleRequest = function (request) {
     var condition = widget.offsetWidth >= request.pageWidth
     console.log({width: widget.offsetWidth, w2: widget.width, condition, widget})
     if (condition){
-        Commander.execute('scaleDownWidget', request.state, widget, (request.pageWidth / widget.offsetWidth)*0.99)
+        Commander.execute('scaleDownWidget', request.state, widget, (request.pageWidth / widget.offsetWidth)*0.95)
     }
     this.next.handleRequest(request)
 }
@@ -97,7 +97,6 @@ HandleFirstPage.prototype.handleRequest = function (request) {
     this.next.handleRequest(request)
 }
 
-/////////////////      Strategy  1    /////////////////////
 var handleCreateNewPage = function (){}
 handleCreateNewPage.prototype = new Handler();
 handleCreateNewPage.prototype.handleRequest = function (request){
@@ -112,9 +111,6 @@ handleCreateNewPage.prototype.handleRequest = function (request){
     this.next.handleRequest(request);
 }
 
-
-
-/////////////////      Strategy  3   /////////////////////
 var AddWidgetAndContinue = function (){}
 AddWidgetAndContinue.prototype = new Handler();
 AddWidgetAndContinue.prototype.handleRequest = function (request){
@@ -129,7 +125,6 @@ AddWidgetAndContinue.prototype.handleRequest = function (request){
     this.next.handleRequest(request);
 }
 
-/////////////////      Strategy   4   /////////////////////
 var ScaleDownWidgets = function (){}
 ScaleDownWidgets.prototype = new Handler();
 ScaleDownWidgets.prototype.handleRequest = function (request){
@@ -148,7 +143,6 @@ ScaleDownWidgets.prototype.handleRequest = function (request){
     this.next.handleRequest(request);
 }
 
-/////////////////      Strategy  5    /////////////////////
 var handleRemoveFooter = function (){}
 handleRemoveFooter.prototype = new Handler();
 handleRemoveFooter.prototype.handleRequest = function (request){
@@ -180,7 +174,6 @@ handleRemoveFooter.prototype.handleRequest = function (request){
     this.next.handleRequest(request);*/
 }
 
-/////////////////      Strategy  6   /////////////////////
 var DefaultAddAndCreatePage = function (){}
 DefaultAddAndCreatePage.prototype = new Handler();
 DefaultAddAndCreatePage.prototype.handleRequest = function (request){
@@ -204,6 +197,7 @@ DefaultAddAndCreatePage.prototype.handleRequest = function (request){
     Commander.execute('finishPage', request.state)
     return ;
 }
+
 var HandleSignature = function (){}
 HandleSignature.prototype = new Handler();
 HandleSignature.prototype.handleRequest = function (request){
