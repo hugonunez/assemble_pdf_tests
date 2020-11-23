@@ -3,9 +3,6 @@
 * */
 var Commander = {
     execute: function ( command ) {
-        /*
-        * Commands collection
-        * */
         var Commands = {
             setStyle: function (element, style){
                 for(var k in style){
@@ -14,25 +11,8 @@ var Commander = {
                     }
                 }
             },
-            addClass: function (element, className){
-                element.classList.add(className)
-            },
             removeClass: function (element, className){
                 element.classList.remove(className)
-            },
-            removeParent: function (el) {
-
-            },
-            unwrap: function (wrapper) {
-                // place childNodes in document fragment
-                var docFrag = document.createDocumentFragment();
-                while (wrapper.firstChild) {
-                    var child = wrapper.removeChild(wrapper.firstChild);
-                    docFrag.appendChild(child);
-                }
-
-                // replace wrapper with document fragment
-                wrapper.parentNode.replaceChild(docFrag, wrapper);
             },
             nodeListToIterable: function(nodeList) {
                 var items = [];
@@ -53,12 +33,10 @@ var Commander = {
                 page.setAttribute('class', 'page');
                 props.print.appendChild(page);
                 props.pages.push(page);
-             /*   page.style.border = '1px solid green';*/
                 return page;
             },
 
             scaleDownWidget: function (state, widget, customScale) {
-    /*            console.log("scaledownwidget", state, widget, customScale)*/
                 var scale = constants.PAGE_HEIGHT/ (state.sumOfHeights);
                 if (customScale){
                     scale = customScale
@@ -91,7 +69,6 @@ var Commander = {
             appendWidget: function (state, pages, widget) {
                 var page = pages[pages.length -1];
                 state.sumOfHeights +=  widget.offsetHeight
-      /*          widget.style.border = '1px dashed red'*/
                 widget.classList.remove('mail__widget')
                 widget.classList.add('widget')
                 widget.removeAttribute('style')
@@ -100,9 +77,6 @@ var Commander = {
                 widget.cssText = 'margin: 0; padding: 0;'
 
                 page.appendChild(widget);
-            },
-            addBorder: function (element, color) {
-                element.style.border = '1px solid ' + color
             },
             hideRemainingElements: function() {
                 // Hide extra element
@@ -143,4 +117,10 @@ var Commander = {
         }
         return Commands[command].apply( Commands, [].slice.call(arguments, 1) );
     }
+}
+
+if (typeof exports !== 'undefined') {
+    module.exports = {
+        Commander
+    };
 }
