@@ -72,17 +72,21 @@ var Commander = {
             addFooter: function (state, page, width) {
                 var footer = document.createElement('div');
                 var footerSignature = document.createElement('small');
-                var separator = document.createElement('hr');
-      
+
                 footer.classList.add('footer')
                 footer.style.width=width+'px'
                 footerSignature.innerHTML = 'SEARS 2020';
-                footer.appendChild(separator);
                 footer.appendChild(footerSignature)
                 if (state) {
                     state.sumOfHeights += footer.offsetHeight;
                 }
-                page.appendChild(footer);
+                if(!isThereFooter()){
+                    page.appendChild(footer);
+                }
+
+                function isThereFooter(){
+                    return !!page.querySelector('.footer')
+                }
             },
             appendWidget: function (state, pages, widget) {
                 var page = pages[pages.length -1];

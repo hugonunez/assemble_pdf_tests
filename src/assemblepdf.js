@@ -64,7 +64,7 @@ window.onload = function () {
     var widgets = document.querySelectorAll(constants.ALL_WIDGETS_SELECTOR);
     var print = document.getElementById(constants.PRINT_SELECTOR);
     var pages = Commander.execute('nodeListToIterable', document.querySelectorAll(constants.ALL_PAGES_SELECTOR));
-    var mode = 'landscape';
+    var mode = 'portrait';
 
     for (var i = 0; i < widgets.length; i++) {
         chain.handle({

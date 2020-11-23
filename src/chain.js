@@ -28,7 +28,6 @@ var chain = {
     }
 }
 
-
 //Handler Abstract Class
 var Handler = function (){
     this.next = {
@@ -55,7 +54,6 @@ HandleSingleWidgetInPage.prototype.handleRequest = function (request) {
     console.log("nitems",request.index, nitems, page)
 
     if (nitems == 1){
-        Commander.execute('addFooter', request.state, page, request.pageWidth)
         var template = {
             'grid-template-areas':'"widget"\n' +
                                 '"footer"',
@@ -72,7 +70,6 @@ HandleWidgetSize.prototype = new Handler();
 HandleWidgetSize.prototype.handleRequest = function (request) {
     var widget = request.items[request.index]
     var condition = widget.offsetWidth >= request.pageWidth
-    console.log({width: widget.offsetWidth, w2: widget.width, condition, widget})
     if (condition){
         Commander.execute('scaleDownWidget', request.state, widget, (request.pageWidth / widget.offsetWidth)*0.95)
     }
@@ -133,7 +130,6 @@ ScaleDownWidgets.prototype.handleRequest = function (request){
     if(debt <= request.scaleDownThreshold){
         console.log("ScaleDownWidgets", {index:request.index, sum: request.state.sumOfHeights, itemH: request.items[request.index].offsetHeight } )
         Commander.execute('appendWidget',request.state,  request.pages, request.items[request.index]);
-        Commander.execute('addFooter', request.state, request.pages[request.pages.length -1], request.pageWidth)
         Commander.execute('scaleDownWidget', request.state, request.items[request.index-1], (constants.PAGE_HEIGHT/ (request.state.sumOfHeights)*0.95));
         Commander.execute('scaleDownWidget', request.state, request.items[request.index], (constants.PAGE_HEIGHT/ (request.state.sumOfHeights)*0.95));
         Commander.execute('resetPageStatus', request.state);
