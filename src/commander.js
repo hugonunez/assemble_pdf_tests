@@ -14,16 +14,7 @@ var Commander = {
             removeClass: function (element, className){
                 element.classList.remove(className)
             },
-            nodeListToIterable: function(nodeList) {
-                var items = [];
-                for (var i = 0; i < nodeList.length; i++){
-                    items.push(nodeList[i])
-                }
-                return items;
-            },
-            formatScale: function(scale){
-                return 'scale('+scale+')'
-            },
+
             resetPageStatus: function (state) {
                 state.isPageFinished = false;
             },
@@ -41,7 +32,7 @@ var Commander = {
                 if (customScale){
                     scale = customScale
                 }
-                widget.style['transform'] = Commander.execute('formatScale', scale)
+                widget.style['transform'] = Utils.formatScale(scale)
             },
             finishPage: function (state) {
                 state.sumOfHeights = 0;
