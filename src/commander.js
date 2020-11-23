@@ -72,7 +72,7 @@ var Commander = {
             addFooter: function (state, page, width) {
                 var footer = document.createElement('div');
                 var footerSignature = document.createElement('small');
-
+                footerSignature.style['margin-top'] = '2em'
                 footer.classList.add('footer')
                 footer.style.width=width+'px'
                 footerSignature.innerHTML = 'SEARS 2020';
