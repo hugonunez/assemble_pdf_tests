@@ -12,48 +12,6 @@
 * */
 
 /*
-* Constants collection
-* */
-/*
-var default_page_height = (window.customSize)? window.customSize : 1056;
-var constants = {
-    ALL_WIDGETS_SELECTOR: "#main > div.mail__container > div",
-    ALL_PAGES_SELECTOR: '#print > div.page > div',
-    TABLE_WIDGET_SELECTOR: "table.widget-product",
-    ALL_MAIL_CONTAINERS: "#main > div.mail__container",
-    PAGE_HEIGHT: default_page_height,
-    PRINT_SELECTOR: 'print',
-    DEFAULT_SKIP_FOOTER_THRESHOLD: default_page_height*0.05,
-    DEFAULT_SCALE_DOWN: default_page_height*0.1
-}
-*/
-
-/*
-* Constants collection
-* */
-var A4 = {
-    w: 210,
-    h: 279
-}
-function mmToPx(value, factor = 3.7795275591) {
-    return Math.floor(value * factor)
-}
-
-var default_page_height = mmToPx(A4.h)
-var default_page_width = mmToPx(A4.w) /*(window.customSize)? window.customSize : 1056;*/
-var constants = {
-    ALL_WIDGETS_SELECTOR: "#main > div.mail__container > div",
-    ALL_PAGES_SELECTOR: '#print > div.page',
-    TABLE_WIDGET_SELECTOR: "table.widget-product",
-    ALL_MAIL_CONTAINERS: "#main > div.mail__container",
-    PAGE_HEIGHT: default_page_height,
-    PAGE_WIDTH: default_page_width,
-    PRINT_SELECTOR: 'print',
-    DEFAULT_SKIP_FOOTER_THRESHOLD: default_page_height*0.05,
-    DEFAULT_SCALE_DOWN: default_page_height*0.1
-}
-
-/*
 * Execute program when document loads.
 * */
 window.onload = function () {
@@ -61,9 +19,11 @@ window.onload = function () {
         isPageFinished: false,
         sumOfHeights: 0,
     }
-    var widgets = document.querySelectorAll(constants.ALL_WIDGETS_SELECTOR);
-    var print = document.getElementById(constants.PRINT_SELECTOR);
-    var pages = Utils.nodeListToIterable(document.querySelectorAll(constants.ALL_PAGES_SELECTOR));
+    var widgets = getters.getWidgets();
+    var print = getters.getPrint();
+    var pages = Utils.nodeListToIterable(
+        getters.getPages()
+    );
     var mode = 'portrait';
 
     for (var i = 0; i < widgets.length; i++) {
@@ -87,3 +47,4 @@ window.onload = function () {
     Commander.execute('hideRemainingElements');
     Commander.execute('markDocAsReady');
 }
+

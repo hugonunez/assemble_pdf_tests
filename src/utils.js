@@ -9,6 +9,9 @@ var Utils = {
     formatScale: function(scale){
         return 'scale('+scale+')'
     },
+    mmToPx: function (value, factor = 3.7795275591) {
+        return Math.floor(value * factor)
+    },
 }
 
 if (typeof exports !== 'undefined') {

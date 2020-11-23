@@ -20,13 +20,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="59524dee-e6ec-4f66-9171-8ba7ab70fcc2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/tests/unit/utils.spec.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/utils.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/constants.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/getters.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/tests/unit/getters.spec.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/assemblepdf.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/assemblepdf.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/commander.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/commander.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/tests/unit/commander.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/unit/commander.spec.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/unit/utils.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/unit/utils.spec.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

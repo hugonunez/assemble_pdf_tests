@@ -9,7 +9,7 @@ describe("Test Util functions", function (){
     });
 
     it('Function formatScale should return formatted text', function () {
-        const value = 1;
+        const value = Utils.formatScale(1);
         const expectedValue = 'scale(1)';
         expect(value).toEqual(expectedValue);
     });
