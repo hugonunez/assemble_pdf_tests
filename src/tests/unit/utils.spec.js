@@ -1,4 +1,4 @@
-import {Utils} from "../../utils"
+import Utils from "../../utils"
 describe("Test Util functions", function (){
 
     it('Function nodeListToIterable should convert to array', function () {
@@ -12,6 +12,10 @@ describe("Test Util functions", function (){
         const value = Utils.formatScale(1);
         const expectedValue = 'scale(1)';
         expect(value).toEqual(expectedValue);
+    });
+
+    it('Function formatScale should throw when input is string', function () {
+        expect(() =>  Utils.formatScale('astring')).toThrow('NOT A STRING')
     });
 
 })

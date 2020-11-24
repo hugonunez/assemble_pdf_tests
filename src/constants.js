@@ -6,9 +6,11 @@ var A4 = {
     w: 210,
     h: 279
 }
-
-var default_page_height = Utils.mmToPx(A4.h)
-var default_page_width = Utils.mmToPx(A4.w)
+function mmToPx (value, factor = 3.7795275591) {
+    return Math.floor(value * factor)
+}
+var default_page_height = mmToPx(A4.h)
+var default_page_width = mmToPx(A4.w)
 var constants = {
     ALL_WIDGETS_SELECTOR: "#main > div.mail__container > div",
     ALL_PAGES_SELECTOR: '#print > div.page',
@@ -22,7 +24,5 @@ var constants = {
 }
 
 if (typeof exports !== 'undefined') {
-    module.exports = {
-        constants
-    };
+    module.exports = constants
 }

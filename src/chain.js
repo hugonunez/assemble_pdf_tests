@@ -36,6 +36,7 @@ var Handler = function (){
         }
     }
 };
+
 //Abstract Class properties
 Handler.prototype.setNext = function (next) {
     this.next = next;
@@ -71,7 +72,7 @@ HandleWidgetSize.prototype.handleRequest = function (request) {
     var widget = request.items[request.index]
     var condition = widget.offsetWidth >= request.pageWidth
     if (condition){
-        Commander.execute('scaleDownWidget', request.state, widget, (request.pageWidth / widget.offsetWidth)*0.95)
+        Commander.execute('scaleElement', widget, Utils.formatScale((request.pageWidth / widget.offsetWidth)*0.95))
     }
     this.next.handleRequest(request)
 }
@@ -115,7 +116,8 @@ AddWidgetAndContinue.prototype.handleRequest = function (request){
     var debt = ( request.state.sumOfHeights + itemHeight) - request.pageHeight ;
     if(debt <= 0){
         console.log("AddWidgetAndContinue", {request})
-        Commander.execute('appendWidget', request.state, request.pages, request.items[request.index])
+        Commander.execute('appendWidget', request.pages, request.items[request.index])
+        Commander.execute('sumHeight', request.state, itemHeight)
         Commander.execute('addFooter', request.state, request.pages[request.pages.length -1], request.pageWidth)
         return ;
     }
@@ -128,10 +130,10 @@ ScaleDownWidgets.prototype.handleRequest = function (request){
     var itemHeight = request.items[request.index].offsetHeight;
     var debt = ( request.state.sumOfHeights + itemHeight) - request.pageHeight ;
     if(debt <= request.scaleDownThreshold){
-        console.log("ScaleDownWidgets", {index:request.index, sum: request.state.sumOfHeights, itemH: request.items[request.index].offsetHeight } )
-        Commander.execute('appendWidget',request.state,  request.pages, request.items[request.index]);
-        Commander.execute('scaleDownWidget', request.state, request.items[request.index-1], (constants.PAGE_HEIGHT/ (request.state.sumOfHeights)*0.95));
-        Commander.execute('scaleDownWidget', request.state, request.items[request.index], (constants.PAGE_HEIGHT/ (request.state.sumOfHeights)*0.95));
+        Commander.execute('appendWidget', request.pages, request.items[request.index]);
+        Commander.execute('sumHeight', request.state, itemHeight)
+        Commander.execute('scaleElement', request.items[request.index-1], Utils.formatScale((constants.PAGE_HEIGHT/ (request.state.sumOfHeights)*0.95)));
+        Commander.execute('scaleElement', request.items[request.index], Utils.formatScale((constants.PAGE_HEIGHT/ (request.state.sumOfHeights)*0.95)));
         Commander.execute('resetPageStatus', request.state);
         Commander.execute('finishPage', request.state);
         return ;
@@ -188,7 +190,8 @@ DefaultAddAndCreatePage.prototype.handleRequest = function (request){
     };
     Commander.execute('setStyle', page, template)
     Commander.execute('resetPageStatus', request.state)
-    Commander.execute('appendWidget', request.state, request.pages, request.items[request.index])
+    Commander.execute('appendWidget', request.pages, request.items[request.index])
+    Commander.execute('sumHeight', request.state, request.items[request.index].offsetHeight)
     Commander.execute('addFooter', request.state, request.pages[request.pages.length -1], request.pageWidth)
     Commander.execute('finishPage', request.state)
     return ;

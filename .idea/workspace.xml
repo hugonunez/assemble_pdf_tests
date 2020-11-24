@@ -20,13 +20,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="59524dee-e6ec-4f66-9171-8ba7ab70fcc2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/constants.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/getters.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/tests/unit/getters.spec.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/factories.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/tests/unit/factories.spec.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assemblepdf.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/assemblepdf.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/assemble_pdf.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/chain.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/chain.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/commander.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/commander.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/constants.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/constants.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/getters.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/getters.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/tests/unit/commander.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/unit/commander.spec.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/unit/getters.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/unit/getters.spec.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/tests/unit/utils.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/unit/utils.spec.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils.js" afterDir="false" />
     </list>
@@ -122,20 +126,24 @@
       <screen x="72" y="27" width="1848" height="1053" />
     </state>
     <state x="485" y="188" width="1022" height="737" key="SettingsEditor/72.27.1848.1053/1920.0.1920.1080@72.27.1848.1053" timestamp="1604336113733" />
-    <state x="511" y="217" width="548" height="534" key="find.popup" timestamp="1606156732207">
+    <state x="370" y="42" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1606248997124">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state x="511" y="217" width="548" height="534" key="find.popup/0.0.1536.864@0.0.1536.864" timestamp="1606156732207" />
+    <state x="370" y="42" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.0.1536.864@0.0.1536.864" timestamp="1606248997124" />
+    <state x="511" y="217" width="548" height="534" key="find.popup" timestamp="1606165970532">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="511" y="217" width="548" height="534" key="find.popup/0.0.1536.864@0.0.1536.864" timestamp="1606165970532" />
     <state x="687" y="292" width="618" height="594" key="find.popup/72.27.1848.1053/1920.0.1920.1080@72.27.1848.1053" timestamp="1605880569927" />
     <state x="489" y="185" width="559" height="556" key="run.anything.popup" timestamp="1606158615562">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="489" y="185" width="559" height="556" key="run.anything.popup/0.0.1536.864@0.0.1536.864" timestamp="1606158615562" />
     <state x="660" y="252" width="672" height="677" key="run.anything.popup/72.27.1848.1053/1920.0.1920.1080@72.27.1848.1053" timestamp="1605551605769" />
-    <state x="488" y="190" width="672" height="557" key="search.everywhere.popup" timestamp="1606158645281">
+    <state x="488" y="190" width="672" height="557" key="search.everywhere.popup" timestamp="1606248930774">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state x="488" y="190" width="672" height="557" key="search.everywhere.popup/0.0.1536.864@0.0.1536.864" timestamp="1606158645281" />
+    <state x="488" y="190" width="672" height="557" key="search.everywhere.popup/0.0.1536.864@0.0.1536.864" timestamp="1606248930774" />
     <state x="659" y="259" width="672" height="678" key="search.everywhere.popup/72.27.1848.1053/1920.0.1920.1080@72.27.1848.1053" timestamp="1605551978471" />
   </component>
 </project>

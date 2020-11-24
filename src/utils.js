@@ -7,6 +7,9 @@ var Utils = {
         return items;
     },
     formatScale: function(scale){
+        if (typeof scale != "number"){
+            throw 'NOT A STRING'
+        }
         return 'scale('+scale+')'
     },
     mmToPx: function (value, factor = 3.7795275591) {
@@ -15,7 +18,5 @@ var Utils = {
 }
 
 if (typeof exports !== 'undefined') {
-    module.exports = {
-        Utils
-    };
+    module.exports = Utils
 }

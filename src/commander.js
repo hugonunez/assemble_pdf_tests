@@ -11,6 +11,7 @@ var Commander = {
                     }
                 }
             },
+
             removeClass: function (element, className){
                 element.classList.remove(className)
             },
@@ -27,12 +28,8 @@ var Commander = {
                 return page;
             },
 
-            scaleDownWidget: function (state, widget, customScale) {
-                var scale = constants.PAGE_HEIGHT/ (state.sumOfHeights);
-                if (customScale){
-                    scale = customScale
-                }
-                widget.style['transform'] = Utils.formatScale(scale)
+            scaleElement: function (widget, scale) {
+                widget.style['transform'] = scale
             },
             finishPage: function (state) {
                 state.sumOfHeights = 0;
@@ -41,30 +38,30 @@ var Commander = {
             addFooter: function (state, page, width) {
                 var footer = document.createElement('div');
                 var footerSignature = document.createElement('small');
-                footerSignature.style['margin-top'] = '2em'
-                footer.classList.add('footer')
-                footer.style.width=width+'px'
+                footerSignature.style['margin-top'] = '2em';
+                footer.classList.add('footer');
+                footer.style.width=width+'px';
                 footerSignature.innerHTML = 'SEARS 2020';
-                footer.appendChild(footerSignature)
+                footer.appendChild(footerSignature);
                 if (state) {
                     state.sumOfHeights += footer.offsetHeight;
                 }
                 if(!isThereFooter()){
                     page.appendChild(footer);
                 }
-
                 function isThereFooter(){
                     return !!page.querySelector('.footer')
                 }
             },
-            appendWidget: function (state, pages, widget) {
+            sumHeight: function (state, height){
+                state.sumOfHeights +=  height
+            },
+            appendWidget: function (pages, widget) {
                 var page = pages[pages.length -1];
-                state.sumOfHeights +=  widget.offsetHeight
                 widget.classList.remove('mail__widget')
                 widget.classList.add('widget')
                 widget.removeAttribute('style')
                 widget.removeAttribute('valign')
-                Commander.execute('setStyle', {gridArea: 'widget'})
                 widget.cssText = 'margin: 0; padding: 0;'
 
                 page.appendChild(widget);
@@ -98,9 +95,7 @@ var Commander = {
 
                     }
                     print.appendChild(landscapePage)
-                    console.log("@pages2", pages)
                 }
-
             }
         }
         if (!Commands[command]) {
@@ -111,7 +106,5 @@ var Commander = {
 }
 
 if (typeof exports !== 'undefined') {
-    module.exports = {
-        Commander
-    };
+    module.exports = Commander
 }

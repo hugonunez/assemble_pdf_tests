@@ -1,11 +1,12 @@
 import '@testing-library/jest-dom/extend-expect'
-import { JSDOM } from 'jsdom'
 import fs from 'fs'
 import path from 'path'
-import {Utils} from '../../utils'
-import {constants} from '../../constants'
-import {Commander} from '../../commander'
-import {getters} from '../../getters'
+import Utils from '../../utils'
+import constants from '../../constants'
+import getters from '../../getters'
+import Commander from '../../commander'
+import Factories from '../../factories'
+
 const html = fs.readFileSync(path.resolve(__dirname, '../../index.html'), 'utf8');
 
 
@@ -33,18 +34,51 @@ describe("Test DOM commander functions", function (){
         expect(item.classList.length).toBe(0)
     });
 
-    it('resetPageStatus should reset isPageFinished', function () {
+    it('resetPageStatus command should reset isPageFinished', function () {
         const state = {isPageFinished: true}
         Commander.execute('resetPageStatus', state)
         expect(state.isPageFinished).toEqual(false)
     });
 
-    it('createNewPage should return a new page', function () {
+    it('createNewPage command should return a new page', function () {
+        expect(getters(constants).getPages().length).toEqual(1)
         const props = {
-            print: getters.getPrint(),
-            pages: getters.getWidgets()
+            print: getters(constants).getPrint(),
+            pages: Utils.nodeListToIterable(
+                getters(constants).getPages()
+            )
         }
         Commander.execute('createNewPage', props)
+        expect(getters(constants).getPages().length).toEqual(2)
     });
 
+    it('scaleElement command should apply transform property', function () {
+        const widgets = getters(constants).getWidgets();
+        const widget = widgets[widgets.length -1]
+        const scale = 0.5;
+        const expectedValue = Utils.formatScale(scale)
+        Commander.execute('scaleElement', widget, expectedValue)
+        expect(widget.style.transform).toBe(expectedValue)
+    });
+
+    it('sumHeight command should add value to state.sumOfHeight', function () {
+        const state = {sumOfHeights: 0};
+        const height = 100;
+        Commander.execute('sumHeight', state, height)
+        expect(state.sumOfHeights).toEqual(height)
+    });
+
+    it('finishPage command should change sumOfHeight and isPageFinished state', function () {
+        const state = {sumOfHeights: 100, isPageFinished: false}
+        Commander.execute('finishPage', state)
+        const expectedValue = {sumOfHeights: 0, isPageFinished: true}
+        expect(state).toEqual(expectedValue)
+    });
+
+    it('addFooter command should append widget to a given page ', function () {
+        const pages = getters(constants).getPages();
+        const page = pages[pages.length-1];
+        const footer = Factories.makeFooter(page.offsetWidth)
+        Commander.execute('addFooter', page, footer)
+    });
 })
