@@ -118,7 +118,9 @@ AddWidgetAndContinue.prototype.handleRequest = function (request){
         console.log("AddWidgetAndContinue", {request})
         Commander.execute('appendWidget', request.pages, request.items[request.index])
         Commander.execute('sumHeight', request.state, itemHeight)
-        Commander.execute('addFooter', request.state, request.pages[request.pages.length -1], request.pageWidth)
+        var footer = Factories.makeFooter(request.pageWidth)
+        Commander.execute('sumHeight', request.state, footer.offsetHeight)
+        Commander.execute('addFooter', request.pages[request.pages.length -1], footer)
         return ;
     }
     this.next.handleRequest(request);
@@ -192,7 +194,9 @@ DefaultAddAndCreatePage.prototype.handleRequest = function (request){
     Commander.execute('resetPageStatus', request.state)
     Commander.execute('appendWidget', request.pages, request.items[request.index])
     Commander.execute('sumHeight', request.state, request.items[request.index].offsetHeight)
-    Commander.execute('addFooter', request.state, request.pages[request.pages.length -1], request.pageWidth)
+    var footer = Factories.makeFooter(request.pageWidth)
+    Commander.execute('sumHeight', request.state, footer.offsetHeight)
+    Commander.execute('addFooter', request.pages[request.pages.length -1], footer)
     Commander.execute('finishPage', request.state)
     return ;
 }

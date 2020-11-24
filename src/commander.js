@@ -35,17 +35,7 @@ var Commander = {
                 state.sumOfHeights = 0;
                 state.isPageFinished = true;
             },
-            addFooter: function (state, page, width) {
-                var footer = document.createElement('div');
-                var footerSignature = document.createElement('small');
-                footerSignature.style['margin-top'] = '2em';
-                footer.classList.add('footer');
-                footer.style.width=width+'px';
-                footerSignature.innerHTML = 'SEARS 2020';
-                footer.appendChild(footerSignature);
-                if (state) {
-                    state.sumOfHeights += footer.offsetHeight;
-                }
+            addFooter: function (page, footer) {
                 if(!isThereFooter()){
                     page.appendChild(footer);
                 }
