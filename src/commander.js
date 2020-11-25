@@ -20,14 +20,10 @@ var Commander = {
                 state.isPageFinished = false;
             },
 
-            createNewPage: function (props) {
-                var page = document.createElement("div");
-                page.setAttribute('class', 'page');
-                props.print.appendChild(page);
-                props.pages.push(page);
-                return page;
+            appendPage: function (print, pages, page){
+                pages.push(page);
+                print.appendChild(page);
             },
-
             scaleElement: function (widget, scale) {
                 widget.style['transform'] = scale
             },
@@ -36,11 +32,8 @@ var Commander = {
                 state.isPageFinished = true;
             },
             addFooter: function (page, footer) {
-                if(!isThereFooter()){
+                if(!page.querySelector('.footer')){
                     page.appendChild(footer);
-                }
-                function isThereFooter(){
-                    return !!page.querySelector('.footer')
                 }
             },
             sumHeight: function (state, height){

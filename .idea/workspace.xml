@@ -21,8 +21,12 @@
   <component name="ChangeListManager">
     <list default="true" id="59524dee-e6ec-4f66-9171-8ba7ab70fcc2" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/assemblepdf.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/assemblepdf.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/chain.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/chain.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/commander.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/commander.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/factories.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/factories.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/unit/commander.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/unit/commander.spec.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/unit/factories.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/unit/factories.spec.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

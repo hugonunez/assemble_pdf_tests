@@ -15,7 +15,7 @@
 * Execute program when document loads.
 * */
 window.onload = function () {
-    var state =  {
+    var initialState =  {
         isPageFinished: false,
         sumOfHeights: 0,
     }
@@ -25,15 +25,16 @@ window.onload = function () {
         getters.getPages()
     );
     var mode = 'portrait';
-
+    var withFooter = true;
     for (var i = 0; i < widgets.length; i++) {
         chain.handle({
-            state,
+            state: initialState,
             print: print,
             items: widgets,
             pages: pages,
             index: i,
             mode: mode,
+            withFooter: withFooter,
             //Constants
             pageHeight: constants.PAGE_HEIGHT,
             pageWidth: constants.PAGE_WIDTH,

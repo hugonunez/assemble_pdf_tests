@@ -40,15 +40,12 @@ describe("Test DOM commander functions", function (){
         expect(state.isPageFinished).toEqual(false)
     });
 
-    it('createNewPage command should return a new page', function () {
+    it('appendPage should add page to print', function () {
         expect(getters(constants).getPages().length).toEqual(1)
-        const props = {
-            print: getters(constants).getPrint(),
-            pages: Utils.nodeListToIterable(
-                getters(constants).getPages()
-            )
-        }
-        Commander.execute('createNewPage', props)
+        const print = getters(constants).getPrint()
+        const pages = Utils.nodeListToIterable(getters(constants).getPages())
+        const page = Factories.makePage();
+        Commander.execute('appendPage', print, pages, page);
         expect(getters(constants).getPages().length).toEqual(2)
     });
 
@@ -80,5 +77,9 @@ describe("Test DOM commander functions", function (){
         const page = pages[pages.length-1];
         const footer = Factories.makeFooter(page.offsetWidth)
         Commander.execute('addFooter', page, footer)
+    });
+
+    it('appendWidget command should add a widget to a page', function () {
+
     });
 })
