@@ -14,4 +14,10 @@ describe("Test getter functions on static html", function (){
         const print = getters(constants).getPrint();
         expect(print).toBeInTheDocument()
     });
+
+    it('getPages should return pages nodeList', function () {
+        const pages = getters(constants).getPages();
+        expect()
+    });
+
 })

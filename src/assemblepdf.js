@@ -21,9 +21,7 @@ window.onload = function () {
     }
     var widgets = getters.getWidgets();
     var print = getters.getPrint();
-    var pages = Utils.nodeListToIterable(
-        getters.getPages()
-    );
+    var pages = Utils.nodeListToIterable(getters.getPages());
     var mode = 'portrait';
     var withFooter = true;
     for (var i = 0; i < widgets.length; i++) {
@@ -35,7 +33,6 @@ window.onload = function () {
             index: i,
             mode: mode,
             withFooter: withFooter,
-            //Constants
             pageHeight: constants.PAGE_HEIGHT,
             pageWidth: constants.PAGE_WIDTH,
             removeFooterThreshold: constants.DEFAULT_SKIP_FOOTER_THRESHOLD,

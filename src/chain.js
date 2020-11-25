@@ -1,7 +1,7 @@
 //Chain of responsibility for widgets assignments
 var chain = {
     handle: function (request) {
-
+        //standard assignment
         var handleNewPage = new handleCreateNewPage();
         var addWidgetAndContinue = new AddWidgetAndContinue();
         var scaleDownWidgets = new ScaleDownWidgets();
@@ -17,14 +17,16 @@ var chain = {
         var handleFirstPage = new HandleFirstPage();
         var handleSignature = new HandleSignature();
         var handleWidgetSize = new HandleWidgetSize();
+        var handleSingleWidgetInPage = new HandleSingleWidgetInPage();
         var addFooter = new handleAddFooter();
 
         handleWidgetSize
             .setNext(handleFirstPage)
             .setNext(handleSignature)
-            .setNext(addFooter)
+            .setNext(addFooter);
+
         handleNewPage.handleRequest(request);
-        handleWidgetSize.handleRequest(request)
+        handleWidgetSize.handleRequest(request);
     }
 }
 
@@ -51,17 +53,11 @@ var HandleSingleWidgetInPage = function (){};
 HandleSingleWidgetInPage.prototype = new Handler();
 HandleSingleWidgetInPage.prototype.handleRequest = function (request) {
     var page = request.items[request.index].parentNode;
-    var nitems = page.childElementCount;
-    console.log("nitems",request.index, nitems, page)
+    var widgetsCount = page.querySelectorAll('.widget').length;
+    console.log("HandleSingleWidgetInPage",request.index, widgetsCount, page)
 
-    if (nitems == 1){
-        var template = {
-            'grid-template-areas':'"widget"\n' +
-                                '"footer"',
-            'gap': '0em',
-            'grid-template-rows': "1fr 76px",
-            'align-items': 'center'
-        };
+    if (widgetsCount == 1){
+        var template = Factories.makeTemplate(1, request.withFooter)
         Commander.execute('setStyle', page, template)
     }
     this.next.handleRequest(request)
@@ -198,13 +194,7 @@ DefaultAddAndCreatePage.prototype.handleRequest = function (request){
         request.pages,
         page
     );
-    var template = {
-        'grid-template-areas':'"widget"\n' +
-                            '"footer"',
-        'gap': '0em',
-        'grid-template-rows': "1fr 76px",
-        'align-items': 'center'
-    };
+    var template = Factories.makeTemplate(1, request.withFooter)
     Commander.execute('setStyle', page, template)
     Commander.execute('resetPageStatus', request.state)
     Commander.execute('appendWidget', page, request.items[request.index])
@@ -219,14 +209,7 @@ HandleSignature.prototype = new Handler();
 HandleSignature.prototype.handleRequest = function (request){
     if(request.index + 1 === request.items.length){
         var widget = request.items[request.index];
-        var template = {
-            'grid-template-areas':'"widget"\n' +
-                                '"signature"\n' +
-                                '"footer"',
-            'gap': '0em',
-            'grid-template-rows': "4fr auto 76px",
-            'align-items': 'center'
-        };
+        var template = Factories.makeTemplate(1, request.withFooter, true)
         var page = request.pages[request.pages.length -1];
         Commander.execute('removeClass', widget,'widget')
         Commander.execute('removeClass', widget,'mail__signature')

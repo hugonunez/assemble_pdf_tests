@@ -89,10 +89,12 @@ describe("Test DOM commander functions", function (){
     });
 
     it('markDocAsReady command should create readyElement', function () {
-        expect(document.body.innerHTML).not.toContain('<div id="pdf-ready"></div>')
-        expect(window.status).not.toEqual('ready')
+        const element = '<div id="pdf-ready"></div>';
+        const status = 'ready';
+        expect(document.body.innerHTML).not.toContain(element)
+        expect(window.status).not.toEqual(status)
         Commander.execute('markDocAsReady')
-        expect(document.body.innerHTML).toContain('<div id="pdf-ready"></div>')
-        expect(window.status).toEqual('ready')
+        expect(document.body.innerHTML).toContain(element)
+        expect(window.status).toEqual(status)
     });
 })

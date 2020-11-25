@@ -13,6 +13,27 @@ var Factories = {
         var page = document.createElement("div");
         page.setAttribute('class', 'page');
         return page
+    },
+    makeTemplate(nWidgets, withFooter, withSignature){
+        var template = {
+            'gap': '0em',
+            'align-items': 'center',
+            'grid-template-areas': '',
+            'grid-template-rows': '',
+        };
+        for (var i=0; i < nWidgets; i++){
+            template['grid-template-areas'] += '"widget"\n'
+            template['grid-template-rows'] += '1fr '
+        }
+        if (withSignature) {
+            template['grid-template-areas'] += '"signature"\n'
+            template['grid-template-rows'] += 'auto '
+        }
+        if (withFooter){
+            template['grid-template-areas'] += '"footer"'
+            template['grid-template-rows'] += '76px'
+        }
+        return template
     }
 }
 
