@@ -31,7 +31,7 @@ describe("Test DOM commander functions", function (){
         item.classList.add(classname)
         expect(item.classList).toContain(classname)
         Commander.execute('removeClass', item, classname)
-        expect(item.classList.length).toBe(0)
+        expect(item.classList).not.toContain(classname)
     });
 
     it('resetPageStatus command should reset isPageFinished', function () {
@@ -41,10 +41,10 @@ describe("Test DOM commander functions", function (){
     });
 
     it('appendPage should add page to print', function () {
-        expect(getters(constants).getPages().length).toEqual(1)
         const print = getters(constants).getPrint()
         const pages = Utils.nodeListToIterable(getters(constants).getPages())
         const page = Factories.makePage();
+        expect(getters(constants).getPages().length).toEqual(1)
         Commander.execute('appendPage', print, pages, page);
         expect(getters(constants).getPages().length).toEqual(2)
     });
@@ -67,8 +67,8 @@ describe("Test DOM commander functions", function (){
 
     it('finishPage command should change sumOfHeight and isPageFinished state', function () {
         const state = {sumOfHeights: 100, isPageFinished: false}
-        Commander.execute('finishPage', state)
         const expectedValue = {sumOfHeights: 0, isPageFinished: true}
+        Commander.execute('finishPage', state)
         expect(state).toEqual(expectedValue)
     });
 
@@ -80,6 +80,19 @@ describe("Test DOM commander functions", function (){
     });
 
     it('appendWidget command should add a widget to a page', function () {
+        const page = Factories.makePage();
+        const widgets = getters(constants).getWidgets();
+        const widget = widgets[widgets.length -1];
+        expect(page.childElementCount).toEqual(0)
+        Commander.execute('appendWidget', page, widget);
+        expect(page.childElementCount).toEqual(1)
+    });
 
+    it('markDocAsReady command should create readyElement', function () {
+        expect(document.body.innerHTML).not.toContain('<div id="pdf-ready"></div>')
+        expect(window.status).not.toEqual('ready')
+        Commander.execute('markDocAsReady')
+        expect(document.body.innerHTML).toContain('<div id="pdf-ready"></div>')
+        expect(window.status).toEqual('ready')
     });
 })

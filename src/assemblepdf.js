@@ -45,7 +45,7 @@ window.onload = function () {
     if (mode === 'landscape'){
         Commander.execute('transformToLandscape', print, pages);
     }
-    Commander.execute('hideRemainingElements');
+    // Commander.execute('hideRemainingElements');
     Commander.execute('markDocAsReady');
 }
 

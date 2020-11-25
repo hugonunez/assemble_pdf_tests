@@ -24,9 +24,7 @@
       <change beforePath="$PROJECT_DIR$/src/assemblepdf.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/assemblepdf.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/chain.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/chain.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/commander.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/commander.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/factories.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/factories.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/tests/unit/commander.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/unit/commander.spec.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests/unit/factories.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/unit/factories.spec.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,7 +44,7 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../demo-pdf" />
     <property name="nodejs_package_manager_path" value="yarn" />
-    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
     <property name="ts.external.directory.path" value="$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
@@ -116,9 +114,10 @@
     </state>
     <state x="588" y="233" key="FileChooserDialogImpl/0.0.1536.864@0.0.1536.864" timestamp="1606159677380" />
     <state x="779" y="311" width="424" height="491" key="FileChooserDialogImpl/72.27.1848.1053/1920.0.1920.1080@72.27.1848.1053" timestamp="1605356185809" />
-    <state x="485" y="188" width="1022" height="737" key="SettingsEditor" timestamp="1604336113733">
-      <screen x="72" y="27" width="1848" height="1053" />
+    <state x="343" y="132" width="914" height="707" key="SettingsEditor" timestamp="1606318145615">
+      <screen x="0" y="0" width="1536" height="864" />
     </state>
+    <state x="343" y="132" width="914" height="707" key="SettingsEditor/0.0.1536.864@0.0.1536.864" timestamp="1606318145615" />
     <state x="485" y="188" width="1022" height="737" key="SettingsEditor/72.27.1848.1053/1920.0.1920.1080@72.27.1848.1053" timestamp="1604336113733" />
     <state x="370" y="42" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1606248997124">
       <screen x="0" y="0" width="1536" height="864" />
@@ -134,10 +133,10 @@
     </state>
     <state x="489" y="185" width="559" height="556" key="run.anything.popup/0.0.1536.864@0.0.1536.864" timestamp="1606158615562" />
     <state x="660" y="252" width="672" height="677" key="run.anything.popup/72.27.1848.1053/1920.0.1920.1080@72.27.1848.1053" timestamp="1605551605769" />
-    <state x="488" y="190" width="672" height="557" key="search.everywhere.popup" timestamp="1606248930774">
+    <state x="488" y="190" width="672" height="557" key="search.everywhere.popup" timestamp="1606318384664">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state x="488" y="190" width="672" height="557" key="search.everywhere.popup/0.0.1536.864@0.0.1536.864" timestamp="1606248930774" />
+    <state x="488" y="190" width="672" height="557" key="search.everywhere.popup/0.0.1536.864@0.0.1536.864" timestamp="1606318384664" />
     <state x="659" y="259" width="672" height="678" key="search.everywhere.popup/72.27.1848.1053/1920.0.1920.1080@72.27.1848.1053" timestamp="1605551978471" />
   </component>
 </project>

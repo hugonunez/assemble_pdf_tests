@@ -39,31 +39,25 @@ var Commander = {
             sumHeight: function (state, height){
                 state.sumOfHeights +=  height
             },
-            appendWidget: function (pages, widget) {
-                var page = pages[pages.length -1];
+            appendWidget: function (page, widget) {
                 widget.classList.remove('mail__widget')
                 widget.classList.add('widget')
                 widget.removeAttribute('style')
                 widget.removeAttribute('valign')
                 widget.cssText = 'margin: 0; padding: 0;'
-
                 page.appendChild(widget);
             },
             hideRemainingElements: function() {
-                // Hide extra element
                 document.querySelector("#main > div.mail__container").style.display = "none";
             },
             markDocAsReady: function() {
-                console.log('---------------------- COMPLETE------------------------');
+                var readyElem = document.createElement("div");
 
                 if (window.pdfdone) {
                     window.pdfdone();
                 }
-                if (true) {
-                    var readyElem = document.createElement("div");
-                    readyElem.setAttribute('id', 'pdf-ready');
-                    document.body.appendChild(readyElem);
-                }
+                readyElem.setAttribute('id', 'pdf-ready');
+                document.body.appendChild(readyElem);
                 window.status = 'ready';
             },
             transformToLandscape: function (print, pages) {

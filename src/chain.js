@@ -83,7 +83,7 @@ HandleFirstPage.prototype = new Handler();
 HandleFirstPage.prototype.handleRequest = function (request) {
     if (request.index === 0){
         request.pages[0].removeChild(request.pages[0].firstElementChild)
-        const page = Factories.makePage()
+        var page = Factories.makePage()
         Commander.execute('appendPage',
             request.print,
             request.pages,
@@ -100,7 +100,7 @@ var handleCreateNewPage = function (){}
 handleCreateNewPage.prototype = new Handler();
 handleCreateNewPage.prototype.handleRequest = function (request){
     if(request.state.isPageFinished){
-        const page = Factories.makePage()
+        var page = Factories.makePage()
         Commander.execute('appendPage',
             request.print,
             request.pages,
@@ -118,9 +118,9 @@ AddWidgetAndContinue.prototype.handleRequest = function (request){
     var debt = ( request.state.sumOfHeights + itemHeight) - request.pageHeight ;
     if(debt <= 0){
         console.log("AddWidgetAndContinue", {request})
-        const footer = Factories.makeFooter(request.pageWidth)
-        const page = request.pages[request.pages.length -1];
-        Commander.execute('appendWidget', request.pages, request.items[request.index])
+        var footer = Factories.makeFooter(request.pageWidth)
+        var page = request.pages[request.pages.length -1];
+        Commander.execute('appendWidget', page, request.items[request.index])
         Commander.execute('sumHeight', request.state, itemHeight)
         Commander.execute('sumHeight', request.state, footer.offsetHeight)
         return ;
@@ -133,8 +133,9 @@ ScaleDownWidgets.prototype = new Handler();
 ScaleDownWidgets.prototype.handleRequest = function (request){
     var itemHeight = request.items[request.index].offsetHeight;
     var debt = ( request.state.sumOfHeights + itemHeight) - request.pageHeight ;
+    var page = request.pages[request.pages.length -1]
     if(debt <= request.scaleDownThreshold){
-        Commander.execute('appendWidget', request.pages, request.items[request.index]);
+        Commander.execute('appendWidget', page, request.items[request.index]);
         Commander.execute('sumHeight', request.state, itemHeight)
         Commander.execute('scaleElement', request.items[request.index-1], Utils.formatScale((constants.PAGE_HEIGHT/ (request.state.sumOfHeights)*0.95)));
         Commander.execute('scaleElement', request.items[request.index], Utils.formatScale((constants.PAGE_HEIGHT/ (request.state.sumOfHeights)*0.95)));
@@ -190,7 +191,8 @@ handleAddFooter.prototype.handleRequest = function (request) {
 var DefaultAddAndCreatePage = function (){}
 DefaultAddAndCreatePage.prototype = new Handler();
 DefaultAddAndCreatePage.prototype.handleRequest = function (request){
-    const page = Factories.makePage()
+    var page = Factories.makePage()
+    var footer = Factories.makeFooter(request.pageWidth)
     Commander.execute('appendPage',
         request.print,
         request.pages,
@@ -205,9 +207,8 @@ DefaultAddAndCreatePage.prototype.handleRequest = function (request){
     };
     Commander.execute('setStyle', page, template)
     Commander.execute('resetPageStatus', request.state)
-    Commander.execute('appendWidget', request.pages, request.items[request.index])
+    Commander.execute('appendWidget', page, request.items[request.index])
     Commander.execute('sumHeight', request.state, request.items[request.index].offsetHeight)
-    var footer = Factories.makeFooter(request.pageWidth)
     Commander.execute('sumHeight', request.state, footer.offsetHeight)
     Commander.execute('finishPage', request.state)
     return ;
