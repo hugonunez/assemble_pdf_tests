@@ -21,9 +21,8 @@
   <component name="ChangeListManager">
     <list default="true" id="59524dee-e6ec-4f66-9171-8ba7ab70fcc2" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/chain.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/chain.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests/unit/factories.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/unit/factories.spec.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests/unit/utils.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/unit/utils.spec.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/assemblepdf.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/assemblepdf.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -122,10 +121,10 @@
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="370" y="42" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.0.1536.864@0.0.1536.864" timestamp="1606248997124" />
-    <state x="511" y="217" width="548" height="534" key="find.popup" timestamp="1606399331457">
+    <state x="511" y="217" width="548" height="534" key="find.popup" timestamp="1606419360255">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state x="511" y="217" width="548" height="534" key="find.popup/0.0.1536.864@0.0.1536.864" timestamp="1606399331457" />
+    <state x="511" y="217" width="548" height="534" key="find.popup/0.0.1536.864@0.0.1536.864" timestamp="1606419360255" />
     <state x="687" y="292" width="618" height="594" key="find.popup/72.27.1848.1053/1920.0.1920.1080@72.27.1848.1053" timestamp="1605880569927" />
     <state x="489" y="185" width="559" height="556" key="run.anything.popup" timestamp="1606158615562">
       <screen x="0" y="0" width="1536" height="864" />
