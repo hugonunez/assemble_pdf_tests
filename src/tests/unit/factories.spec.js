@@ -36,7 +36,7 @@ describe("Test factories functions", function (){
         expect(template).toEqual(expectedValue)
     });
 
-    it.only('makeTemplate should return a formatted template, with signature', function () {
+    it('makeTemplate should return a formatted template, with signature', function () {
         const template = Factories.makeTemplate(1, true, true)
         const expectedValue = {
             'grid-template-areas':'"widget"\n' +

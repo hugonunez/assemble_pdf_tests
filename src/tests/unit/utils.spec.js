@@ -18,4 +18,11 @@ describe("Test Util functions", function (){
         expect(() =>  Utils.formatScale('astring')).toThrow('NOT A STRING')
     });
 
+    it('Function mmToPx should return a the correct pixel value', function () {
+        const value = 2;
+        const expectedValue = Math.floor(value*3.7795275591);
+        const result = Utils.mmToPx(value);
+        expect(result).toEqual(expectedValue);
+    });
+
 })

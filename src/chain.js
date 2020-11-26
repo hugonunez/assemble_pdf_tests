@@ -62,6 +62,7 @@ HandleSingleWidgetInPage.prototype.handleRequest = function (request) {
     }
     this.next.handleRequest(request)
 }
+
 var HandleWidgetSize = function (){};
 HandleWidgetSize.prototype = new Handler();
 HandleWidgetSize.prototype.handleRequest = function (request) {
@@ -113,12 +114,9 @@ AddWidgetAndContinue.prototype.handleRequest = function (request){
     var itemHeight = request.items[request.index].offsetHeight;
     var debt = ( request.state.sumOfHeights + itemHeight) - request.pageHeight ;
     if(debt <= 0){
-        console.log("AddWidgetAndContinue", {request})
-        var footer = Factories.makeFooter(request.pageWidth)
         var page = request.pages[request.pages.length -1];
         Commander.execute('appendWidget', page, request.items[request.index])
         Commander.execute('sumHeight', request.state, itemHeight)
-        Commander.execute('sumHeight', request.state, footer.offsetHeight)
         return ;
     }
     this.next.handleRequest(request);
@@ -145,11 +143,17 @@ ScaleDownWidgets.prototype.handleRequest = function (request){
 var handleAddFooter = function (){}
 handleAddFooter.prototype = new Handler();
 handleAddFooter.prototype.handleRequest = function (request) {
+    var page = request.pages[request.pages.length-1];
+    var nWidgets = page.querySelectorAll('.widget').length
+
     if (request.withFooter){
-        var page = request.pages[request.pages.length-1];
         var footer = Factories.makeFooter();
         Commander.execute('addFooter', page, footer)
-
+        var template = Factories.makeTemplate(nWidgets, true, request.index +1 == request.items.length)
+        Commander.execute('setStyle', page, template)
+    }else {
+        var template = Factories.makeTemplate(nWidgets, false, request.index +1 == request.items.length)
+        Commander.execute('setStyle', page, template)
     }
     return
     /**
@@ -188,7 +192,6 @@ var DefaultAddAndCreatePage = function (){}
 DefaultAddAndCreatePage.prototype = new Handler();
 DefaultAddAndCreatePage.prototype.handleRequest = function (request){
     var page = Factories.makePage()
-    var footer = Factories.makeFooter(request.pageWidth)
     Commander.execute('appendPage',
         request.print,
         request.pages,
@@ -199,7 +202,6 @@ DefaultAddAndCreatePage.prototype.handleRequest = function (request){
     Commander.execute('resetPageStatus', request.state)
     Commander.execute('appendWidget', page, request.items[request.index])
     Commander.execute('sumHeight', request.state, request.items[request.index].offsetHeight)
-    Commander.execute('sumHeight', request.state, footer.offsetHeight)
     Commander.execute('finishPage', request.state)
     return ;
 }
