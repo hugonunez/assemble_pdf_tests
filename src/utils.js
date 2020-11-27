@@ -12,7 +12,10 @@ var Utils = {
         }
         return 'scale('+scale+')'
     },
-    mmToPx: function (value, factor = 3.7795275591) {
+    mmToPx: function (value, factor) {
+        if (!factor){
+            factor = 3.7795275591
+        }
         return Math.floor(value * factor)
     },
 }

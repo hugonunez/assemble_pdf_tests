@@ -6,7 +6,10 @@ var A4 = {
     w: 210,
     h: 279
 }
-function mmToPx (value, factor = 3.7795275591) {
+function mmToPx (value, factor) {
+    if (!factor){
+        factor = 3.7795275591
+    }
     return Math.floor(value * factor)
 }
 var default_page_height = mmToPx(A4.h)

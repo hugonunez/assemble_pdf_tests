@@ -14,7 +14,7 @@ var Factories = {
         page.setAttribute('class', 'page');
         return page
     },
-    makeTemplate(nWidgets, withFooter, withSignature){
+    makeTemplate: function (nWidgets, withFooter, withSignature){
         var template = {
             'gap': '0em',
             'align-items': 'center',

@@ -1,4 +1,4 @@
-var collection = function(constants = constants) {
+var collection = function(constants) {
     return {
         getWidgets: function () {
             return document.querySelectorAll(constants.ALL_WIDGETS_SELECTOR)
