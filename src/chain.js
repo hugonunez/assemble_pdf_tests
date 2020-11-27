@@ -156,35 +156,7 @@ handleAddFooter.prototype.handleRequest = function (request) {
         Commander.execute('setStyle', page, template)
     }
     return
-    /**
-     *  var page = request.pages[request.pages.length-1];
-     var sum = 0
-     for (var i=0; i< page.childNodes.length; i++){
-        sum+= page.childNodes[i].offsetHeight
-    }
-     var debt = sum-request.pageHeight
-     console.log({debt, sum, cnt: page.childNodes.length})
 
-     var itemHeight = request.items[request.index].offsetHeight;
-     var debt = ( request.state.sumOfHeights + itemHeight) - request.pageHeight ;
-     if(debt <= request.removeFooterThreshold){
-        console.log("RemoveFooter", {index:request.index, sum: request.state.sumOfHeights, itemH: request.items[request.index].offsetHeight } )
-
-        var page = request.pages[request.pages.length-1];
-        var footer = page.querySelector('.footer')
-        footer.remove()
-        var template = {
-            'grid-template-areas':'"widget"\n',
-            'gap': '0em',
-            'grid-template-rows': "1fr 1rf",
-            'align-items': 'center'
-        };
-        Commander.execute('setStyle', page, template)
-        return;
-    }
-     this.next.handleRequest(request);
-     *
-     * **/
 }
 
 
