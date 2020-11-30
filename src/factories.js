@@ -16,9 +16,7 @@ var Factories = {
     },
     makeTemplate: function (nWidgets, withFooter, withSignature){
         var template = {
-            'display': 'flex',
-            'flex-wrap': 'wrap',
-            'flex-direction': 'column'
+
         };
 /*        for (var i=0; i < nWidgets; i++){
             template['grid-template-areas'] += '"widget"\n'

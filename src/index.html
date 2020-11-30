@@ -503,11 +503,20 @@
       width: 210mm;
       height: 297mm;
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: column;
       border: 1px solid grey;
-      flex-flow: column;
+      flex-wrap: wrap;
+      align-content: center;
+      overflow: hidden;
+      justify-content: center;
+      page-break-inside: avoid;
+      -webkit-column-break-inside: avoid;
+      background-color: white !important;
     }
-
+.widget {
+   border: 1px solid red;
+  flex: 1;
+}
   .landscape-page {
     display: grid;
     width: 420mm;
@@ -518,12 +527,9 @@
     border: 1px dashed grey;
   }
 
-    .widget {
-      /* border: 1px solid red; */
-    }
+
     .footer {
-      position: relative;
-      top: 0;
+
       height: 76px;
       text-align: center;
       margin-top: 3em;
