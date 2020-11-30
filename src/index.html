@@ -500,16 +500,12 @@
       color: #080808;
     }*/
     .page {
-      display: grid;
       width: 210mm;
       height: 297mm;
-      grid-template-areas: "widget"
-                           "widget"
-                           "footer";
-      grid-template-rows: 1fr 1fr 76px;
-      grid-template-columns: 1fr;
-      gap: 0em;
+      display: flex;
+      flex-wrap: wrap;
       border: 1px solid grey;
+      flex-flow: column;
     }
 
   .landscape-page {
@@ -526,7 +522,8 @@
       /* border: 1px solid red; */
     }
     .footer {
-      grid-area: footer;
+      position: relative;
+      top: 0;
       height: 76px;
       text-align: center;
       margin-top: 3em;
@@ -2085,13 +2082,13 @@
 
 
 </div>
-<script type="text/javascript" src="C:\Users\kipf0\projects\assemble_pdf_tests\src\factories.js">
+<script type="text/javascript" src="./factories.js">
 
 </script>
-<script type="text/javascript" src="C:\Users\kipf0\projects\assemble_pdf_tests\src\utils.js">
+<script type="text/javascript" src="./utils.js">
 
 </script>
-<script type="text/javascript" src="C:\Users\kipf0\projects\assemble_pdf_tests\src\constants.js">
+<script type="text/javascript" src="./constants.js">
 
 </script>
 <script type="text/javascript" src="./getters.js">
