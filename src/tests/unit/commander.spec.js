@@ -46,7 +46,7 @@ describe("Test DOM commander functions", function (){
         const page = Factories.makePage();
         expect(getters(constants).getPages().length).toEqual(1)
         Commander.execute('appendPage', print, pages, page);
-        expect(getters(constants).getPages().length).toEqual(2)
+        expect(pages.length).toEqual(2)
     });
 
     it('scaleElement command should apply transform property', function () {

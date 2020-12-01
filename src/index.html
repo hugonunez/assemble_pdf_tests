@@ -499,24 +499,27 @@
       padding: 0;
       color: #080808;
     }*/
-    .page {
+    .page-wrapper {
       width: 210mm;
       height: 297mm;
       display: flex;
       flex-direction: column;
       border: 1px solid grey;
-      flex-wrap: wrap;
-      align-content: center;
-      overflow: hidden;
+
+    }
+    .page {
+      width: 210mm;
+      height: 297mm;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       justify-content: center;
       page-break-inside: avoid;
       -webkit-column-break-inside: avoid;
-      background-color: white !important;
     }
-.widget {
-   border: 1px solid red;
-  flex: 1;
-}
+    .widget {
+/*      border: 1px solid red;*/
+    }
   .landscape-page {
     display: grid;
     width: 420mm;
@@ -528,13 +531,12 @@
   }
 
 
-    .footer {
-
-      height: 76px;
-      text-align: center;
-      margin-top: 3em;
-      font-weight: bold;
-    }
+  .footer {
+    height: 76px;
+    text-align: center;
+    margin-top: 3em;
+    font-weight: bold;
+  }
 
     .mail__brand{
       text-align: center;

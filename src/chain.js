@@ -187,8 +187,6 @@ HandleSignature.prototype.handleRequest = function (request){
         var page = request.pages[request.pages.length -1];
         Commander.execute('removeClass', widget,'widget')
         Commander.execute('removeClass', widget,'mail__signature')
-        Commander.execute('setStyle', page, template)
-        Commander.execute('setStyle', widget, {position: '-2/-3', gridArea: 'signature', alignSelf: 'end', })
     }
     this.next.handleRequest(request);
 }

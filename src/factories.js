@@ -16,9 +16,12 @@ var Factories = {
     },
     makeTemplate: function (nWidgets, withFooter, withSignature){
         var template = {
-
+            "align-items": "center",
+             "gap": "0em",
+            'grid-template-areas': "",
+            'grid-template-rows': '',
         };
-/*        for (var i=0; i < nWidgets; i++){
+        for (var i=0; i < nWidgets; i++){
             template['grid-template-areas'] += '"widget"\n'
             template['grid-template-rows'] += '1fr '
         }
@@ -29,7 +32,7 @@ var Factories = {
         if (withFooter){
             template['grid-template-areas'] += '"footer"'
             template['grid-template-rows'] += '76px'
-        }*/
+        }
         return template
     }
 }
