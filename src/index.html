@@ -500,16 +500,17 @@
       color: #080808;
     }*/
     .page-wrapper {
-      width: 210mm;
-      height: 297mm;
+      padding: 0;
+      border: 1px dashed grey;
+      height: auto;
+      margin: 0;
       display: flex;
       flex-direction: column;
-      border: 1px solid grey;
 
     }
     .page {
-      width: 210mm;
-      height: 297mm;
+      width: 9.5in;
+      height: 11.99in;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -519,6 +520,7 @@
     }
     .widget {
 /*      border: 1px solid red;*/
+      margin: auto;
     }
   .landscape-page {
     display: grid;
@@ -2090,25 +2092,479 @@
 
 
 </div>
-<script type="text/javascript" src="./factories.js">
+<script type="text/javascript" >
+  var Factories = {
+    makeFooter: function (width) {
+      var footer = document.createElement('div');
+      var footerSignature = document.createElement('small');
+      footerSignature.style['margin-top'] = '2em';
+      footer.classList.add('footer');
+      footer.style.width=width+'px';
+      footerSignature.innerHTML = 'SEARS 2020';
+      footer.appendChild(footerSignature);
+      return footer
+    },
+    makePage: function (){
+      var page = document.createElement("div");
+      page.setAttribute('class', 'page');
+      return page
+    },
+    makeTemplate: function (nWidgets, withFooter, withSignature){
+      var template = {
+        "align-items": "center",
+        "gap": "0em",
+        'grid-template-areas': "",
+        'grid-template-rows': '',
+      };
+      for (var i=0; i < nWidgets; i++){
+        template['grid-template-areas'] += '"widget"\n'
+        template['grid-template-rows'] += '1fr '
+      }
+      if (withSignature) {
+        template['grid-template-areas'] += '"signature"\n'
+        template['grid-template-rows'] += 'auto '
+      }
+      if (withFooter){
+        template['grid-template-areas'] += '"footer"'
+        template['grid-template-rows'] += '76px'
+      }
+      return template
+    }
+  }
+
+
+  if (typeof exports !== 'undefined') {
+    module.exports = Factories
+  }
+</script>
+<script type="text/javascript">
+  var Utils = {
+    nodeListToIterable: function(nodeList) {
+      var items = [];
+      for (var i = 0; i < nodeList.length; i++){
+        items.push(nodeList[i])
+      }
+      return items;
+    },
+    formatScale: function(scale){
+      if (typeof scale != "number"){
+        throw 'NOT A STRING'
+      }
+      return 'scale('+scale+')'
+    },
+    mmToPx: function (value, factor) {
+      if (!factor){
+        factor = 3.7795275591
+      }
+      return Math.floor(value * factor)
+    },
+  }
+
+  if (typeof exports !== 'undefined') {
+    module.exports = Utils
+  }
 
 </script>
-<script type="text/javascript" src="./utils.js">
+<script type="text/javascript">
+
+  /*
+  * Constants collection
+  * */
+  var A4 = {
+    w: 210,
+    h: 279
+  }
+  function mmToPx (value, factor) {
+    if (!factor){
+      factor = 3.7795275591
+    }
+    return Math.floor(value * factor)
+  }
+  var default_page_height = mmToPx(A4.h)
+  var default_page_width = mmToPx(A4.w)
+  var constants = {
+    ALL_WIDGETS_SELECTOR: "#main > div.mail__container > div",
+    ALL_PAGES_SELECTOR: '#print > div.page',
+    TABLE_WIDGET_SELECTOR: "table.widget-product",
+    ALL_MAIL_CONTAINERS: "#main > div.mail__container",
+    PAGE_HEIGHT: default_page_height,
+    PAGE_WIDTH: default_page_width,
+    PRINT_SELECTOR: 'print',
+    DEFAULT_SKIP_FOOTER_THRESHOLD: default_page_height*0.05,
+    DEFAULT_SCALE_DOWN: default_page_height*0.1
+  }
+
+  if (typeof exports !== 'undefined') {
+    module.exports = constants
+  }
+</script>
+<script type="text/javascript" >
+  var collection = function(constants) {
+    return {
+      getWidgets: function () {
+        return document.querySelectorAll(constants.ALL_WIDGETS_SELECTOR)
+      },
+      getPrint: function () {
+        return document.getElementById(constants.PRINT_SELECTOR)
+      },
+      getPages: function () {
+        return document.querySelectorAll(constants.ALL_PAGES_SELECTOR)
+      }
+    }
+  }
+  var getters = function(constants) {
+    return collection(constants)
+  }
+
+  if (typeof exports !== 'undefined') {
+    module.exports = getters
+  }else {
+    getters = collection(constants)
+  }
+</script>
+<script type="text/javascript">
+  /*
+  * Command dispatcher
+  * */
+  var Commander = {
+    execute: function ( command ) {
+      var Commands = {
+        setStyle: function (element, style){
+          for(var k in style){
+            if (style.hasOwnProperty(k)){
+              element.style[k] = style[k]
+            }
+          }
+        },
+
+        removeClass: function (element, className){
+          element.classList.remove(className)
+        },
+
+        resetPageStatus: function (state) {
+          state.isPageFinished = false;
+        },
+
+        appendPage: function (print, pages, page){
+          pages.push(page);
+          var pageWrapper = document.createElement('div')
+          pageWrapper.classList.add('page-wrapper')
+          pageWrapper.appendChild(page)
+          print.appendChild(pageWrapper);
+        },
+        scaleElement: function (widget, scale) {
+          widget.style['transform'] = scale
+        },
+        finishPage: function (state) {
+          state.sumOfHeights = 0;
+          state.isPageFinished = true;
+        },
+        addFooter: function (page, footer) {
+          if(!page.parentNode.querySelector('.footer')){
+            insertAfter(footer, page);
+          }
+
+          function insertAfter(newNode, referenceNode) {
+            referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+          }
+        },
+        sumHeight: function (state, height){
+          state.sumOfHeights +=  height
+        },
+        appendWidget: function (page, widget) {
+          widget.classList.remove('mail__widget')
+          widget.classList.add('widget')
+          widget.removeAttribute('style')
+          widget.removeAttribute('valign')
+          widget.cssText = 'margin: 0; padding: 0;'
+          page.appendChild(widget);
+        },
+        hideRemainingElements: function() {
+          document.querySelector("#main > div.mail__container").style.display = "none";
+        },
+        markDocAsReady: function() {
+          var readyElem = document.createElement("div");
+
+          if (window.pdfdone) {
+            window.pdfdone();
+          }
+          readyElem.setAttribute('id', 'pdf-ready');
+          document.body.appendChild(readyElem);
+          window.status = 'ready';
+        },
+        transformToLandscape: function (print, pages) {
+          for (var i=1; i < pages.length; i+=2) {
+            var landscapePage = document.createElement('div')
+            landscapePage.classList.add('landscape-page')
+            landscapePage.appendChild(pages[i])
+            Commander.execute('setStyle', pages[i], {position: '2/1'})
+            if (pages[i+1]){
+              landscapePage.appendChild(pages[i+1])
+              Commander.execute('setStyle', pages[i+1], {position: '3/2'})
+
+            }
+            print.appendChild(landscapePage)
+          }
+        }
+      }
+      if (!Commands[command]) {
+        throw 'ERROR: ' + command + ' <- command not found in commands collection.'
+      }
+      return Commands[command].apply( Commands, [].slice.call(arguments, 1) );
+    }
+  }
+
+  if (typeof exports !== 'undefined') {
+    module.exports = Commander
+  }
 
 </script>
-<script type="text/javascript" src="./constants.js">
+<script type="text/javascript">
+  //Chain of responsibility for widgets assignments
+  var chain = {
+    handle: function (request) {
+      //standard assignment
+      var handleNewPage = new handleCreateNewPage();
+      var addWidgetAndContinue = new AddWidgetAndContinue();
+      var scaleDownWidgets = new ScaleDownWidgets();
+      var defaultAssignment = new DefaultAddAndCreatePage();
+
+
+      handleNewPage
+              .setNext(addWidgetAndContinue)
+              .setNext(scaleDownWidgets)
+              .setNext(defaultAssignment);
+
+      //repair work (handle width values and edge cases)
+      var handleFirstPage = new HandleFirstPage();
+      var handleSignature = new HandleSignature();
+      var handleWidgetSize = new HandleWidgetSize();
+      var handleSingleWidgetInPage = new HandleSingleWidgetInPage();
+      var addFooter = new handleAddFooter();
+
+      handleWidgetSize
+              .setNext(handleFirstPage)
+              .setNext(handleSignature)
+              .setNext(addFooter);
+
+      handleNewPage.handleRequest(request);
+      handleWidgetSize.handleRequest(request);
+    }
+  }
+
+  //Handler Abstract Class
+  var Handler = function (){
+    this.next = {
+      handleRequest: function (request){
+        console.log("ALL HANDLERS HAVE BEEN TRIED, NONE MATCHED.")
+      }
+    }
+  };
+
+  //Abstract Class properties
+  Handler.prototype.setNext = function (next) {
+    this.next = next;
+    return next;
+  };
+  Handler.prototype.handleRequest = function (request){};
+
+  /*
+  * Define Strategies to assign widgets
+  * */
+  var HandleSingleWidgetInPage = function (){};
+  HandleSingleWidgetInPage.prototype = new Handler();
+  HandleSingleWidgetInPage.prototype.handleRequest = function (request) {
+    var page = request.items[request.index].parentNode;
+    var widgetsCount = page.querySelectorAll('.widget').length;
+    console.log("HandleSingleWidgetInPage",request.index, widgetsCount, page)
+
+    if (widgetsCount == 1){
+      var template = Factories.makeTemplate(1, request.withFooter)
+      Commander.execute('setStyle', page, template)
+    }
+    this.next.handleRequest(request)
+  }
+
+  var HandleWidgetSize = function (){};
+  HandleWidgetSize.prototype = new Handler();
+  HandleWidgetSize.prototype.handleRequest = function (request) {
+    var widget = request.items[request.index]
+    var condition = widget.offsetWidth >= request.pageWidth
+    if (condition){
+      Commander.execute('scaleElement', widget, Utils.formatScale((request.pageWidth / widget.offsetWidth)*0.95))
+    }
+    this.next.handleRequest(request)
+  }
+
+
+  var HandleFirstPage = function (){};
+  HandleFirstPage.prototype = new Handler();
+  HandleFirstPage.prototype.handleRequest = function (request) {
+    if (request.index === 0){
+      request.pages[0].removeChild(request.pages[0].firstElementChild)
+      var page = Factories.makePage()
+      Commander.execute('appendPage',
+              request.print,
+              request.pages,
+              page
+      );
+      request.print.removeChild(request.print.firstElementChild)
+
+    }
+
+    this.next.handleRequest(request)
+  }
+
+  var handleCreateNewPage = function (){}
+  handleCreateNewPage.prototype = new Handler();
+  handleCreateNewPage.prototype.handleRequest = function (request){
+    if(request.state.isPageFinished){
+      var page = Factories.makePage()
+      Commander.execute('appendPage',
+              request.print,
+              request.pages,
+              page
+      );
+      Commander.execute('resetPageStatus', request.state)
+    }
+    this.next.handleRequest(request);
+  }
+
+  var AddWidgetAndContinue = function (){}
+  AddWidgetAndContinue.prototype = new Handler();
+  AddWidgetAndContinue.prototype.handleRequest = function (request){
+    var itemHeight = request.items[request.index].offsetHeight;
+    var debt = ( request.state.sumOfHeights + itemHeight) - request.pageHeight ;
+    if(debt <= 0){
+      var page = request.pages[request.pages.length -1];
+      Commander.execute('appendWidget', page, request.items[request.index])
+      Commander.execute('sumHeight', request.state, itemHeight)
+      return ;
+    }
+    this.next.handleRequest(request);
+  }
+
+  var ScaleDownWidgets = function (){}
+  ScaleDownWidgets.prototype = new Handler();
+  ScaleDownWidgets.prototype.handleRequest = function (request){
+    var itemHeight = request.items[request.index].offsetHeight;
+    var debt = ( request.state.sumOfHeights + itemHeight) - request.pageHeight ;
+    var page = request.pages[request.pages.length -1]
+    if(debt <= request.scaleDownThreshold){
+      Commander.execute('appendWidget', page, request.items[request.index]);
+      Commander.execute('sumHeight', request.state, itemHeight)
+      Commander.execute('scaleElement', request.items[request.index-1], Utils.formatScale((constants.PAGE_HEIGHT/ (request.state.sumOfHeights)*0.95)));
+      Commander.execute('scaleElement', request.items[request.index], Utils.formatScale((constants.PAGE_HEIGHT/ (request.state.sumOfHeights)*0.95)));
+      Commander.execute('resetPageStatus', request.state);
+      Commander.execute('finishPage', request.state);
+      return ;
+    }
+    this.next.handleRequest(request);
+  }
+
+  var handleAddFooter = function (){}
+  handleAddFooter.prototype = new Handler();
+  handleAddFooter.prototype.handleRequest = function (request) {
+    var page = request.pages[request.pages.length-1];
+    var nWidgets = page.querySelectorAll('.widget').length
+
+    if (request.withFooter){
+      var footer = Factories.makeFooter();
+      Commander.execute('addFooter', page, footer)
+      var template = Factories.makeTemplate(nWidgets, true, request.index +1 == request.items.length)
+      Commander.execute('setStyle', page, template)
+    }else {
+      var template = Factories.makeTemplate(nWidgets, false, request.index +1 == request.items.length)
+      Commander.execute('setStyle', page, template)
+    }
+    return
+
+  }
+
+
+  var DefaultAddAndCreatePage = function (){}
+  DefaultAddAndCreatePage.prototype = new Handler();
+  DefaultAddAndCreatePage.prototype.handleRequest = function (request){
+    var page = Factories.makePage()
+    Commander.execute('appendPage',
+            request.print,
+            request.pages,
+            page
+    );
+    var template = Factories.makeTemplate(1, request.withFooter)
+    Commander.execute('setStyle', page, template)
+    Commander.execute('resetPageStatus', request.state)
+    Commander.execute('appendWidget', page, request.items[request.index])
+    Commander.execute('sumHeight', request.state, request.items[request.index].offsetHeight)
+    Commander.execute('finishPage', request.state)
+    return ;
+  }
+
+  var HandleSignature = function (){}
+  HandleSignature.prototype = new Handler();
+  HandleSignature.prototype.handleRequest = function (request){
+    if(request.index + 1 === request.items.length){
+      var widget = request.items[request.index];
+      var template = Factories.makeTemplate(1, request.withFooter, true)
+      var page = request.pages[request.pages.length -1];
+      Commander.execute('removeClass', widget,'widget')
+      Commander.execute('removeClass', widget,'mail__signature')
+    }
+    this.next.handleRequest(request);
+  }
+
+
 
 </script>
-<script type="text/javascript" src="./getters.js">
+<script type="text/javascript" >
+  /*
+  * This file contains a program to organize widgets into an html page
+  * that can be rendered by wkhtmltopdf https://wkhtmltopdf.org/.
+  *
+  * The presented algorithm iterates through an array of widgets (HTMLElements),
+  * and tries to fit as many items as possible into a given page (Div Element).
+  *
+  * The way in which this widgets are assigned is managed by a chain of responsibility
+  * that will handle edge cases or default to a solution.
+  *
+  * Must use vanilla JS without ES6 for compatibility issues.
+  * */
 
-</script>
-<script type="text/javascript" src="./commander.js">
+  /*
+  * Execute program when document loads.
+  * */
+  window.onload = function () {
+    var initialState =  {
+      isPageFinished: false,
+      sumOfHeights: 0,
+    }
+    var widgets = getters.getWidgets();
+    var print = getters.getPrint();
+    var pages = Utils.nodeListToIterable(getters.getPages());
+    var mode = 'portrait';
+    var withFooter = true;
+    for (var i = 0; i < widgets.length; i++) {
+      chain.handle({
+        state: initialState,
+        print: print,
+        items: widgets,
+        pages: pages,
+        index: i,
+        mode: mode,
+        withFooter: withFooter,
+        pageHeight: constants.PAGE_HEIGHT,
+        pageWidth: constants.PAGE_WIDTH,
+        removeFooterThreshold: constants.DEFAULT_SKIP_FOOTER_THRESHOLD,
+        scaleDownThreshold: constants.DEFAULT_SCALE_DOWN,
+      })
+    }
+    if (mode === 'landscape'){
+      Commander.execute('transformToLandscape', print, pages);
+    }
+    Commander.execute('hideRemainingElements');
+    Commander.execute('markDocAsReady');
+  }
 
-</script>
-<script type="text/javascript" src="./chain.js">
-
-</script>
-<script type="text/javascript" src="./assemblepdf.js">
 
 </script>
 
