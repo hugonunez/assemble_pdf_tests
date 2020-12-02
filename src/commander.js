@@ -52,7 +52,10 @@ var Commander = {
                 widget.removeAttribute('style')
                 widget.removeAttribute('valign')
                 widget.cssText = 'margin: 0; padding: 0;'
-                page.appendChild(widget);
+                var widgetWp = document.createElement('div')
+                div.style.display='table-row'
+                widgetWp.appendChild(widget)
+                page.appendChild(widgetWp);
             },
             hideRemainingElements: function() {
                 document.querySelector("#main > div.mail__container").style.display = "none";

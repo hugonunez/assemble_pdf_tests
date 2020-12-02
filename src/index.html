@@ -511,15 +511,17 @@
     .page {
       width: 9.5in;
       height: 11.99in;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      display: table;
+      align-items: center; 
       justify-content: center;
       page-break-inside: avoid;
       -webkit-column-break-inside: avoid;
+      
     }
     .widget {
 /*      border: 1px solid red;*/
+      display: table-cell; 
+      vertical-align: middle; 
       margin: auto;
     }
   .landscape-page {
@@ -2277,7 +2279,10 @@
           widget.removeAttribute('style')
           widget.removeAttribute('valign')
           widget.cssText = 'margin: 0; padding: 0;'
-          page.appendChild(widget);
+          var widgetWp = document.createElement('div')
+          widgetWp.style.display='table-row'
+          widgetWp.appendChild(widget)
+          page.appendChild(widgetWp);
         },
         hideRemainingElements: function() {
           document.querySelector("#main > div.mail__container").style.display = "none";
