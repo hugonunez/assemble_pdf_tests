@@ -501,16 +501,20 @@
     }*/
     .page-wrapper {
       padding: 0;
-      border: 1px dashed grey;
+      /* border: 1px dashed grey; */
       height: auto;
-      width: 8.5in;
+      width: auto;
       page-break-inside: avoid;
       -webkit-column-break-inside: avoid;
     }
     .page {
-      width: 8.5in;
-      height: 10.99in;
+      /* width: 8.5in;
+      height: 10.99in; */
+      width: 9.5in;
+      height: 13.0in;
+      margin-left: 0.3in;
       display: table;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       page-break-inside: avoid;
@@ -519,8 +523,9 @@
     .widget {
 /*      border: 1px solid red;*/
       margin: auto;
-      display: table-cell;
-      vertical-align: center;
+      display:table-cell;
+  vertical-align: middle;
+  text-align: center;
     }
   .landscape-page {
     display: grid;
@@ -2392,9 +2397,8 @@
   HandleWidgetSize.prototype = new Handler();
   HandleWidgetSize.prototype.handleRequest = function (request) {
     var widget = request.items[request.index]
-    var condition = widget.offsetWidth >= request.pageWidth
-    if (condition){
-      Commander.execute('scaleElement', widget, Utils.formatScale((request.pageWidth / widget.offsetWidth)*0.95))
+    if (widget.offsetWidth >= request.pageWidth){
+      Commander.execute('scaleElement', widget, Utils.formatScale((request.pageWidth / widget.offsetWidth)*0.94))
     }
     this.next.handleRequest(request)
   }
