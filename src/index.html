@@ -503,16 +503,14 @@
       padding: 0;
       border: 1px dashed grey;
       height: auto;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-
+      width: 8.5in;
+      page-break-inside: avoid;
+      -webkit-column-break-inside: avoid;
     }
     .page {
-      width: 9.5in;
-      height: 11.99in;
-      display: flex;
-      flex-direction: column;
+      width: 8.5in;
+      height: 10.99in;
+      display: table;
       align-items: center;
       justify-content: center;
       page-break-inside: avoid;
@@ -521,6 +519,8 @@
     .widget {
 /*      border: 1px solid red;*/
       margin: auto;
+      display: table-cell;
+      vertical-align: center;
     }
   .landscape-page {
     display: grid;
@@ -2277,7 +2277,10 @@
           widget.removeAttribute('style')
           widget.removeAttribute('valign')
           widget.cssText = 'margin: 0; padding: 0;'
-          page.appendChild(widget);
+          var wraper = document.createElement('div')
+          wraper.style.display='table-row'
+          wraper.appendChild(widget)
+          page.appendChild(wraper);
         },
         hideRemainingElements: function() {
           document.querySelector("#main > div.mail__container").style.display = "none";
