@@ -501,9 +501,9 @@
     }*/
     .page-wrapper {
       padding: 0;
-      /* border: 1px dashed grey; */
+       border: 1px dashed grey;
+      width: 9.5in;
       height: auto;
-      width: auto;
       page-break-inside: avoid;
       -webkit-column-break-inside: avoid;
     }
@@ -527,15 +527,15 @@
   vertical-align: middle;
   text-align: center;
     }
-  .landscape-page {
-    display: grid;
-    width: 420mm;
-    height: 297mm;
-    grid-template-rows: 1fr;
-    grid-template-columns: auto auto;
-    gap: 0;
-    border: 1px dashed grey;
-  }
+    .landscape-page {
+      display: table;
+      width: 19in;
+      height: auto;
+      grid-template-rows: 1fr;
+      grid-template-columns: auto auto;
+      gap: 0;
+      border: 1px dashed grey;
+    }
 
 
   .footer {
@@ -2300,16 +2300,14 @@
           document.body.appendChild(readyElem);
           window.status = 'ready';
         },
-        transformToLandscape: function (print, pages) {
+        transformToLandscape: function (print) {
+          var pages = document.querySelectorAll('.page-wrapper')
           for (var i=1; i < pages.length; i+=2) {
             var landscapePage = document.createElement('div')
             landscapePage.classList.add('landscape-page')
             landscapePage.appendChild(pages[i])
-            Commander.execute('setStyle', pages[i], {position: '2/1'})
             if (pages[i+1]){
               landscapePage.appendChild(pages[i+1])
-              Commander.execute('setStyle', pages[i+1], {position: '3/2'})
-
             }
             print.appendChild(landscapePage)
           }
@@ -2388,7 +2386,7 @@
 
     if (widgetsCount == 1){
       var template = Factories.makeTemplate(1, request.withFooter)
-      Commander.execute('setStyle', page, template)
+/*      Commander.execute('setStyle', page, template)*/
     }
     this.next.handleRequest(request)
   }
@@ -2479,10 +2477,10 @@
       var footer = Factories.makeFooter();
       Commander.execute('addFooter', page, footer)
       var template = Factories.makeTemplate(nWidgets, true, request.index +1 == request.items.length)
-      Commander.execute('setStyle', page, template)
+ /*     Commander.execute('setStyle', page, template)*/
     }else {
       var template = Factories.makeTemplate(nWidgets, false, request.index +1 == request.items.length)
-      Commander.execute('setStyle', page, template)
+/*      Commander.execute('setStyle', page, template)*/
     }
     return
 
@@ -2499,7 +2497,7 @@
             page
     );
     var template = Factories.makeTemplate(1, request.withFooter)
-    Commander.execute('setStyle', page, template)
+/*    Commander.execute('setStyle', page, template)*/
     Commander.execute('resetPageStatus', request.state)
     Commander.execute('appendWidget', page, request.items[request.index])
     Commander.execute('sumHeight', request.state, request.items[request.index].offsetHeight)
@@ -2514,7 +2512,6 @@
       var widget = request.items[request.index];
       var template = Factories.makeTemplate(1, request.withFooter, true)
       var page = request.pages[request.pages.length -1];
-      Commander.execute('removeClass', widget,'widget')
       Commander.execute('removeClass', widget,'mail__signature')
     }
     this.next.handleRequest(request);
