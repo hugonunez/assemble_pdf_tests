@@ -500,17 +500,17 @@
       color: #080808;
     }*/
     .page-wrapper {
-      padding: 0;
+/*      padding: 0;
        border: 1px dashed grey;
       width: 9.5in;
       height: auto;
       page-break-inside: avoid;
-      -webkit-column-break-inside: avoid;
+      -webkit-column-break-inside: avoid;*/
     }
     .page {
       /* width: 8.5in;
       height: 10.99in; */
-      width: 9.5in;
+/*      width: 9.5in;
       height: 13.0in;
       margin-left: 0.3in;
       display: table;
@@ -518,31 +518,31 @@
       align-items: center;
       justify-content: center;
       page-break-inside: avoid;
-      -webkit-column-break-inside: avoid;
+      -webkit-column-break-inside: avoid;*/
     }
     .widget {
 /*      border: 1px solid red;*/
-      margin: auto;
+/*      margin: auto;
       display:table-cell;
-  vertical-align: middle;
-  text-align: center;
+      vertical-align: middle;
+      text-align: center;*/
     }
     .landscape-page {
-      display: table;
+/*      display: table;
       width: 19in;
       height: auto;
       grid-template-rows: 1fr;
       grid-template-columns: auto auto;
       gap: 0;
-      border: 1px dashed grey;
+      border: 1px dashed grey;*/
     }
 
 
   .footer {
-    height: 76px;
+/*    height: 76px;
     text-align: center;
     margin-top: 3em;
-    font-weight: bold;
+    font-weight: bold;*/
   }
 
     .mail__brand{
@@ -2104,6 +2104,12 @@
       var footerSignature = document.createElement('small');
       footerSignature.style['margin-top'] = '2em';
       footer.classList.add('footer');
+      Commander.execute('setStyle', footer, {
+        'height': '76px',
+        'text-align': 'center',
+        'margin-top': '3em',
+        'font-weight': 'bold',
+      })
       footer.style.width=width+'px';
       footerSignature.innerHTML = 'SEARS 2020';
       footer.appendChild(footerSignature);
@@ -2111,6 +2117,17 @@
     },
     makePage: function (){
       var page = document.createElement("div");
+      Commander.execute('setStyle', page, {
+        'width': '9.5in',
+        'height': '13.0in',
+        'margin-left': '0.3in',
+        'display': 'table',
+        'flex-direction': 'column',
+        'align-items': 'center',
+        'justify-content': 'center',
+        'page-break-inside': 'avoid',
+        '-webkit-column-break-inside': 'avoid',
+      })
       page.setAttribute('class', 'page');
       return page
     },
@@ -2254,6 +2271,14 @@
           pages.push(page);
           var pageWrapper = document.createElement('div')
           pageWrapper.classList.add('page-wrapper')
+          Commander.execute('setStyle', pageWrapper, {
+            'padding': '0',
+            'border': '1px dashed grey',
+            'width': '9.5in',
+            'height': 'auto',
+            'page-break-inside': 'avoid',
+            '-webkit-column-break-inside': 'avoid',
+          })
           pageWrapper.appendChild(page)
           print.appendChild(pageWrapper);
         },
@@ -2280,6 +2305,12 @@
           widget.classList.remove('mail__widget')
           widget.classList.add('widget')
           widget.removeAttribute('style')
+          Commander.execute('setStyle', widget, {
+            'margin': 'auto',
+            'display':'table-cell',
+            'vertical-align': 'middle',
+            'text-align': 'center',
+          })
           widget.removeAttribute('valign')
           widget.cssText = 'margin: 0; padding: 0;'
           var wraper = document.createElement('div')
@@ -2302,12 +2333,36 @@
         },
         transformToLandscape: function (print) {
           var pages = document.querySelectorAll('.page-wrapper')
-          for (var i=1; i < pages.length; i+=2) {
+          for (var i=0; i < pages.length; i+=2) {
             var landscapePage = document.createElement('div')
             landscapePage.classList.add('landscape-page')
+            Commander.execute('setStyle', landscapePage, {
+              width: '19in',
+              height: 'auto',
+              border: '1px dashed blue',
+              display: 'table',
+              'table-layout': 'fixed'
+            })
             landscapePage.appendChild(pages[i])
+
+            Commander.execute('setStyle', pages[i], {
+              'display': 'table-cell',
+              'vertical-align': 'top',
+            })
             if (pages[i+1]){
               landscapePage.appendChild(pages[i+1])
+              Commander.execute('setStyle', pages[i+1], {
+                'display': 'table-cell',
+                'vertical-align': 'top',
+              })
+            }else {
+              Commander.execute('setStyle', landscapePage, {
+                width: '9.5in',
+                height: 'auto',
+                border: '1px dashed blue',
+                display: 'table',
+                'table-layout': 'fixed'
+              })
             }
             print.appendChild(landscapePage)
           }

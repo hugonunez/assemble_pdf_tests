@@ -48,8 +48,13 @@ var Commander = {
             },
             appendWidget: function (page, widget) {
                 widget.classList.remove('mail__widget')
-                widget.classList.add('widget')
                 widget.removeAttribute('style')
+                Commander.execute('setStyle', widget, {
+                    'margin': 'auto',
+                    'display':'table-cell',
+                    'vertical-align': 'middle',
+                    'text-align': 'center',
+                })
                 widget.removeAttribute('valign')
                 widget.cssText = 'margin: 0; padding: 0;'
                 page.appendChild(widget);
