@@ -1,6 +1,7 @@
 /*
-* Command dispatcher
-* */
+ * Command dispatcher
+ * */
+
 var Commander = {
     execute: function ( command ) {
         var Commands = {
@@ -20,10 +21,8 @@ var Commander = {
                 state.isPageFinished = false;
             },
 
-            appendPage: function (print, pages, page){
+            appendPage: function (print, pages, pageWrapper, page){
                 pages.push(page);
-                var pageWrapper = document.createElement('div')
-                pageWrapper.classList.add('page-wrapper')
                 pageWrapper.appendChild(page)
                 print.appendChild(pageWrapper);
             },
@@ -48,16 +47,15 @@ var Commander = {
             },
             appendWidget: function (page, widget) {
                 widget.classList.remove('mail__widget')
+                widget.classList.add('widget')
                 widget.removeAttribute('style')
-                Commander.execute('setStyle', widget, {
-                    'margin': 'auto',
-                    'display':'table-cell',
-                    'vertical-align': 'middle',
-                    'text-align': 'center',
-                })
+
                 widget.removeAttribute('valign')
                 widget.cssText = 'margin: 0; padding: 0;'
-                page.appendChild(widget);
+                var wraper = document.createElement('div')
+                wraper.style.display='table-row'
+                wraper.appendChild(widget)
+                page.appendChild(wraper);
             },
             hideRemainingElements: function() {
                 document.querySelector("#main > div.mail__container").style.display = "none";
@@ -72,16 +70,40 @@ var Commander = {
                 document.body.appendChild(readyElem);
                 window.status = 'ready';
             },
-            transformToLandscape: function (print, pages) {
-                for (var i=1; i < pages.length; i+=2) {
+            transformToLandscape: function (print) {
+                var pages = document.querySelectorAll('.page-wrapper')
+                for (var i=0; i < pages.length; i+=2) {
                     var landscapePage = document.createElement('div')
                     landscapePage.classList.add('landscape-page')
+                    Commander.execute('setStyle', landscapePage, {
+                        width: '19in',
+                        height: 'auto',
+                        border: '1px dashed blue',
+                        display: 'table',
+                        'table-layout': 'fixed',
+                        'page-break-inside': 'avoid',
+                        '-webkit-column-break-inside': 'avoid'
+                    })
                     landscapePage.appendChild(pages[i])
-                    Commander.execute('setStyle', pages[i], {position: '2/1'})
+
+                    Commander.execute('setStyle', pages[i], {
+                        'display': 'table-cell',
+                        'vertical-align': 'top',
+                    })
                     if (pages[i+1]){
                         landscapePage.appendChild(pages[i+1])
-                        Commander.execute('setStyle', pages[i+1], {position: '3/2'})
-
+                        Commander.execute('setStyle', pages[i+1], {
+                            'display': 'table-cell',
+                            'vertical-align': 'top',
+                        })
+                    }else {
+                        Commander.execute('setStyle', landscapePage, {
+                            width: '9.5in',
+                            height: 'auto',
+                            border: '1px dashed blue',
+                            display: 'table',
+                            'table-layout': 'fixed'
+                        })
                     }
                     print.appendChild(landscapePage)
                 }

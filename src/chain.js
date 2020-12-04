@@ -58,7 +58,7 @@ HandleSingleWidgetInPage.prototype.handleRequest = function (request) {
 
     if (widgetsCount == 1){
         var template = Factories.makeTemplate(1, request.withFooter)
-        Commander.execute('setStyle', page, template)
+        /*      Commander.execute('setStyle', page, template)*/
     }
     this.next.handleRequest(request)
 }
@@ -67,9 +67,8 @@ var HandleWidgetSize = function (){};
 HandleWidgetSize.prototype = new Handler();
 HandleWidgetSize.prototype.handleRequest = function (request) {
     var widget = request.items[request.index]
-    var condition = widget.offsetWidth >= request.pageWidth
-    if (condition){
-        Commander.execute('scaleElement', widget, Utils.formatScale((request.pageWidth / widget.offsetWidth)*0.95))
+    if (widget.offsetWidth >= request.pageWidth){
+        Commander.execute('scaleElement', widget, Utils.formatScale((request.pageWidth / widget.offsetWidth)*0.94))
     }
     this.next.handleRequest(request)
 }
@@ -81,10 +80,12 @@ HandleFirstPage.prototype.handleRequest = function (request) {
     if (request.index === 0){
         request.pages[0].removeChild(request.pages[0].firstElementChild)
         var page = Factories.makePage()
+        var pageWrapper = Factories.makePageWrapper()
         Commander.execute('appendPage',
             request.print,
             request.pages,
-            page
+            page,
+            pageWrapper
         );
         request.print.removeChild(request.print.firstElementChild)
 
@@ -98,10 +99,12 @@ handleCreateNewPage.prototype = new Handler();
 handleCreateNewPage.prototype.handleRequest = function (request){
     if(request.state.isPageFinished){
         var page = Factories.makePage()
+        var pageWrapper = Factories.makePageWrapper()
         Commander.execute('appendPage',
             request.print,
             request.pages,
-            page
+            page,
+            pageWrapper
         );
         Commander.execute('resetPageStatus', request.state)
     }
@@ -115,6 +118,12 @@ AddWidgetAndContinue.prototype.handleRequest = function (request){
     var debt = ( request.state.sumOfHeights + itemHeight) - request.pageHeight ;
     if(debt <= 0){
         var page = request.pages[request.pages.length -1];
+        Commander.execute('setStyle', request.items[request.index], {
+            'margin': 'auto',
+            'display':'table-cell',
+            'vertical-align': 'middle',
+            'text-align': 'center',
+        })
         Commander.execute('appendWidget', page, request.items[request.index])
         Commander.execute('sumHeight', request.state, itemHeight)
         return ;
@@ -129,7 +138,14 @@ ScaleDownWidgets.prototype.handleRequest = function (request){
     var debt = ( request.state.sumOfHeights + itemHeight) - request.pageHeight ;
     var page = request.pages[request.pages.length -1]
     if(debt <= request.scaleDownThreshold){
-        Commander.execute('appendWidget', page, request.items[request.index]);
+
+        Commander.execute('setStyle', request.items[request.index], {
+            'margin': 'auto',
+            'display':'table-cell',
+            'vertical-align': 'middle',
+            'text-align': 'center',
+        })
+        Commander.execute('appendWidget', page, request.items[request.index])
         Commander.execute('sumHeight', request.state, itemHeight)
         Commander.execute('scaleElement', request.items[request.index-1], Utils.formatScale((constants.PAGE_HEIGHT/ (request.state.sumOfHeights)*0.95)));
         Commander.execute('scaleElement', request.items[request.index], Utils.formatScale((constants.PAGE_HEIGHT/ (request.state.sumOfHeights)*0.95)));
@@ -150,10 +166,10 @@ handleAddFooter.prototype.handleRequest = function (request) {
         var footer = Factories.makeFooter();
         Commander.execute('addFooter', page, footer)
         var template = Factories.makeTemplate(nWidgets, true, request.index +1 == request.items.length)
-        Commander.execute('setStyle', page, template)
+        /*     Commander.execute('setStyle', page, template)*/
     }else {
         var template = Factories.makeTemplate(nWidgets, false, request.index +1 == request.items.length)
-        Commander.execute('setStyle', page, template)
+        /*      Commander.execute('setStyle', page, template)*/
     }
     return
 
@@ -164,14 +180,22 @@ var DefaultAddAndCreatePage = function (){}
 DefaultAddAndCreatePage.prototype = new Handler();
 DefaultAddAndCreatePage.prototype.handleRequest = function (request){
     var page = Factories.makePage()
+    var pageWrapper = Factories.makePageWrapper();
     Commander.execute('appendPage',
         request.print,
         request.pages,
-        page
+        page,
+        pageWrapper
     );
     var template = Factories.makeTemplate(1, request.withFooter)
-    Commander.execute('setStyle', page, template)
+    /*    Commander.execute('setStyle', page, template)*/
     Commander.execute('resetPageStatus', request.state)
+    Commander.execute('setStyle', request.items[request.index], {
+        'margin': 'auto',
+        'display':'table-cell',
+        'vertical-align': 'middle',
+        'text-align': 'center',
+    })
     Commander.execute('appendWidget', page, request.items[request.index])
     Commander.execute('sumHeight', request.state, request.items[request.index].offsetHeight)
     Commander.execute('finishPage', request.state)
@@ -185,7 +209,6 @@ HandleSignature.prototype.handleRequest = function (request){
         var widget = request.items[request.index];
         var template = Factories.makeTemplate(1, request.withFooter, true)
         var page = request.pages[request.pages.length -1];
-        Commander.execute('removeClass', widget,'widget')
         Commander.execute('removeClass', widget,'mail__signature')
     }
     this.next.handleRequest(request);

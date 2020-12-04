@@ -1,3 +1,4 @@
+import Commander from '../../commander'
 import Factories from '../../factories';
 
 describe("Test factories functions", function (){

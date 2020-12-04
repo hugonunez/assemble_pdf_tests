@@ -2341,7 +2341,9 @@
               height: 'auto',
               border: '1px dashed blue',
               display: 'table',
-              'table-layout': 'fixed'
+              'table-layout': 'fixed',
+              'page-break-inside': 'avoid',
+              '-webkit-column-break-inside': 'avoid'
             })
             landscapePage.appendChild(pages[i])
 
@@ -2600,7 +2602,7 @@
     var widgets = getters.getWidgets();
     var print = getters.getPrint();
     var pages = Utils.nodeListToIterable(getters.getPages());
-    var mode = 'portrait';
+    var mode = 'landscape';
     var withFooter = true;
     for (var i = 0; i < widgets.length; i++) {
       chain.handle({

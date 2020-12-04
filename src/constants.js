@@ -1,7 +1,6 @@
-
 /*
-* Constants collection
-* */
+  * Constants collection
+  * */
 var A4 = {
     w: 210,
     h: 279

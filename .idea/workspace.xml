@@ -21,8 +21,15 @@
   <component name="ChangeListManager">
     <list default="true" id="59524dee-e6ec-4f66-9171-8ba7ab70fcc2" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/assemblepdf.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/assemblepdf.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/chain.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/chain.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/commander.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/commander.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/constants.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/constants.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/factories.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/factories.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/unit/factories.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/unit/factories.spec.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/test.pdf" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -95,7 +102,9 @@
       <workItem from="1606740543673" duration="600000" />
       <workItem from="1606827678835" duration="6087000" />
       <workItem from="1606914905118" duration="6332000" />
-      <workItem from="1607000830355" duration="5618000" />
+      <workItem from="1607000830355" duration="6271000" />
+      <workItem from="1607089753114" duration="618000" />
+      <workItem from="1607096973049" duration="1540000" />
     </task>
     <servers />
   </component>
@@ -130,12 +139,12 @@
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="370" y="42" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.0.1536.864@0.0.1536.864" timestamp="1606248997124" />
-    <state x="687" y="291" width="660" height="651" key="find.popup" timestamp="1607027996483">
+    <state x="687" y="291" width="660" height="651" key="find.popup" timestamp="1607098454641">
       <screen x="72" y="27" width="1848" height="1053" />
     </state>
     <state x="511" y="217" width="548" height="534" key="find.popup/0.0.1536.864@0.0.1536.864" timestamp="1606502683492" />
     <state x="687" y="292" width="618" height="594" key="find.popup/72.27.1848.1053/1920.0.1920.1080@72.27.1848.1053" timestamp="1605880569927" />
-    <state x="687" y="291" width="660" height="651" key="find.popup/72.27.1848.1053@72.27.1848.1053" timestamp="1607027996483" />
+    <state x="687" y="291" width="660" height="651" key="find.popup/72.27.1848.1053@72.27.1848.1053" timestamp="1607098454641" />
     <state x="660" y="252" width="673" height="678" key="run.anything.popup" timestamp="1606833185720">
       <screen x="72" y="27" width="1848" height="1053" />
     </state>
